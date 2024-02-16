@@ -48,6 +48,7 @@ func main() {
 	fmt.Println(matrix)	
 	*/
 	
+	/*
 	NbrNurses = instance.Nbr_nurses
 	CapacityNurse = instance.Capacity_nurse
 	Benchmark = instance.Benchmark
@@ -58,6 +59,10 @@ func main() {
 
 	patients := instance.Patients
 	fmt.Printf("Patients: %+v\n", patients)
+	*/
+
+	individualSolution := generateIndividualSolution(instance)
+    fmt.Println("Generated Individual Solution:", individualSolution)
 
 }
 
