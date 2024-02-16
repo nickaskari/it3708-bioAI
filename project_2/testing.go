@@ -21,6 +21,9 @@ func main() {
     // Calling a method on the Person instance
     greeting := person.Greet()
     fmt.Println(greeting)
+
+    num := bad()
+    fmt.Println(num)
 }
 
 
