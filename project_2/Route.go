@@ -1,11 +1,11 @@
 package main
 
-
-
 type Route struct {
-	Depot Depot
-	Nurse Nurse
-	// strore the patients in the route, depot start and finish is implicit
-	Patients []Patients
+	Depot Depot `json:"depot"`
+	NurseCapacity int `json:"nurse_capacity"`
+	CurrentTime float64 `json:"current_time"`
+	Patients []Patient `json:"patients"`
 }
+
+
 
