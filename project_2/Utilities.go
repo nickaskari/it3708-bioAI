@@ -53,12 +53,18 @@ func NewRandomizer() *Randomizer {
 	}
 }
 
-// Returns a random route from an array of routes, as well as the route's index in the array.
-func (r *Randomizer) getRandomRoute(routes []Route) (Route, int) {
+// getRandomRoute picks a random route from the map and returns the route along with its index.
+func getRandomRoute(routesMap map[int]Route) (Route, int) {
+  keys := make([]int, 0, len(routesMap))
+  for k := range routesMap {
+      keys = append(keys, k)
+  }
 
-	randomIndex := r.Intn(len(routes))
+  // Pick a random key.
+  randomIndex := rand.Intn(len(keys))
+  randomKey := keys[randomIndex]
 
-	return routes[randomIndex], randomIndex
+  return routesMap[randomKey], randomKey
 }
 
 // Pares a string to an int and returns the int.
@@ -71,7 +77,6 @@ func strToInt(str string) int {
 	return n
 }
 
-// NOTE: VISIT TIME IS NOT RIGHT MUST FIX
 // Prints a solution, or an individual
 func printSolution(individual Individual, instance Instance) {
 	nurseCapacity := instance.CapacityNurse
@@ -84,6 +89,8 @@ func printSolution(individual Individual, instance Instance) {
 
   const maxSequenceLength = 1000 
 
+  counter := 0
+
   for i, route := range individual.routes {
     nurseIdentifier := fmt.Sprintf("Nurse %-3d", i+1) 
     routeDuration := fmt.Sprintf("%-6.2f", route.CurrentTime) 
@@ -92,6 +99,7 @@ func printSolution(individual Individual, instance Instance) {
         if len(route.Patients) > 0 {
             patientSequence += "D (0)"
             for _, patient := range route.Patients {
+              counter += 1
                 sequencePart := fmt.Sprintf(" -> %d (%.2f-%.2f) [%d-%d]",
                     patient.ID, float64(patient.VisitTime), float64(patient.LeavingTime), patient.StartTime, patient.EndTime)
                 if len(patientSequence)+len(sequencePart) > maxSequenceLength {
@@ -101,22 +109,21 @@ func printSolution(individual Individual, instance Instance) {
                 patientSequence += sequencePart
                 coveredDemand += patient.Demand
             }
+            patientSequence += fmt.Sprintf(" -> D (%.2f)", route.CurrentTime)
+        } else {
+          patientSequence = "NOT ON DUTY"
         }
         if len(patientSequence) > maxSequenceLength {
             patientSequence = patientSequence[:maxSequenceLength] + "..."
         }
     coveredDemandStr := fmt.Sprintf("%-4d", coveredDemand)  
 
-    if len(route.Patients) > 0 {
-        patientSequence += fmt.Sprintf(" -> D (%.2f)", route.CurrentTime)
-    } else {
-      patientSequence = "NOT ON DUTY"
-    }
     fmt.Printf("%-10s %-10s %-5s %-s\n", nurseIdentifier, routeDuration, coveredDemandStr, patientSequence)  
 }
 
 	printDivider(150, "-")
 	fmt.Println("Objective value (total duration):", objectiveValue)
+  fmt.Println(counter, "coutner")
 }
 
 // Prints out a divider (for example: "-----") of desired length
@@ -126,3 +133,20 @@ func printDivider(length int, dividerChar string) {
 	}
 	fmt.Println()
 }
+
+// takes in a route array, and outputs a dictionary with the keys being the indexes of the array.
+func sliceToMap(routes []Route) map[int]Route {
+  availableRoutes := make(map[int]Route)
+  for index, route := range routes {
+      availableRoutes[index] = route
+  }
+  return availableRoutes
+}
+
+// Deletes key from route dictionary. Note the keys can be though of as indexes.
+func removeRouteFromMap(routesMap map[int]Route, index int) map[int]Route {
+  delete(routesMap, index)
+  return routesMap
+}
+
+

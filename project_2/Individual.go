@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 /*
 NOTE:
@@ -14,9 +16,6 @@ type Individual struct {
 	routes  []Route
 }
 
-// A randomizer struct for arbitrary use
-var random *Randomizer = NewRandomizer()
-
 // Acts as a constructor for creating an individual.
 func createIndividual(instance Instance) Individual {
 	routes := createInitialRoutes(instance)
@@ -28,36 +27,39 @@ func createIndividual(instance Instance) Individual {
 		// Assigning patients to routes(nurses), not the other way around
 		if !patient.IsPatientInList(visitedPatients) {
 
-			availableRoutes := routes
+			availableRoutes := sliceToMap(routes)
 			searchForRoute := true
 
 			for searchForRoute {
-				route, routeIndex := random.getRandomRoute(availableRoutes)
+				route, routeIndex := getRandomRoute(availableRoutes)
 
 				if satisfiesConstraints(route, patient, instance) {
-					totalTravelTime += visitPatient(routes, routeIndex, patient, instance)
+
+					travelTime, updatedRoute := visitPatient(route, patient, instance)
+					totalTravelTime += travelTime
+					routes[routeIndex] = updatedRoute
 					visitedPatients = append(visitedPatients, patient)
 					searchForRoute = false
 					//fmt.Println("IM HERE 1")
 				} else {
 					// If the route does not satisfy constraints, remove it from the set of possible routes.
-					availableRoutes = removeRouteFromArray(availableRoutes, routeIndex)
-					//fmt.Println("IM HERE 2", len(available_routes))
+					availableRoutes = removeRouteFromMap(availableRoutes, routeIndex)
+					//fmt.Println("IM HERE 2", len(availableRoutes))
 				}
 
 				if len(availableRoutes) == 0 {
 					// If there no routes that satisfies the constraints, start from scratch
-					fmt.Println("IM HERE 3")
+					fmt.Println("THIS IS A ROUTE", "%+v\n", route, "\n")
+					fmt.Println("THIS IS A PATIENT", "%+v\n", patient)
+					printDivider(20, "*")
+					fmt.Println("visited", len(visitedPatients))
+					//fmt.Println("IM HERE 3")
 					return createIndividual(instance)
 				}
 			}
 		}
 	}
-	if len(visitedPatients) < len(instance.getPatients()) {
-		fmt.Println("TOO FEW PATIENTS", len(visitedPatients), "INSTEAD OF", instance.getPatients())
-	} else if len(visitedPatients) == len(instance.getPatients()) {
-		fmt.Println("WE GOOD", len(visitedPatients), "=", len(instance.getPatients()))
-	}
+	fmt.Println("visited", len(visitedPatients))
 	routes = returnToDepot(routes, instance)
 
 	return Individual{totalTravelTime, routes}
@@ -87,13 +89,35 @@ func satisfiesConstraints(nurseRoute Route, potentialPatient Patient, instance I
 
 	potentialPatientID := potentialPatient.ID
 
-	currentTime := nurseRoute.CurrentTime
+	//currentTime := nurseRoute.CurrentTime
 
 	potentialPatientToDepot := instance.getTravelTime(potentialPatient.ID, 0)
 	curentToPotentialPatient := instance.getTravelTime(currentPatient, potentialPatientID)
 
+	if (nurseRoute.NurseCapacity >= potentialPatient.Demand) {
+		if(potentialPatient.EndTime - potentialPatient.StartTime >= potentialPatient.CareTime) {
+			timeAtArival := nurseRoute.CurrentTime + curentToPotentialPatient
+			if timeAtArival < float64(potentialPatient.StartTime) {
+				if (float64(potentialPatient.StartTime) + float64(potentialPatient.CareTime) + potentialPatientToDepot) <= float64(instance.Depot.ReturnTime) {
+					// We have checked end - start >= caretime. Hence if care is at start time the nurse will be done in time for the end time. 
+					return true
+				}
+			} else {
+				if (timeAtArival + float64(potentialPatient.CareTime) + potentialPatientToDepot) <= float64(instance.Depot.ReturnTime) {
+					if (timeAtArival + float64(potentialPatient.CareTime)) <= float64(potentialPatient.EndTime) {
+						// If the nurse arrives late, check if the nurse will treat in time before the end time.
+						return true
+					}
+				}
+			}
+		}
+	}
+
+	return false
+
 	// CHECK THESE CONDITIONS --> ARE THEY CORRECT?
-	if (nurseRoute.NurseCapacity >= potentialPatient.Demand) &&
+	/*
+	if (nurseRoute.NurseCapacity >= potentialPatient.Demand) && 
 		(potentialPatient.EndTime - potentialPatient.StartTime >= potentialPatient.CareTime) && //Not scam
 		(currentTime + float64(potentialPatient.CareTime) <= float64(potentialPatient.EndTime)) &&
 		(nurseRoute.CurrentTime + curentToPotentialPatient + float64(potentialPatient.CareTime) + potentialPatientToDepot <=
@@ -101,12 +125,11 @@ func satisfiesConstraints(nurseRoute Route, potentialPatient Patient, instance I
 		return true
 	} else {
 		return false
-	}
+	}*/
 }
 
 // Visit a patient and wait and/or care for them. Returns travel time and route.
-func visitPatient(routes []Route, routeIndex int, patient Patient, instance Instance) float64 {
-	route := routes[routeIndex]
+func visitPatient(route Route, patient Patient, instance Instance) (float64, Route) {
 	route.NurseCapacity -= patient.Demand
 
 
@@ -128,9 +151,8 @@ func visitPatient(routes []Route, routeIndex int, patient Patient, instance Inst
 	patient.LeavingTime = route.CurrentTime
 
 	route.Patients = append(route.Patients, patient)
-	routes[routeIndex] = route
 
-	return travelTime
+	return travelTime, route
 }
 
 // Takes in all routes, checks if they are not empty, then return those to the depot.

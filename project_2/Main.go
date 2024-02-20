@@ -16,9 +16,10 @@ func main() {
 	for _, patient := range patients {
 		fmt.Printf("Patient: %+v\n", patient)
 	}
-	fmt.Println(len(patients))
-	*/
+	fmt.Println(len(patients))*/
+	
 	fmt.Println("")
 	individual := createIndividual(instance)
 	printSolution(individual, instance)
+	fmt.Println(instance.getTravelTime(49, 0))
 }
