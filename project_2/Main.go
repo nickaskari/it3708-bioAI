@@ -5,7 +5,7 @@ import (
 )
 
 // Declare what file you want problem instance from
-var train_file string = "train/train_5.json"
+var train_file string = "train/train_3.json"
 
 func main() {
     instance := getProblemInstance(train_file)
