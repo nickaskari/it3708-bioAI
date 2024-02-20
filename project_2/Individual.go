@@ -35,9 +35,8 @@ func createIndividual(instance Instance) Individual {
 
 				if satisfiesConstraints(route, patient, instance) {
 
-					travelTime, updatedRoute := visitPatient(route, patient, instance)
+					travelTime := visitPatient(routes, routeIndex, patient, instance)
 					totalTravelTime += travelTime
-					routes[routeIndex] = updatedRoute
 					visitedPatients = append(visitedPatients, patient)
 					searchForRoute = false
 					//fmt.Println("IM HERE 1")
@@ -49,14 +48,10 @@ func createIndividual(instance Instance) Individual {
 
 				if len(availableRoutes) == 0 {
 					// If there no routes that satisfies the constraints, start from scratch
-					fmt.Println("THIS IS A ROUTE", "%+v\n", route, "\n")
-					fmt.Println("THIS IS A PATIENT", "%+v\n", patient)
-					printDivider(20, "*")
 					fmt.Println("visited", len(visitedPatients))
-					//fmt.Println("IM HERE 3")
-					//return createIndividual(instance)
-					routes = returnToDepot(routes, instance)
-					return Individual{totalTravelTime, routes}
+					return createIndividual(instance)
+					//routes = returnToDepot(routes, instance)
+					//return Individual{totalTravelTime, routes}
 				}
 			}
 		}
@@ -131,29 +126,32 @@ func satisfiesConstraints(nurseRoute Route, potentialPatient Patient, instance I
 }
 
 // Visit a patient and wait and/or care for them. Returns travel time and route.
-func visitPatient(route Route, patient Patient, instance Instance) (float64, Route) {
-	route.NurseCapacity -= patient.Demand
-
-	if route.CurrentTime < float64(patient.StartTime) {
-		waitingTime := float64(patient.StartTime) - route.CurrentTime
-		route.CurrentTime += waitingTime
-	}
+func visitPatient(routes []Route, index int, patient Patient, instance Instance) float64 {
+	routes[index].NurseCapacity -= patient.Demand
 
 	lastVisitedPatientID := 0
-	if len(route.Patients) > 0 {
-		lastVisitedPatientID = route.Patients[len(route.Patients)-1].ID
+	if len(routes[index].Patients) > 0 {
+		lastVisitedPatientID = routes[index].Patients[len(routes[index].Patients)-1].ID
 	}
 
 	travelTime := instance.getTravelTime(lastVisitedPatientID, patient.ID)
-	patient.VisitTime = route.CurrentTime + travelTime
+	routes[index].CurrentTime += travelTime
 
-	route.CurrentTime += travelTime + float64(patient.CareTime)
+	if routes[index].CurrentTime < float64(patient.StartTime) {
+		waitingTime := float64(patient.StartTime) - routes[index].CurrentTime
+		routes[index].CurrentTime += waitingTime
+		fmt.Println("ROUTE NUM", index, "WAITED")
+	}
 
-	patient.LeavingTime = route.CurrentTime
+	patient.VisitTime = routes[index].CurrentTime 
 
-	route.Patients = append(route.Patients, patient)
+	routes[index].CurrentTime += float64(patient.CareTime)
 
-	return travelTime, route
+	patient.LeavingTime = routes[index].CurrentTime
+
+	routes[index].Patients = append(routes[index].Patients, patient)
+
+	return travelTime
 }
 
 // Takes in all routes, checks if they are not empty, then return those to the depot.
@@ -163,9 +161,7 @@ func returnToDepot(routes []Route, instance Instance) []Route {
 		if len(patients) != 0 {
 			lastPatientID := patients[len(patients)-1].ID
 			travelTimeToDepot := instance.getTravelTime(lastPatientID, 0)
-			fmt.Println("curren b4", routes[i].CurrentTime)
 			routes[i].CurrentTime += travelTimeToDepot
-			fmt.Println("curren after", routes[i].CurrentTime)
 		}
 	}
 	return routes
