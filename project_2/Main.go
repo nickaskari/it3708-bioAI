@@ -22,4 +22,6 @@ func main() {
 	individual := createIndividual(instance)
 	printSolution(individual, instance)
 	//fmt.Println(instance.getTravelTime(49, 0))
+
+	individual.writeIndividualToJson()
 }

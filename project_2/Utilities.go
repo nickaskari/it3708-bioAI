@@ -81,7 +81,7 @@ func strToInt(str string) int {
 func printSolution(individual Individual, instance Instance) {
 	nurseCapacity := instance.CapacityNurse
 	depotReturnTime := instance.Depot.ReturnTime
-	objectiveValue := individual.fitness
+	objectiveValue := individual.Fitness
 
 	fmt.Println("Nurse capacity:", nurseCapacity)
 	fmt.Println("Depot return time:", depotReturnTime)
@@ -91,7 +91,7 @@ func printSolution(individual Individual, instance Instance) {
 
   counter := 0
 
-  for i, route := range individual.routes {
+  for i, route := range individual.Routes {
     nurseIdentifier := fmt.Sprintf("Nurse %-3d", i+1) 
     routeDuration := fmt.Sprintf("%-6.2f", route.CurrentTime) 
     coveredDemand := 0
@@ -148,5 +148,3 @@ func removeRouteFromMap(routesMap map[int]Route, index int) map[int]Route {
   delete(routesMap, index)
   return routesMap
 }
-
-
