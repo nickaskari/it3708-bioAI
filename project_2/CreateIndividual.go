@@ -38,6 +38,8 @@ func createIndividual(instance Instance) Individual {
 					// If there no routes that satisfies the constraints, start from scratch
 					fmt.Println("visited", len(visitedPatients))
 					return createIndividual(instance)
+
+					// UNCOMMMENT TO GET "HALFWAY" SOLUTION WHEN RUNNING
 					//routes = returnToDepot(routes, instance)
 					//return Individual{totalTravelTime, routes}
 				}
