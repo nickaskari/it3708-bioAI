@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"os"
 	"strconv"
+    "time"
 )
 
 // Reads file at filename and returns JSON.
@@ -43,6 +44,13 @@ func getProblemInstance(filename string) Instance {
 // A struct to perform random math operations
 type Randomizer struct {
 	*rand.Rand
+}
+
+// NewRandomizer creates a new Randomizer (constructor)
+func NewRandomizer() *Randomizer {
+	return &Randomizer{
+		Rand: rand.New(rand.NewSource(time.Now().UnixNano())),
+	}
 }
 
 // Returns a random route from an array of routes, as well as the route's index in the array.

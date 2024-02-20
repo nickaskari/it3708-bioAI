@@ -9,11 +9,16 @@ var train_file string = "train/train_0.json"
 
 func main() {
     instance := getProblemInstance(train_file)
-
-	patients := getPatients(instance)
+	
+	/*
+	//patients := getPatients(instance)
 
 	for _, patient := range patients {
 		fmt.Printf("Patient: %+v\n", patient)
 	}
 	fmt.Println(len(patients))
+	*/
+
+	individual := createIndividual(instance)
+	fmt.Println(individual)
 }
