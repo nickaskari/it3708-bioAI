@@ -54,7 +54,9 @@ func createIndividual(instance Instance) Individual {
 					printDivider(20, "*")
 					fmt.Println("visited", len(visitedPatients))
 					//fmt.Println("IM HERE 3")
-					return createIndividual(instance)
+					//return createIndividual(instance)
+					routes = returnToDepot(routes, instance)
+					return Individual{totalTravelTime, routes}
 				}
 			}
 		}
@@ -111,7 +113,6 @@ func satisfiesConstraints(nurseRoute Route, potentialPatient Patient, instance I
 				// If the nurse arrives late, check if the nurse will treat in time before the end time.
 				return true
 			}
-			return true
 		}
 	}
 	return false
