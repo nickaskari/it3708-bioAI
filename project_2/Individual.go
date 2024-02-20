@@ -158,12 +158,14 @@ func visitPatient(route Route, patient Patient, instance Instance) (float64, Rou
 
 // Takes in all routes, checks if they are not empty, then return those to the depot.
 func returnToDepot(routes []Route, instance Instance) []Route {
-	for _, route := range routes {
+	for i, route := range routes {
 		patients := route.Patients
 		if len(patients) != 0 {
 			lastPatientID := patients[len(patients)-1].ID
 			travelTimeToDepot := instance.getTravelTime(lastPatientID, 0)
-			route.CurrentTime += travelTimeToDepot
+			fmt.Println("curren b4", routes[i].CurrentTime)
+			routes[i].CurrentTime += travelTimeToDepot
+			fmt.Println("curren after", routes[i].CurrentTime)
 		}
 	}
 	return routes
