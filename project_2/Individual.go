@@ -143,9 +143,9 @@ func visitPatient(route Route, patient Patient, instance Instance) (float64, Rou
 		lastVisitedPatientID = route.Patients[len(route.Patients)-1].ID
 	}
 
-	patient.VisitTime = route.CurrentTime
-
 	travelTime := instance.getTravelTime(lastVisitedPatientID, patient.ID)
+	patient.VisitTime = route.CurrentTime + travelTime
+
 	route.CurrentTime += travelTime + float64(patient.CareTime)
 
 	patient.LeavingTime = route.CurrentTime
