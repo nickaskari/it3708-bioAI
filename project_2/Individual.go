@@ -1,9 +1,5 @@
 package main
 
-import (
-	"fmt"
-)
-
 /*
 NOTE:
 	An individual is simply a feasible solution for this problem.
