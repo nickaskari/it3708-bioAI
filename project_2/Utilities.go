@@ -87,7 +87,7 @@ func printSolution(individual Individual, instance Instance) {
 	fmt.Println("Depot return time:", depotReturnTime)
 	printDivider(150, "-")
 
-  const maxSequenceLength = 1000 
+  const maxSequenceLength = 100 
 
   counter := 0
 
@@ -113,9 +113,7 @@ func printSolution(individual Individual, instance Instance) {
         } else {
           patientSequence = "NOT ON DUTY"
         }
-        if len(patientSequence) > maxSequenceLength {
-            patientSequence = patientSequence[:maxSequenceLength] + "..."
-        }
+
     coveredDemandStr := fmt.Sprintf("%-4d", coveredDemand)  
 
     fmt.Printf("%-10s %-10s %-5s %-s\n", nurseIdentifier, routeDuration, coveredDemandStr, patientSequence)  
