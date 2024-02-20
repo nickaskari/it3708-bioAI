@@ -3,13 +3,13 @@ package main
 
 // Needed to read all the JSON file data
 type Instance struct {
-    Instance_name  string            `json:"instance_name"`
-    Nbr_nurses     int               `json:"nbr_nurses"`
-    Capacity_nurse int               `json:"capacity_nurse"`
+    InstanceName  string            `json:"instance_name"`
+    NbrNurses     int               `json:"nbr_nurses"`
+    CapacityNurse int               `json:"capacity_nurse"`
     Benchmark      float64           `json:"benchmark"`
     Depot          Depot             `json:"depot"`
     Patients       map[string]Patient `json:"patients"`
-    Travel_times   [][]float64      `json:"travel_times"`
+    TravelTimes   [][]float64      `json:"travel_times"`
 }
 
 
@@ -19,7 +19,18 @@ type Instance struct {
     travel matrix.
 */
 func (i Instance) getTravelTime(source int, destination int) float64 {
-	return i.Travel_times[source][destination]
+	return i.TravelTimes[source][destination]
+}
+
+// Converts JSON data to Patient objects. Returns an array of patients.
+func (i Instance) getPatients() []Patient {
+	var patientsSlice []Patient
+	for id, patient := range i.Patients {
+		int_id := strToInt(id)
+		patient.ID = int_id
+		patientsSlice = append(patientsSlice, patient)
+	}
+	return patientsSlice
 }
 
 

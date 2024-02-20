@@ -11,14 +11,14 @@ func main() {
     instance := getProblemInstance(train_file)
 	
 	/*
-	//patients := getPatients(instance)
+	patients := instance.getPatients()
 
 	for _, patient := range patients {
 		fmt.Printf("Patient: %+v\n", patient)
 	}
 	fmt.Println(len(patients))
 	*/
-
+	fmt.Println("")
 	individual := createIndividual(instance)
-	fmt.Println(individual)
+	printSolution(individual, instance)
 }

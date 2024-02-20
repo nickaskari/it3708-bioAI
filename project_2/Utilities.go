@@ -6,7 +6,7 @@ import (
 	"math/rand"
 	"os"
 	"strconv"
-    "time"
+	"time"
 )
 
 // Reads file at filename and returns JSON.
@@ -69,4 +69,60 @@ func strToInt(str string) int {
 		fmt.Println(err)
 	}
 	return n
+}
+
+// NOTE: VISIT TIME IS NOT RIGHT MUST FIX
+// Prints a solution, or an individual
+func printSolution(individual Individual, instance Instance) {
+	nurseCapacity := instance.CapacityNurse
+	depotReturnTime := instance.Depot.ReturnTime
+	objectiveValue := individual.fitness
+
+	fmt.Println("Nurse capacity:", nurseCapacity)
+	fmt.Println("Depot return time:", depotReturnTime)
+	printDivider(150, "-")
+
+  const maxSequenceLength = 1000 
+
+  for i, route := range individual.routes {
+    nurseIdentifier := fmt.Sprintf("Nurse %-3d", i+1) 
+    routeDuration := fmt.Sprintf("%-6.2f", route.CurrentTime) 
+    coveredDemand := 0
+    patientSequence := ""
+        if len(route.Patients) > 0 {
+            patientSequence += "D (0)"
+            for _, patient := range route.Patients {
+                sequencePart := fmt.Sprintf(" -> %d (%.2f-%.2f) [%d-%d]",
+                    patient.ID, float64(patient.VisitTime), float64(patient.LeavingTime), patient.StartTime, patient.EndTime)
+                if len(patientSequence)+len(sequencePart) > maxSequenceLength {
+                    patientSequence += " ..."
+                    break 
+                }
+                patientSequence += sequencePart
+                coveredDemand += patient.Demand
+            }
+        }
+        if len(patientSequence) > maxSequenceLength {
+            patientSequence = patientSequence[:maxSequenceLength] + "..."
+        }
+    coveredDemandStr := fmt.Sprintf("%-4d", coveredDemand)  
+
+    if len(route.Patients) > 0 {
+        patientSequence += fmt.Sprintf(" -> D (%.2f)", route.CurrentTime)
+    } else {
+      patientSequence = "NOT ON DUTY"
+    }
+    fmt.Printf("%-10s %-10s %-5s %-s\n", nurseIdentifier, routeDuration, coveredDemandStr, patientSequence)  
+}
+
+	printDivider(150, "-")
+	fmt.Println("Objective value (total duration):", objectiveValue)
+}
+
+// Prints out a divider (for example: "-----") of desired length
+func printDivider(length int, dividerChar string) {
+	for i := 0; i < length; i++ {
+		fmt.Print(dividerChar)
+	}
+	fmt.Println()
 }
