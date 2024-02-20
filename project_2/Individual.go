@@ -135,18 +135,24 @@ func visitPatient(routes []Route, index int, patient Patient, instance Instance)
 	}
 
 	travelTime := instance.getTravelTime(lastVisitedPatientID, patient.ID)
+
+	// Travel
 	routes[index].CurrentTime += travelTime
 
+	// Wait if neccesary
 	if routes[index].CurrentTime < float64(patient.StartTime) {
 		waitingTime := float64(patient.StartTime) - routes[index].CurrentTime
 		routes[index].CurrentTime += waitingTime
 		fmt.Println("ROUTE NUM", index, "WAITED")
 	}
 
+	// Now you can visit the patient
 	patient.VisitTime = routes[index].CurrentTime 
 
+	// Care for patient
 	routes[index].CurrentTime += float64(patient.CareTime)
 
+	// Time to leave
 	patient.LeavingTime = routes[index].CurrentTime
 
 	routes[index].Patients = append(routes[index].Patients, patient)

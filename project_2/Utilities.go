@@ -123,7 +123,7 @@ func printSolution(individual Individual, instance Instance) {
 
 	printDivider(150, "-")
 	fmt.Println("Objective value (total duration):", objectiveValue)
-  fmt.Println(counter, "coutner")
+  fmt.Println("Number of patients in above solution =", counter)
 }
 
 // Prints out a divider (for example: "-----") of desired length
