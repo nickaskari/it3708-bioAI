@@ -94,25 +94,26 @@ func satisfiesConstraints(nurseRoute Route, potentialPatient Patient, instance I
 	potentialPatientToDepot := instance.getTravelTime(potentialPatient.ID, 0)
 	curentToPotentialPatient := instance.getTravelTime(currentPatient, potentialPatientID)
 
-	if (nurseRoute.NurseCapacity >= potentialPatient.Demand) {
-		if(potentialPatient.EndTime - potentialPatient.StartTime >= potentialPatient.CareTime) {
-			timeAtArival := nurseRoute.CurrentTime + curentToPotentialPatient
-			if timeAtArival < float64(potentialPatient.StartTime) {
-				if (float64(potentialPatient.StartTime) + float64(potentialPatient.CareTime) + potentialPatientToDepot) <= float64(instance.Depot.ReturnTime) {
-					// We have checked end - start >= caretime. Hence if care is at start time the nurse will be done in time for the end time. 
-					return true
-				}
-			} else {
-				if (timeAtArival + float64(potentialPatient.CareTime) + potentialPatientToDepot) <= float64(instance.Depot.ReturnTime) {
-					if (timeAtArival + float64(potentialPatient.CareTime)) <= float64(potentialPatient.EndTime) {
-						// If the nurse arrives late, check if the nurse will treat in time before the end time.
-						return true
-					}
-				}
-			}
-		}
+	if (nurseRoute.NurseCapacity < potentialPatient.Demand) {
+		return false
 	}
 
+	timeAtArival := nurseRoute.CurrentTime + curentToPotentialPatient
+	if timeAtArival < float64(potentialPatient.StartTime) {
+		if (float64(potentialPatient.StartTime) + float64(potentialPatient.CareTime) + potentialPatientToDepot) <= float64(instance.Depot.ReturnTime) {
+			// Assuming end - start >= caretime. Hence if care is at start time the nurse will be done in time for the end time. 
+			return true
+		}
+	} else {
+		if (timeAtArival + float64(potentialPatient.CareTime) + potentialPatientToDepot) <= float64(instance.Depot.ReturnTime) {
+			// THIS ONE IS TOO STRICT??
+			if (timeAtArival + float64(potentialPatient.CareTime)) <= float64(potentialPatient.EndTime) {
+				// If the nurse arrives late, check if the nurse will treat in time before the end time.
+				return true
+			}
+			return true
+		}
+	}
 	return false
 
 	// CHECK THESE CONDITIONS --> ARE THEY CORRECT?
@@ -131,7 +132,6 @@ func satisfiesConstraints(nurseRoute Route, potentialPatient Patient, instance I
 // Visit a patient and wait and/or care for them. Returns travel time and route.
 func visitPatient(route Route, patient Patient, instance Instance) (float64, Route) {
 	route.NurseCapacity -= patient.Demand
-
 
 	if route.CurrentTime < float64(patient.StartTime) {
 		waitingTime := float64(patient.StartTime) - route.CurrentTime
