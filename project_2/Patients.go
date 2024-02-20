@@ -11,7 +11,7 @@ type Patient struct {
 	Care_time  int `json:"care_time"`
 }
 
-
+// Check if patient is in a list of patients.
 func (p Patient) IsPatientInList(patients []Patient) bool {
 	for _, patient := range patients {
 		if patient.X_coord == p.X_coord && patient.Y_coord == p.Y_coord {
@@ -21,15 +21,12 @@ func (p Patient) IsPatientInList(patients []Patient) bool {
 	return false
 }
 
-// For some reason, every time i print the patients, the order is different. But the individual values are correct.
-func getPatients(filename string, instance Instance, data []byte) []Patient {
+// Converts JSON data to Patient objects. Returns an array of patients.
+func getPatients(instance Instance) []Patient {
 	var patientsSlice []Patient
 	for id, patient := range instance.Patients {
-
 		int_id := strToInt(id)
-
 		patient.ID = int_id
-
 		patientsSlice = append(patientsSlice, patient)
 	}
 
