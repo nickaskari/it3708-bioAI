@@ -17,6 +17,7 @@ type Instance struct {
     Returns the traveltime between nurses and/or depot.
     Inputs are the row/column indicies of the nurses/depots in the
     travel matrix.
+    Travel Times is the Euclidean distance between two items. 
 */
 func (i Instance) getTravelTime(source int, destination int) float64 {
 	return i.TravelTimes[source][destination]

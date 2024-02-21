@@ -1,0 +1,8 @@
+Do greedy for indiviudal creating
+ - for routes in routes check patient
+ - get random patient based on a batch of the k closest patients
+
+ If it does not work --> do concurrency
+
+
+
