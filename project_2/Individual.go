@@ -25,7 +25,7 @@ func (i Individual) writeIndividualToJson() {
         fmt.Printf("Error marshaling to JSON: %v", err)
     }
 
-    err = os.WriteFile("Individual.json", jsonData, 0644)
+    err = os.WriteFile("plotting/Individual.json", jsonData, 0644)
     if err != nil {
         fmt.Printf("Error writing JSON to file: %v", err)
     }

@@ -87,7 +87,7 @@ func printSolution(individual Individual, instance Instance) {
 	fmt.Println("Depot return time:", depotReturnTime)
 	printDivider(150, "-")
 
-	const maxSequenceLength = 100
+	const maxSequenceLength = 10000
 
 	counter := 0
 
