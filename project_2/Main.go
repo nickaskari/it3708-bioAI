@@ -10,19 +10,17 @@ var train_file string = "train/train_0.json"
 func main() {
 	instance := getProblemInstance(train_file)
 
-	/*
-		patients := instance.getPatients()
-
-		for _, patient := range patients {
-			fmt.Printf("Patient: %+v\n", patient)
-		}
-		fmt.Println(len(patients))*/
-
 	fmt.Println("")
 
-	//individual := createIndividual(instance)
+	population := initPopulation(instance, 100)
+	population.printPopulationStats()
+
+	population.printBestIndividual(instance)
+
+	/*
 	individual := createIndividual(instance)
 
 	printSolution(individual, instance)
 	individual.writeIndividualToJson()
+	*/
 }

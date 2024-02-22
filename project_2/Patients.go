@@ -14,7 +14,7 @@ type Patient struct {
 	CareTime  int `json:"care_time"`
 	VisitTime float64 `json:"-"`
 	LeavingTime float64 `json:"-"`
-}
+} 
 
 // Check if patient is in a list of patients.
 func (p Patient) IsPatientInList(patients []Patient) bool {

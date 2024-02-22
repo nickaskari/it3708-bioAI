@@ -83,6 +83,7 @@ func printSolution(individual Individual, instance Instance) {
 	depotReturnTime := instance.Depot.ReturnTime
 	objectiveValue := individual.Fitness
 
+	fmt.Println("Age of individual:", individual.Age)
 	fmt.Println("Nurse capacity:", nurseCapacity)
 	fmt.Println("Depot return time:", depotReturnTime)
 	printDivider(150, "-")
