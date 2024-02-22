@@ -14,6 +14,8 @@ Fitness function solution:
 
 - Possibly differentiate between traveltime value and penalty value when deciding penalty factor
 
+- Add number of times constraint has been violated in printout
+
 
 ----------------------------------------------------------------------------------------------------------
 Old satisfies constraints:
