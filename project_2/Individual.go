@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 )
 
 /*
@@ -65,54 +66,43 @@ func (i *Individual) growOlder() {
 	i.Age++
 }
 
-
 func (individual Individual) checkIndividualRoutes(instance Instance) {
-    for routeIndex, route := range individual.Routes {
-        for _, patient := range route.Patients {
-            if !checkRouteConstraints(route, patient, instance) {
-                // If any constraint is violated, it's printed inside checkRouteConstraints
-                fmt.Printf("Route %d has constraints violations with patient ID %d\n", routeIndex+1, patient.ID)
-            }
-        }
-    }
+routesLoop:
+	for routeIndex, route := range individual.Routes {
+		for _, patient := range route.Patients {
+			if !violatesTimeWindowConstraints(route, patient, instance) {
+				// If any constraint is violated, it's printed inside checkRouteConstraints
+				fmt.Println(strings.Repeat("*", 75) + " VIOLATION " + strings.Repeat("*", 75))
+				fmt.Printf("Route %d has constraints violations with patient %d\n", routeIndex+1, patient.ID)
+				fmt.Println(strings.Repeat("*", 75) + " VIOLATION " + strings.Repeat("*", 75))
+
+				break routesLoop
+			}
+		}
+	}
 }
 
-func checkRouteConstraints(nurseRoute Route, potentialPatient Patient, instance Instance) bool {
-    currentPatientID := 0
-    if len(nurseRoute.Patients) > 0 {
-        currentPatientID = nurseRoute.Patients[len(nurseRoute.Patients)-1].ID
-    }
+func violatesTimeWindowConstraints(route Route, patient Patient, instance Instance) bool {
 
-    potentialPatientID := potentialPatient.ID
-    potentialPatientToDepot := instance.getTravelTime(potentialPatientID, 0) 
-    currentToPotentialPatient := instance.getTravelTime(currentPatientID, potentialPatientID)
+	if patient.VisitTime < float64(patient.StartTime) {
+		//fmt.Printf("Route has a patient it starts treating before its treating window \n")
+		return false
+	}
 
-    // Check nurse capacity constraint
-    if nurseRoute.NurseCapacity < potentialPatient.Demand {
-        fmt.Println("Constraint violated: Nurse capacity is less than the patient's demand.")
-        return false
-    }
+	if patient.VisitTime > float64(patient.EndTime) {
+		//fmt.Printf("Route has a patient it starts treating after its treating window \n")
+		return false
+	}
 
-    // Calculate time of arrival and evaluate timing constraints
-    timeAtArrival := nurseRoute.CurrentTime + currentToPotentialPatient
-    if timeAtArrival < float64(potentialPatient.StartTime) {
-        // Nurse arrives before start time
-        if (float64(potentialPatient.StartTime) + float64(potentialPatient.CareTime) + potentialPatientToDepot) > float64(instance.Depot.ReturnTime) {
-            fmt.Println("Constraint violated: Nurse cannot return to depot in time after providing care.")
-            return false
-        }
-    } else {
-        // Nurse arrives at or after start time
-        if (timeAtArrival + float64(potentialPatient.CareTime) + potentialPatientToDepot) > float64(instance.Depot.ReturnTime) {
-            fmt.Println("Constraint violated: Nurse cannot return to depot in time after providing care.")
-            return false
-        }
-		if (timeAtArrival + float64(potentialPatient.CareTime)) > float64(potentialPatient.EndTime) {
-			// If the nurse arrives late, check if the nurse will treat in time before the end time.
-			return false
-		}
-    }
+	if patient.LeavingTime > float64(patient.EndTime) {
+		//fmt.Printf("Route has a patient it ends treating after its treating window \n")
+		return false
+	}
 
-    // If we reach here, no constraints are violated for this patient
-    return true
+	if patient.LeavingTime < float64(patient.StartTime) {
+		//fmt.Printf("Route has a patient it ends treating before its treating window \n")
+		return false
+	}
+
+	return true
 }

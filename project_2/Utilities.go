@@ -147,3 +147,18 @@ func removeRouteFromMap(routesMap map[int]Route, index int) map[int]Route {
 	delete(routesMap, index)
 	return routesMap
 }
+
+// Chooses "size" amount of elements from "slice" randomly.
+func chooseRandomUnique[T any](slice []T, size int) []T {
+	source := rand.NewSource(time.Now().UnixNano())
+	r := rand.New(source)
+
+	r.Shuffle(len(slice), func(i, j int) {
+		slice[i], slice[j] = slice[j], slice[i]
+	})
+
+	if size > len(slice) {
+		size = len(slice) 
+	}
+	return slice[:size]
+}

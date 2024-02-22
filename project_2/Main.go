@@ -16,11 +16,12 @@ func main() {
 	population.printPopulationStats()
 
 	population.printBestIndividual(instance)
+	population.BestIndividual.checkIndividualRoutes(instance)
 
 	/*
-	individual := createIndividual(instance)
+		individual := createIndividual(instance)
 
-	printSolution(individual, instance)
-	individual.writeIndividualToJson()
+		printSolution(individual, instance)
+		individual.writeIndividualToJson()
 	*/
 }
