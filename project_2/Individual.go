@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"reflect"
 )
 
 /*
@@ -106,3 +107,21 @@ func violatesTimeWindowConstraints(route Route, patient Patient, instance Instan
 
 	return true
 }
+
+// isEqual compares two Individual instances for equality.
+func isEqual(a, b Individual) bool {
+    // Compare all other fields for equality.
+    // Assuming Routes is the only field for simplicity; add comparisons for any other fields as necessary.
+    return reflect.DeepEqual(a.Routes, b.Routes)
+}
+
+// RemoveIndividualFrom removes the first occurrence of `individual` from `individuals`.
+func (individual Individual) removeIndividualFrom(individuals []Individual) []Individual {
+    for i, j := range individuals {
+        if isEqual(j, individual) {
+            return append(individuals[:i], individuals[i+1:]...)
+        }
+    }
+    return individuals
+}
+

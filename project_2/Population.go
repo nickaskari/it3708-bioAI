@@ -97,10 +97,17 @@ func (p Population) tournamentSelection() []Individual {
 			size := 2 + r.Intn(p.Size-1)
 			match := chooseRandomUnique[Individual](contestants, size)
 			winner := getBestIndividual(match)
+			winner.removeIndividualFrom(match)
+			winners = append(winners, winner)
+		} else {
+			winner := contestants[0]
+			winners = append(winners, winner)
 		}
 	}
+	return winners
 }
 
+// A helper function for tournamentSelection(). Returns best individual from list of individuals.
 func getBestIndividual(individuals []Individual) Individual {
 	bestIndividual := Individual{Fitness: math.Inf(1), Age: 0, Routes: make([]Route, 0)}
 
@@ -112,56 +119,48 @@ func getBestIndividual(individuals []Individual) Individual {
 	return bestIndividual
 }
 
-// Performs elitism for surivior selection. Returns all surviving individuals
-func (p *Population) applyElitismWithPercentage(newwPopulation []Individual, elitismPercentage float64) {
+// Performs elitism for surivior selection. Returns the new population
+func (p *Population) applyElitismWithPercentage(newPopulation []Individual, elitismPercentage float64) []Individual {
+	numToPreserve := int(float64(len(p.Individuals))*elitismPercentage/100.0 + 0.5) // Percentage to absolute number
 
-	numToPreserve := int(float64(len(p.Individuals))*elitismPercentage/100.0 + 0.5) // Rounded
-
-	// Sort the current population by fitness to find the fittest individuals
-	// Make a copy of the slice to avoid modifying the original population order
+	// Sort the old population by fitness to find the fittest individuals, by making a copy
 	sortedIndividuals := make([]Individual, len(p.Individuals))
 	copy(sortedIndividuals, p.Individuals)
 	sort.Slice(sortedIndividuals, func(i, j int) bool {
 		return sortedIndividuals[i].Fitness < sortedIndividuals[j].Fitness // For minimization
 	})
 
-	// Select the fittest individuals based on the calculated number to preserve
+	// Select the n fittest individuals based on the elitism percentage
 	fittestIndividuals := sortedIndividuals[:numToPreserve]
 
-	// Ensure the fittest individuals are included in the new generation
 	for _, fittest := range fittestIndividuals {
 		// Check if this fittest individual is already in the new generation
 		found := false
-		for _, individual := range newIndividuals {
+		for _, individual := range newPopulation {
 			if individual.Fitness == fittest.Fitness {
 				found = true
+				// If found, break the loop
 				break
 			}
 		}
 
-		// If not found, replace the least fit individual in the new generation with this fittest individual
+		// If not found, replace the least fit individual in the new generation with this fittest individual from the old generation
 		if !found {
 			// Find the least fit individual in the new generation
-			worstFitnessIndex := 0
-			worstFitness := newIndividuals[0].Fitness
-			for i, individual := range newIndividuals {
-				if individual.Fitness > worstFitness {
+			worstFitnessIndex := -1
+			worstFitness := -1.0
+			for i, individual := range newPopulation {
+				if worstFitnessIndex == -1 || individual.Fitness > worstFitness {
 					worstFitness = individual.Fitness
 					worstFitnessIndex = i
 				}
 			}
 
-			newIndividuals[worstFitnessIndex] = fittest
+			if worstFitnessIndex != -1 {
+				newPopulation[worstFitnessIndex] = fittest
+			}
 		}
 	}
 
-	// Update the population with the new generation, now including the preserved fittest individuals
-	p.Individuals = newIndividuals
-
-	// Optionally, update the BestIndividual if needed
-	// This assumes BestIndividual should still reflect the overall best found so far
-	if len(fittestIndividuals) > 0 {
-		p.BestIndividual = fittestIndividuals[0] // The first one is the best due to sorting
-	}
-
+	return newPopulation
 }
