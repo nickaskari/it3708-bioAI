@@ -5,7 +5,7 @@ import (
 )
 
 // Declare what file you want problem instance from
-var train_file string = "train/train_5.json"
+var train_file string = "train/train_0.json"
 
 func main() {
 	instance := getProblemInstance(train_file)
@@ -25,5 +25,4 @@ func main() {
 
 	printSolution(individual, instance)
 	individual.writeIndividualToJson()
-	fmt.Println("TRAVEL TIME FROM PATIENT 22 -> 99 =", instance.getTravelTime(22, 99))
 }

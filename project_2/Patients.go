@@ -1,5 +1,8 @@
 package main
 
+import (
+	"fmt"
+)
 
 type Patient struct {
 	ID        int `json:"-"`
@@ -21,6 +24,17 @@ func (p Patient) IsPatientInList(patients []Patient) bool {
 		}
 	}
 	return false
+}
+
+// Deletes patient from a list of patients. Returns whether this was succesful and the new list of patients
+func (p Patient) deletePatientFrom(patients []Patient) ([]Patient) {
+	for i, patient := range patients {
+		if patient.ID == p.ID {
+			return append(patients[:i], patients[i+1:]...)
+		}
+	}
+	fmt.Println("Unable to delete patient", p.ID, "from list of patients...")
+	return patients 
 }
 
 

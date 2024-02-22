@@ -1,9 +1,5 @@
 package main
 
-import (
-	"fmt"
-)
-
 // Acts as a constructor for creating an individual.
 func createIndividual(instance Instance) Individual {
 	routes := createInitialRoutes(instance)
@@ -27,26 +23,18 @@ func createIndividual(instance Instance) Individual {
 					totalTravelTime += travelTime
 					visitedPatients = append(visitedPatients, patient)
 					searchForRoute = false
-					//fmt.Println("IM HERE 1")
 				} else {
 					// If the route does not satisfy constraints, remove it from the set of possible routes.
 					availableRoutes = removeRouteFromMap(availableRoutes, routeIndex)
-					//fmt.Println("IM HERE 2", len(availableRoutes))
 				}
 
 				if len(availableRoutes) == 0 {
 					// If there no routes that satisfies the constraints, start from scratch
-					fmt.Println("visited", len(visitedPatients))
 					return createIndividual(instance)
-
-					// UNCOMMMENT TO GET "HALFWAY" SOLUTION WHEN RUNNING
-					//routes = returnToDepot(routes, instance)
-					//return Individual{totalTravelTime, routes}
 				}
 			}
 		}
 	}
-	fmt.Println("visited", len(visitedPatients))
 	routes = returnToDepot(routes, instance)
 
 	return Individual{totalTravelTime, routes}
@@ -76,8 +64,6 @@ func satisfiesConstraints(nurseRoute Route, potentialPatient Patient, instance I
 
 	potentialPatientID := potentialPatient.ID
 
-	//currentTime := nurseRoute.CurrentTime
-
 	potentialPatientToDepot := instance.getTravelTime(potentialPatient.ID, 0)
 	curentToPotentialPatient := instance.getTravelTime(currentPatient, potentialPatientID)
 
@@ -87,32 +73,25 @@ func satisfiesConstraints(nurseRoute Route, potentialPatient Patient, instance I
 
 	timeAtArival := nurseRoute.CurrentTime + curentToPotentialPatient
 	if timeAtArival < float64(potentialPatient.StartTime) {
+		// Nurse arrives before start time. Waits until start time, then starts treatment.
 		if (float64(potentialPatient.StartTime) + float64(potentialPatient.CareTime) + potentialPatientToDepot) <= float64(instance.Depot.ReturnTime) {
 			// Assuming end - start >= caretime. Hence if care is at start time the nurse will be done in time for the end time. 
 			return true
 		}
 	} else {
 		if (timeAtArival + float64(potentialPatient.CareTime) + potentialPatientToDepot) <= float64(instance.Depot.ReturnTime) {
-			// THIS ONE IS TOO STRICT??
-			if (timeAtArival + float64(potentialPatient.CareTime)) <= float64(potentialPatient.EndTime) {
+
+			//TO BE HANDLED INDIRECTLY IN THE GA
+			//if (timeAtArival + float64(potentialPatient.CareTime)) <= float64(potentialPatient.EndTime) {
 				// If the nurse arrives late, check if the nurse will treat in time before the end time.
-				return true
-			}
+				//return true
+			//}
+
+			return true
 		}
 	}
 	return false
 
-	// CHECK THESE CONDITIONS --> ARE THEY CORRECT?
-	/*
-	if (nurseRoute.NurseCapacity >= potentialPatient.Demand) && 
-		(potentialPatient.EndTime - potentialPatient.StartTime >= potentialPatient.CareTime) && //Not scam
-		(currentTime + float64(potentialPatient.CareTime) <= float64(potentialPatient.EndTime)) &&
-		(nurseRoute.CurrentTime + curentToPotentialPatient + float64(potentialPatient.CareTime) + potentialPatientToDepot <=
-			float64(instance.Depot.ReturnTime)) {
-		return true
-	} else {
-		return false
-	}*/
 }
 
 // Visit a patient and wait and/or care for them. Returns travel time and route.
@@ -133,7 +112,6 @@ func visitPatient(routes []Route, index int, patient Patient, instance Instance)
 	if routes[index].CurrentTime < float64(patient.StartTime) {
 		waitingTime := float64(patient.StartTime) - routes[index].CurrentTime
 		routes[index].CurrentTime += waitingTime
-		fmt.Println("ROUTE NUM", index, "WAITED")
 	}
 
 	// Now you can visit the patient
@@ -163,14 +141,4 @@ func returnToDepot(routes []Route, instance Instance) []Route {
 	return routes
 }
 
-// Removes the route at index spesified from an array of routes.
-func removeRouteFromArray(routes []Route, index int) []Route {
-	if index < len(routes) - 1 {
-		routes = append(routes[:index], routes[index+1:]...)
-	} else {
-		// It's the last element or out of bounds; just truncate the slice if it's the last element
-		routes = routes[:index]
-	}
-	return routes
-}
 

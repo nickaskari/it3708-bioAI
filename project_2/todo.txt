@@ -1,8 +1,27 @@
-Do greedy for indiviudal creating
- - for routes in routes check patient
- - get random patient based on a batch of the k closest patients
+Constraint to be handled in GA:
 
- If it does not work --> do concurrency
+if (timeAtArival + float64(potentialPatient.CareTime)) <= float64(potentialPatient.EndTime) {
+    // If the nurse arrives late, check if the nurse will treat in time before the end time.
+    return true
+}
+
+Fitness function solution:
+- Add how much time the nurses are off (compared to patients time window) in time
+- Or, calculate how many time windows are missed
 
 
 
+
+----------------------------------------------------------------------------------------------------------
+Old satisfies constraints:
+
+currentTime := nurseRoute.CurrentTime
+if (nurseRoute.NurseCapacity >= potentialPatient.Demand) && 
+    (potentialPatient.EndTime - potentialPatient.StartTime >= potentialPatient.CareTime) && //Not scam
+    (currentTime + float64(potentialPatient.CareTime) <= float64(potentialPatient.EndTime)) &&
+    (nurseRoute.CurrentTime + curentToPotentialPatient + float64(potentialPatient.CareTime) + potentialPatientToDepot <=
+        float64(instance.Depot.ReturnTime)) {
+    return true
+} else {
+    return false
+}
