@@ -16,7 +16,8 @@ Fitness function solution:
 - Add number of times constraint has been violated in printout
 
 - When calling edgeRecombination in some crossover function we must take in two indivudals. And then pair up simular routes to perform this on. Dont know how to handle empty routes? 
-Maybe ignore them if an optimal solution never has empty route. Not sure whether this is the case.
+Maybe ignore them if an optimal solution never has empty route. Not sure whether this is the case. Also we might have to incorporate some constrain handling in the edge recombination 
+function.
 
 
 ----------------------------------------------------------------------------------------------------------
