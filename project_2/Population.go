@@ -85,14 +85,14 @@ func (p Population) printBestIndividual(instance Instance) {
 	printSolution(p.BestIndividual, instance)
 }
 
-// Performs tournamentselection for parent selection. Returns all chosen parents. (deterministic)
-func (p Population) tournamentSelection() []Individual {
+// Performs tournamentselection for parent selection. Input is number of desired parents. Returns all chosen parents. (deterministic)
+func (p Population) tournamentSelection(numParents int) []Individual {
 	contestants := p.Individuals
 	winners := make([]Individual, 0)
 	source := rand.NewSource(time.Now().UnixNano())
 	r := rand.New(source)
 
-	for len(winners) != p.Size {
+	for len(winners) != numParents {
 		if len(contestants) > 1 {
 			size := 2 + r.Intn(p.Size-1)
 			match := chooseRandomUnique[Individual](contestants, size)

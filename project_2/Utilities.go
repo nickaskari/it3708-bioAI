@@ -90,8 +90,6 @@ func printSolution(individual Individual, instance Instance) {
 
 	const maxSequenceLength = 10000
 
-	counter := 0
-
 	for i, route := range individual.Routes {
 		nurseIdentifier := fmt.Sprintf("Nurse %-3d", i+1)
 		routeDuration := fmt.Sprintf("%-6.2f", route.CurrentTime)
@@ -100,7 +98,6 @@ func printSolution(individual Individual, instance Instance) {
 		if len(route.Patients) > 0 {
 			patientSequence += "D (0)"
 			for _, patient := range route.Patients {
-				counter += 1
 				sequencePart := fmt.Sprintf(" -> %d (%.2f-%.2f) [%d-%d]",
 					patient.ID, float64(patient.VisitTime), float64(patient.LeavingTime), patient.StartTime, patient.EndTime)
 				if len(patientSequence)+len(sequencePart) > maxSequenceLength {
@@ -122,7 +119,6 @@ func printSolution(individual Individual, instance Instance) {
 
 	printDivider(150, "-")
 	fmt.Println("Objective value (total duration):", objectiveValue)
-	fmt.Println("Number of patients in above solution (if truncated answers, wrong number)=", counter)
 }
 
 // Prints out a divider (for example: "-----") of desired length
@@ -161,4 +157,20 @@ func chooseRandomUnique[T any](slice []T, size int) []T {
 		size = len(slice) 
 	}
 	return slice[:size]
+}
+
+// A struct to register constriant violations.
+type Violation struct {
+	Count int
+	Example string
+}
+
+// Counts a violation.
+func (v *Violation) countViolation() {
+	v.Count++
+}
+
+// Registers an example of the violation.
+func (v *Violation) registerExample(example string) {
+	v.Example = example
 }

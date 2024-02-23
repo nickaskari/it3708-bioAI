@@ -11,14 +11,13 @@ Fitness function solution:
 - Add how much time the nurses are off (compared to patients time window) in time
 - Or, calculate how many time windows are missed
 
-
 - Possibly differentiate between traveltime value and penalty value when deciding penalty factor
 
 - Add number of times constraint has been violated in printout
 
 
 ----------------------------------------------------------------------------------------------------------
-Old satisfies constraints:
+Old version of satisfiesConstraints():
 
 currentTime := nurseRoute.CurrentTime
 if (nurseRoute.NurseCapacity >= potentialPatient.Demand) && 
