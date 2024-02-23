@@ -136,22 +136,18 @@ func reportViolation(timeWindow Violation, capacity Violation, returnTime Violat
 func violatesTimeWindowConstraints(route Route, patient Patient, instance Instance) bool {
 
 	if patient.VisitTime < float64(patient.StartTime) {
-		//fmt.Printf("Route has a patient it starts treating before its treating window \n")
 		return false
 	}
 
 	if patient.VisitTime > float64(patient.EndTime) {
-		//fmt.Printf("Route has a patient it starts treating after its treating window \n")
 		return false
 	}
 
 	if patient.LeavingTime > float64(patient.EndTime) {
-		//fmt.Printf("Route has a patient it ends treating after its treating window \n")
 		return false
 	}
 
 	if patient.LeavingTime < float64(patient.StartTime) {
-		//fmt.Printf("Route has a patient it ends treating before its treating window \n")
 		return false
 	}
 

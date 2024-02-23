@@ -54,7 +54,7 @@ func createInitialRoutes(instance Instance) []Route {
 	return routes
 }
 
-// Checks whether a given nurse can visit a potential patient.
+// Checks whether a given nurse can visit a potential patient. DOES NOT CHECK ALL CONSTRAINTS (TIME WINDOW LEFT OUT)
 func satisfiesConstraints(nurseRoute Route, potentialPatient Patient, instance Instance) bool {
 
 	currentPatient := 0

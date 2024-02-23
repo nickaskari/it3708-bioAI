@@ -26,7 +26,7 @@ func (p Patient) IsPatientInList(patients []Patient) bool {
 	return false
 }
 
-// Deletes patient from a list of patients. Returns whether this was succesful and the new list of patients
+// Deletes patient from a list of patients. Returns the new list of patients.
 func (p Patient) deletePatientFrom(patients []Patient) ([]Patient) {
 	for i, patient := range patients {
 		if patient.ID == p.ID {
@@ -37,4 +37,6 @@ func (p Patient) deletePatientFrom(patients []Patient) ([]Patient) {
 	return patients 
 }
 
-
+func createDummyPatient() Patient {
+	return Patient{-1, -1, -1, -1, -1, -1, -1, -1, -1}
+}
