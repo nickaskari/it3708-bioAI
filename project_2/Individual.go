@@ -52,7 +52,7 @@ func (i *Individual) calculateFitness(instance Instance) {
 
 // Calculates a penalty if patient is visited after endtime, or nurse leaves after endtime.
 func calculatePenalty(patient Patient) float64 {
-	var penaltyFactor float64 = 10
+	var penaltyFactor float64 = 1
 
 	if patient.VisitTime > float64(patient.EndTime) {
 		return (patient.VisitTime - float64(patient.EndTime)) * penaltyFactor
@@ -80,8 +80,8 @@ func (individual Individual) checkIndividualRoutes(instance Instance) {
 			if !patient.IsPatientInList(distinctVisitedPatients) {
 				distinctVisitedPatients = append(distinctVisitedPatients, patient)
 			}
-			if !violatesTimeWindowConstraints(route, patient, instance) {
-				if (timeWindowViolation.Example == "") {
+			if !notViolatesTimeWindowConstraints(route, patient, instance) {
+				if timeWindowViolation.Example == "" {
 					timeWindowViolation.registerExample(fmt.Sprintf("Route %d violates time window of patient %d.", routeIndex+1, patient.ID))
 				}
 				timeWindowViolation.countViolation()
@@ -133,7 +133,7 @@ func reportViolation(timeWindow Violation, capacity Violation, returnTime Violat
 }
 
 // Helper function for checkIndividualRoutes() that checks for time window constraint violations
-func violatesTimeWindowConstraints(route Route, patient Patient, instance Instance) bool {
+func notViolatesTimeWindowConstraints(route Route, patient Patient, instance Instance) bool {
 
 	if patient.VisitTime < float64(patient.StartTime) {
 		return false
@@ -169,4 +169,22 @@ func (individual Individual) removeIndividualFrom(individuals []Individual) []In
 		}
 	}
 	return individuals
+}
+
+// Deep copy method for Individual
+func deepCopyIndividual(original Individual) Individual {
+	copy := original
+
+	// Deep copy any slices, maps, or other reference types
+	copy.Routes = make([]Route, len(original.Routes))
+	for i, route := range original.Routes {
+		// If Route itself contains reference types, you'll need to deep copy those too
+		copy.Routes[i] = route // Assuming Route can be shallow copied; adjust if necessary
+	}
+
+	// Deep copy other fields as necessary
+	copy.Fitness = original.Fitness
+	copy.Age = original.Age
+
+	return copy
 }

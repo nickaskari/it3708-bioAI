@@ -1,8 +1,8 @@
 package main
 
 import (
-	"time"
 	"math/rand"
+	"time"
 )
 
 type Route struct {
@@ -36,16 +36,20 @@ func (r Route) getRandomPatient() Patient {
 func createRouteFromPatientsVisited(patients []Patient, instance Instance) Route {
 	var currentTime float64 = 0
 	lastLocation := 0
+
+	newPatients := make([]Patient, 0)
 	for _, patient := range patients {
 		currentTime += instance.getTravelTime(lastLocation, patient.ID) 
 		if currentTime < float64(patient.StartTime) {
 			currentTime += float64(patient.StartTime) - currentTime
 		} 
 		patient.VisitTime = currentTime
+	
 		currentTime += float64(patient.CareTime)
 		patient.LeavingTime = currentTime
 
 		lastLocation = patient.ID
+		newPatients = append(newPatients, patient)
 	}
 	// Go back to depot
 	currentTime += instance.getTravelTime(lastLocation, 0)
@@ -54,7 +58,7 @@ func createRouteFromPatientsVisited(patients []Patient, instance Instance) Route
 		Depot:          instance.Depot,
 		NurseCapacity:  instance.CapacityNurse,
 		CurrentTime:    currentTime,
-		Patients:       patients,
+		Patients:       newPatients,
 	}
 }
 
@@ -86,6 +90,19 @@ func (r *Route) visitPatient(patient Patient, instance Instance) {
 	patient.LeavingTime = r.CurrentTime
 }
 
+// Deep copy function for Route
+func deepCopyRoute(originalRoute Route) Route {
+    var r Route
+    r.Depot = originalRoute.Depot
+    r.NurseCapacity = originalRoute.NurseCapacity
+	r.CurrentTime = originalRoute.CurrentTime
+
+    // Manually copying the slice
+    r.Patients = make([]Patient, len(originalRoute.Patients))
+    copy(r.Patients, originalRoute.Patients) // This is correct usage of copy for slice
+
+    return r
+}
 
 
 
