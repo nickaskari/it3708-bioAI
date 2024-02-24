@@ -104,8 +104,17 @@ func deepCopyRoute(originalRoute Route) Route {
     return r
 }
 
-
-
-
-
-
+func calculateRouteFitness(route Route, instance Instance) float64 {
+    var fitness float64 = 0
+    if len(route.Patients) > 0 {
+        lastLocation := 0 
+        for _, patient := range route.Patients {
+            fitness += instance.getTravelTime(lastLocation, patient.ID)
+            lastLocation = patient.ID
+            fitness += calculatePenalty(patient)
+        }
+        
+        fitness += instance.getTravelTime(lastLocation, 0) 
+    }
+    return fitness
+}
