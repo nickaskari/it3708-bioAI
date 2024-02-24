@@ -24,7 +24,7 @@ func main() {
 
 	printDivider(105, "<-><->")
 
-	bro := swapMutation(population.BestIndividual, instance)
+	bro := inversionMutationIndividual(population.BestIndividual, instance)
 	printSolution(bro, instance)
 	bro.checkIndividualRoutes(instance)
 

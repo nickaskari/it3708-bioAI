@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"math/rand"
-	"time"
 )
 
 // Performs swap mutation. Return mutated individual. Mutates in only one route.
@@ -48,70 +47,110 @@ func createAlteredIndivual(individual Individual, routeIndex int, route Route, i
 	return newIndividual
 }
 
-func swapMutationRoute(route Route, instance Instance) Route {
-	r := deepCopyRoute(route)
 
-	for i := 0; i < len(r.Patients)-1; i++ {
-		for j := i + 1; j < len(r.Patients); j++ {
-			if !notViolatesTimeWindowConstraints(r, r.Patients[i], instance) && !notViolatesTimeWindowConstraints(r, r.Patients[j], instance) {
-				r.Patients[i], r.Patients[j] = r.Patients[j], r.Patients[i]
-				newRoute := createRouteFromPatientsVisited(r.Patients, instance)
 
-				// Assuming there is logic here to calculate the fitness of the route
-				oldFitness := calculateRouteFitness(route, instance)    // Placeholder function
-				newFitness := calculateRouteFitness(newRoute, instance) // Placeholder function
 
-				if newFitness < oldFitness {
-					fmt.Println("Route got mutated")
-					return newRoute
-				} else {
-					// Revert the swap if no improvement
-					r.Patients[j], r.Patients[i] = r.Patients[i], r.Patients[j]
-				}
-			}
-		}
-	}
 
-	return route
+func swapMutationRoute(originalRoute Route, instance Instance) (Route, bool) {
+    r := deepCopyRoute(originalRoute)
+    originalFitness := calculateRouteFitness(originalRoute, instance)
+
+    for i := 0; i < len(r.Patients)-1; i++ {
+        for j := i + 1; j < len(r.Patients); j++ {
+            r.Patients[i], r.Patients[j] = r.Patients[j], r.Patients[i]
+         
+            if !notViolatesTimeWindowConstraints(r, r.Patients[i], instance) && !notViolatesTimeWindowConstraints(r, r.Patients[j], instance) {
+
+                newRoute := createRouteFromPatientsVisited(r.Patients, instance)
+                newFitness := calculateRouteFitness(newRoute, instance)
+
+                if newFitness < originalFitness {
+                    return newRoute, true
+                }
+            }
+            r.Patients[i], r.Patients[j] = r.Patients[j], r.Patients[i]
+        }
+    }
+    return originalRoute, false 
 }
+
 
 func swapMutationIndividual(individual Individual, instance Instance) Individual {
-	for routeIndex, originalRoute := range individual.Routes {
-		newRoute := swapMutationRoute(originalRoute, instance)
-		if mutated {
-			fmt.Println("Nurse", routeIndex+1, "route got mutated")
-			individual.Routes[routeIndex] = newRoute
+    mutatedIndividual := deepCopyIndividual(individual) 
+    anyMutationOccurred := false
 
-			individual.Fitness
-		}
-	}
+    for routeIndex, originalRoute := range mutatedIndividual.Routes {
+        mutatedRoute, mutated := swapMutationRoute(originalRoute, instance)
+        if mutated {
+            mutatedIndividual.Routes[routeIndex] = mutatedRoute
+            anyMutationOccurred = true 
+			fmt.Println("Nurse", routeIndex+1, "got mutated")
+        }
+    }
 
-	return individual
+    if anyMutationOccurred {
+        mutatedIndividual.calculateFitness(instance)
+    } else {
+        fmt.Println("DID NOT MUTATE")
+    }
+	oldFitness := individual.Fitness
+	newFitness := mutatedIndividual.Fitness
+	fmt.Println("DIFFERENCE =", newFitness-oldFitness)
+    return mutatedIndividual
 }
 
+
+
+
+
 // Selects a random route and inverts the order of patients between two random points in the route. Accepts regardless of fitness.
-func inversionMutation(individual *Individual, instance Instance) {
+func inversionMutation(originalRoute Route, instance Instance) (Route, bool) {
+    if len(originalRoute.Patients) < 2 {
+        return originalRoute, false
+    }
 
-	source := rand.NewSource(time.Now().UnixNano())
-	rand := rand.New(source)
+    r := deepCopyRoute(originalRoute)
+    originalFitness := calculateRouteFitness(originalRoute, instance)
 
-	// Randomly select a route
-	routeIndex := rand.Intn(len(individual.Routes))
-	route := &individual.Routes[routeIndex]
+    start, end := rand.Intn(len(r.Patients)-1), rand.Intn(len(r.Patients)-1)
+    if start > end {
+        start, end = end, start
+    }
 
-	// Selected route need more than two patients for inversion to make sense
-	if len(route.Patients) < 3 {
-		return
-	}
+    for i, j := start, end; i < j; i, j = i+1, j-1 {
+        r.Patients[i], r.Patients[j] = r.Patients[j], r.Patients[i]
+    }
 
-	// Randomly select two distinct points within the route for inversion
-	point1 := rand.Intn(len(route.Patients) - 1)
-	point2 := rand.Intn(len(route.Patients)-point1-1) + point1 + 1 // Ensure point2 is after point1
+    newRoute := createRouteFromPatientsVisited(r.Patients, instance)
+    newFitness := calculateRouteFitness(newRoute, instance)
 
-	// Invert the order of patients between point1 and point2
-	for i, j := point1, point2; i < j; i, j = i+1, j-1 {
-		route.Patients[i], route.Patients[j] = route.Patients[j], route.Patients[i]
-	}
+    if newFitness < originalFitness {
+		return newRoute, true
+    }
 
-	// Can edit this to only accept if it improves fitness
+    return originalRoute, false
+}
+
+func inversionMutationIndividual(individual Individual, instance Instance) Individual {
+    mutatedIndividual := deepCopyIndividual(individual) // Start with a deep copy to apply mutations progressively
+    anyMutationOccurred := false
+
+    for routeIndex, originalRoute := range mutatedIndividual.Routes {
+        mutatedRoute, mutated := inversionMutation(originalRoute, instance)
+        if mutated {
+            mutatedIndividual.Routes[routeIndex] = mutatedRoute
+            anyMutationOccurred = true 
+			fmt.Println("Nurse", routeIndex+1, "got mutated")
+        }
+    }
+
+    if anyMutationOccurred {
+        mutatedIndividual.calculateFitness(instance)
+    } else {
+        fmt.Println("NO INVERSION MUTATION OCCURRED")
+    }
+	oldFitness := individual.Fitness
+	newFitness := mutatedIndividual.Fitness
+	fmt.Println("DIFFERENCE =", newFitness-oldFitness)
+    return mutatedIndividual
 }
