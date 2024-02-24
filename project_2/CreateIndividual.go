@@ -92,7 +92,6 @@ func satisfiesConstraints(nurseRoute Route, potentialPatient Patient, instance I
 		}
 	}
 	return false
-
 }
 
 // Visit a patient and wait and/or care for them. Returns travel time and route.

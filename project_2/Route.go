@@ -32,6 +32,7 @@ func (r Route) getRandomPatient() Patient {
 	return r.Patients[randomIndex]
 }
 
+// Creates a route based on a slice of patients visited. Updates patients visit/leave time.
 func createRouteFromPatientsVisited(patients []Patient, instance Instance) Route {
 	var currentTime float64 = 0
 	lastLocation := 0
@@ -56,6 +57,36 @@ func createRouteFromPatientsVisited(patients []Patient, instance Instance) Route
 		Patients:       patients,
 	}
 }
+
+// Returns a route with currentTime = 0 and zero patients.
+func initalizeOneRoute(instance Instance) Route {
+	return Route {
+		Depot:          instance.Depot,
+		NurseCapacity:  instance.CapacityNurse,
+		CurrentTime:    0,
+		Patients:       make([]Patient, 0),
+	}
+}
+
+// Visits a patient to a Route. Updates currentTime
+func (r *Route) visitPatient(patient Patient, instance Instance) {
+	currentLocation := r.getCurrentLocation()
+	
+	// Travel
+	r.CurrentTime += instance.getTravelTime(currentLocation, patient.ID)
+	// Wait
+	if r.CurrentTime < float64(patient.StartTime) {
+		r.CurrentTime += float64(patient.StartTime) - r.CurrentTime
+	}
+	// Visit
+	patient.VisitTime = r.CurrentTime
+	// Care
+	r.CurrentTime += float64(patient.CareTime)
+	// Leave
+	patient.LeavingTime = r.CurrentTime
+}
+
+
 
 
 

@@ -6,35 +6,54 @@ import (
 	"math/rand"
 )
 
-// Performs edge recombination of two parents. Returns offspring Route.
+// Performs edge recombination of two parents. Returns offspring Route. MUST HANDLE EMPTY ROUTES
 func edgeRecombination(parentRoute1 Route, parentRoute2 Route, instance Instance) Route {
+	
+	if len(parentRoute1.Patients) == 0 && len(parentRoute2.Patients) == 0 {
+        return initalizeOneRoute(instance) 
+    }
+
+	// If either parent route is empty, return the other parent route
+	if len(parentRoute1.Patients) == 0 {
+		return parentRoute2
+	}
+	if len(parentRoute2.Patients) == 0 {
+		return parentRoute1
+	}
+
+	// This way of dealing with empty routes makes sure that satisfiesConstraints never gets called with an empty route
+
+	// If both parent routes are nonempty, perform edge recombination
 	matrix1 := createEdgeConnectivityMatrix(parentRoute1)
 	matrix2 := createEdgeConnectivityMatrix(parentRoute2)
 
 	unionMatrix := matrixUnionEdges(matrix1, matrix2)
 
-	offspringPatients := make([]Patient, 0)
+	offspringRoute := initalizeOneRoute(instance)
 
 	// Select a random starting patient from one of the parent routes
+	// Need to handle empty routes
 	currentPatient := parentRoute1.getRandomPatient()
 
-	for len(offspringPatients) < getTotalNumberOfUniquePatients(unionMatrix) {
-		offspringPatients = append(offspringPatients, currentPatient)
-
-		removePatientFromAdjacencyMatrix(currentPatient, unionMatrix)
-
-		var nextPatient Patient
-
-		if len(unionMatrix[currentPatient.ID]) > 0 {
-			nextPatient = getLeastConnectedNeighbor(currentPatient, unionMatrix)
-
-		} else {
-			nextPatient = selectRandomRemainingPatient(unionMatrix)
+	for len(offspringRoute.Patients) < getTotalNumberOfUniquePatients(unionMatrix) {
+		if satisfiesConstraints(offspringRoute, currentPatient, instance) { 
+			offspringRoute.visitPatient(currentPatient, instance)
+		
+			removePatientFromAdjacencyMatrix(currentPatient, unionMatrix)
+	
+			var nextPatient Patient
+	
+			if len(unionMatrix[currentPatient.ID]) > 0 {
+				nextPatient = getLeastConnectedNeighbor(currentPatient, unionMatrix)
+	
+			} else {
+				nextPatient = selectRandomRemainingPatient(unionMatrix)
+			}
+	
+			currentPatient = nextPatient
 		}
-
-		currentPatient = nextPatient
 	}
-	offspringRoute := createRouteFromPatientsVisited(offspringPatients, instance)
+
 	return offspringRoute
 }
 
