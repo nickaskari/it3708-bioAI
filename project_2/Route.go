@@ -88,6 +88,8 @@ func (r *Route) visitPatient(patient Patient, instance Instance) {
 	r.CurrentTime += float64(patient.CareTime)
 	// Leave
 	patient.LeavingTime = r.CurrentTime
+
+	r.Patients = append(r.Patients, patient)
 }
 
 // Deep copy function for Route

@@ -14,7 +14,7 @@ import (
 
 /*
 Performs crossover with edge recombination and a possible swap mutation (performed randomly with mutationRate).
-Returns one child.
+Returns one child. MAKE SURE UNIQUE PATIOENTS IN CHILD
 */
 func crossover(parent1 Individual, parent2 Individual, instance Instance, mutationRate float64) Individual {
 	matchedRoutes := make([]int, 0)
@@ -53,7 +53,7 @@ func crossover(parent1 Individual, parent2 Individual, instance Instance, mutati
 	child.calculateFitness(instance)
 
 	if random.Float64() < mutationRate {
-		child = swapMutationIndividual(child, instance)
+		child = inversionMutationIndividual(child, instance)
 	}
 	return child
 }

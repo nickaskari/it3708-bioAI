@@ -6,7 +6,7 @@ import (
 	"math/rand"
 )
 
-// Performs edge recombination of two parents. Returns offspring Route. MUST HANDLE EMPTY ROUTES
+// Performs edge recombination of two parents. Returns offspring Route. 
 func edgeRecombination(parentRoute1 Route, parentRoute2 Route, instance Instance) Route {
 	
 	if len(parentRoute1.Patients) == 0 && len(parentRoute2.Patients) == 0 {
