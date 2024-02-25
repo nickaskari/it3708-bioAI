@@ -2,16 +2,16 @@ package main
 
 import (
 	"math"
-	"time"
 	"math/rand"
+	"time"
 )
 
-// Performs edge recombination of two parents. Returns offspring Route. 
+// Performs edge recombination of two parents. Returns offspring Route.
 func edgeRecombination(parentRoute1 Route, parentRoute2 Route, instance Instance) Route {
-	
+
 	if len(parentRoute1.Patients) == 0 && len(parentRoute2.Patients) == 0 {
-        return initalizeOneRoute(instance) 
-    }
+		return initalizeOneRoute(instance)
+	}
 
 	// If either parent route is empty, return the other parent route
 	if len(parentRoute1.Patients) == 0 {
@@ -36,27 +36,30 @@ func edgeRecombination(parentRoute1 Route, parentRoute2 Route, instance Instance
 	currentPatient := parentRoute1.getRandomPatient()
 
 	for len(offspringRoute.Patients) < getTotalNumberOfUniquePatients(unionMatrix) {
-		if satisfiesConstraints(offspringRoute, currentPatient, instance) { 
+		//if satisfiesConstraints(offspringRoute, currentPatient, instance) {
 			offspringRoute.visitPatient(currentPatient, instance)
-		
+
 			removePatientFromAdjacencyMatrix(currentPatient, unionMatrix)
-	
+
 			var nextPatient Patient
-	
+
 			if len(unionMatrix[currentPatient.ID]) > 0 {
 				nextPatient = getLeastConnectedNeighbor(currentPatient, unionMatrix)
-	
+
 			} else {
 				nextPatient = selectRandomRemainingPatient(unionMatrix)
 			}
-	
+
 			currentPatient = nextPatient
-		}
+		//} else {
+		//	removePatientFromAdjacencyMatrix(currentPatient, unionMatrix)
+		//	nextPatient := selectRandomRemainingPatient(unionMatrix)
+		//	currentPatient = nextPatient
+		//}
 	}
 
 	return offspringRoute
 }
-
 
 // Creates an adjcancy matrix of patients visited from a certain patient. Start and end patient are "tied" together.
 func createEdgeConnectivityMatrix(route Route) map[int][]Patient {
@@ -121,7 +124,7 @@ func getTotalNumberOfUniquePatients(matrix map[int][]Patient) int {
 func removePatientFromAdjacencyMatrix(patient Patient, matrix map[int][]Patient) {
 	for key, patients := range matrix {
 		patient.deletePatientFrom(patients)
-		matrix[key] = patient.deletePatientFrom(patients)
+		matrix[key] = patients
 	}
 }
 
@@ -143,9 +146,9 @@ func getLeastConnectedNeighbor(patient Patient, matrix map[int][]Patient) Patien
 	if len(candidates) > 0 {
 		source := rand.NewSource(time.Now().UnixNano())
 		random := rand.New(source)
-	
+
 		randomIndex := random.Intn(len(candidates))
-	
+
 		return candidates[randomIndex]
 	} else {
 		return candidates[0]
@@ -161,5 +164,3 @@ func selectRandomRemainingPatient(matrix map[int][]Patient) Patient {
 	}
 	return createDummyPatient()
 }
-
-

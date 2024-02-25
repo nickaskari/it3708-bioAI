@@ -7,6 +7,7 @@ import (
 	"os"
 	"strconv"
 	"time"
+	"sort"
 )
 
 // Reads file at filename and returns JSON.
@@ -173,4 +174,32 @@ func (v *Violation) countViolation() {
 // Registers an example of the violation.
 func (v *Violation) registerExample(example string) {
 	v.Example = example
+}
+
+// Used for sorting
+type Pair struct {
+    Value int
+    Index int
+}
+
+// Sorts an array. Returns array, and original indexes in an other
+func sortWithReflection(a []int) ([]int, []int) {
+    n := len(a)
+    pairs := make([]Pair, n)
+    for i, v := range a {
+        pairs[i] = Pair{v, i}
+    }
+
+    sort.Slice(pairs, func(i, j int) bool {
+        return pairs[i].Value > pairs[j].Value
+    })
+
+    sortedA := make([]int, n)
+    reflectedB := make([]int, n)
+    for i, pair := range pairs {
+        sortedA[i] = pair.Value
+        reflectedB[i] = pair.Index
+    }
+
+    return sortedA, reflectedB
 }

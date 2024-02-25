@@ -14,23 +14,15 @@ var populationSize int = 100
 func main() {
 	instance := getProblemInstance(train_file)
 
-	fmt.Println("")
-
 	population := initPopulation(instance, populationSize)
 
 	population.printPopulationStats()
 	population.printBestIndividual(instance)
 	population.BestIndividual.checkIndividualRoutes(instance)
-	fmt.Println("\n\n1\n\n")
-	var bro Individual = inversionMutationIndividual(population.BestIndividual, instance)
-	for i := 0; i < 100000; i ++ {
 
-		bro = inversionMutationIndividual(bro, instance)
-		bro = swapMutationIndividual(bro, instance)
-	
-	}
-
-	printSolution(bro, instance)
-	bro.checkIndividualRoutes(instance)
-
+	parents := population.tournamentSelection(numParents)
+	child := crossover(parents[0], parents[1], instance, 0)
+	printSolution(child, instance)
+	child.checkIndividualRoutes(instance)
+	fmt.Println("")
 }
