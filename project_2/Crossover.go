@@ -53,7 +53,7 @@ func crossover(parent1 Individual, parent2 Individual, instance Instance, mutati
 	child.calculateFitness(instance)
 
 	if random.Float64() < mutationRate {
-		child = swapMutation(child, instance)
+		child = swapMutationIndividual(child, instance)
 	}
 	return child
 }

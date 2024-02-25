@@ -9,7 +9,7 @@ var train_file string = "train/train_0.json"
 
 // GA paramters
 var numParents int = 5
-var populationSize int = 10
+var populationSize int = 100
 
 func main() {
 	instance := getProblemInstance(train_file)
@@ -21,10 +21,15 @@ func main() {
 	population.printPopulationStats()
 	population.printBestIndividual(instance)
 	population.BestIndividual.checkIndividualRoutes(instance)
+	fmt.Println("\n\n1\n\n")
+	var bro Individual = inversionMutationIndividual(population.BestIndividual, instance)
+	for i := 0; i < 100000; i ++ {
 
-	printDivider(105, "<-><->")
+		bro = inversionMutationIndividual(bro, instance)
+		bro = swapMutationIndividual(bro, instance)
+	
+	}
 
-	bro := inversionMutationIndividual(population.BestIndividual, instance)
 	printSolution(bro, instance)
 	bro.checkIndividualRoutes(instance)
 

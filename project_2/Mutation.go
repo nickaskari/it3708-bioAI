@@ -5,51 +5,6 @@ import (
 	"math/rand"
 )
 
-// Performs swap mutation. Return mutated individual. Mutates in only one route.
-func swapMutation(individual Individual, instance Instance) Individual {
-	//newRoutes := make(map[int]Route)
-
-	for routeIndex, originalRoute := range individual.Routes {
-		// Traverse the route
-		r := deepCopyRoute(originalRoute)
-		for i := 0; i < len(r.Patients)-1; i++ {
-			for j := i + 1; j < len(r.Patients); j++ {
-				if !notViolatesTimeWindowConstraints(r, r.Patients[i], instance) && !notViolatesTimeWindowConstraints(r, r.Patients[j], instance) {
-					r.Patients[i], r.Patients[j] = r.Patients[j], r.Patients[i]
-					newRoute := createRouteFromPatientsVisited(r.Patients, instance)
-
-					// Problem --> individual changes
-					newIndividual := createAlteredIndivual(individual, routeIndex, newRoute, instance)
-
-					oldFitness := individual.Fitness
-					newFitness := newIndividual.Fitness
-
-					//fmt.Println("DIFFERENCE =", newFitness-oldFitness)
-					if newFitness < oldFitness {
-						fmt.Println("Nurse", routeIndex+1, "got mutated")
-						fmt.Println("DIFFERENCE =", newFitness-oldFitness)
-						return newIndividual
-					}
-				}
-			}
-		}
-	}
-	fmt.Println("DID NOT MUTATE")
-	return individual
-}
-
-func createAlteredIndivual(individual Individual, routeIndex int, route Route, instance Instance) Individual {
-	newIndividual := deepCopyIndividual(individual)
-
-	newIndividual.Routes[routeIndex] = route
-	newIndividual.calculateFitness(instance)
-
-	return newIndividual
-}
-
-
-
-
 
 func swapMutationRoute(originalRoute Route, instance Instance) (Route, bool) {
     r := deepCopyRoute(originalRoute)
