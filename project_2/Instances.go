@@ -34,4 +34,16 @@ func (i Instance) getPatients() []Patient {
 	return patientsSlice
 }
 
+// Returns patient with the specified id.
+func (i Instance) getPatientAtID(patientID int) Patient {
+    allPatients := i.getPatients()
+    var resultPatient Patient
+    for _, p := range allPatients {
+        if p.ID == patientID {
+            resultPatient = p
+        }
+    }
+    return resultPatient
+}
+
 

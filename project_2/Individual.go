@@ -67,12 +67,13 @@ func (i *Individual) growOlder() {
 	i.Age++
 }
 
-func (individual Individual) checkIndividualRoutes(instance Instance) {
+func (individual Individual) checkIndividualRoutes(instance Instance, force bool) {
 	timeWindowViolation := Violation{Count: 0, Example: ""}
 	capacityViolation := Violation{Count: 0, Example: ""}
 	returnTimeViolation := Violation{Count: 0, Example: ""}
 
 	distinctVisitedPatients := make([]Patient, 0)
+	totalPatients := make([]Patient, 0)
 	for routeIndex, route := range individual.Routes {
 		demandCovered := 0
 		for _, patient := range route.Patients {
@@ -80,6 +81,7 @@ func (individual Individual) checkIndividualRoutes(instance Instance) {
 			if !patient.IsPatientInList(distinctVisitedPatients) {
 				distinctVisitedPatients = append(distinctVisitedPatients, patient)
 			}
+			totalPatients = append(totalPatients, patient)
 			if !notViolatesTimeWindowConstraints(route, patient, instance) {
 				if timeWindowViolation.Example == "" {
 					timeWindowViolation.registerExample(fmt.Sprintf("Route %d violates time window of patient %d.", routeIndex+1, patient.ID))
@@ -96,14 +98,13 @@ func (individual Individual) checkIndividualRoutes(instance Instance) {
 			returnTimeViolation.countViolation()
 		}
 	}
-	if timeWindowViolation.Count > 0 || capacityViolation.Count > 0 || returnTimeViolation.Count > 0 {
-		reportViolation(timeWindowViolation, capacityViolation, returnTimeViolation, distinctVisitedPatients, instance)
-	}
-
+	if timeWindowViolation.Count > 0 || capacityViolation.Count > 0 || returnTimeViolation.Count > 0 || force{
+		reportViolation(timeWindowViolation, capacityViolation, returnTimeViolation, distinctVisitedPatients, totalPatients, instance)
+	} 
 }
 
 // Helper function for checkIndividualRoutes(). Prints out a report of violations.
-func reportViolation(timeWindow Violation, capacity Violation, returnTime Violation, visitedPatients []Patient, instance Instance) {
+func reportViolation(timeWindow Violation, capacity Violation, returnTime Violation, visitedPatients []Patient, totalPatients []Patient, instance Instance) {
 	const consoleWidth = 150
 	const countLabel = "Count = "
 	const padding = 2
@@ -126,8 +127,9 @@ func reportViolation(timeWindow Violation, capacity Violation, returnTime Violat
 	fmt.Printf("\nSum violations = %d\n", sumViolations)
 
 	if len(visitedPatients) != len(instance.getPatients()) {
-		fmt.Println("\nNumber of distinct patinets", len(visitedPatients), "is not correct!")
+		fmt.Println("\nNumber of distinct patients", len(visitedPatients), "is not correct!")
 	}
+	fmt.Println("\nTotal number of patients", len(totalPatients))
 
 	fmt.Println(strings.Repeat("*", 75) + " VIOLATION " + strings.Repeat("*", 75))
 }
@@ -191,4 +193,17 @@ func deepCopyIndividual(original Individual) Individual {
 
 func (i *Individual) addRoute(route Route) {
 	i.Routes = append(i.Routes, route)
+}
+
+// return num patients in individual, and if duplicates
+func(i Individual) getNumPatients() (int, bool) {
+	num := 0
+	visited := []int{}
+	for _, r := range i.Routes{
+		for _, p := range r.Patients {
+			num ++
+			visited = append(visited, p.ID)
+		} 
+	}
+	return num, hasDuplicates(visited)
 }

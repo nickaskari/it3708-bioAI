@@ -2,7 +2,6 @@ package main
 
 import (
 	"math/rand"
-	"strconv"
 	"time"
 )
 
@@ -135,10 +134,8 @@ func (r Route) extractAllVisitedPatients() []int {
 Checks whether a patient can be added to a route. Checks capacity and returntime constraints.
 Returns Route and bool on whether this can indeed happen.
 */
-
-
-func (r *Route) canAddPatient(patientID int, instance Instance) (Route, bool) {
-	patientToAdd := instance.Patients[strconv.Itoa(patientID)]
+func (r Route) canAddPatient(patientID int, instance Instance) (Route, bool) {
+	patientToAdd := instance.getPatientAtID(patientID)
 
 	demandCovered := 0
 	//canReturnInTime := false
@@ -147,23 +144,34 @@ func (r *Route) canAddPatient(patientID int, instance Instance) (Route, bool) {
 		demandCovered += patient.Demand
 
 		/*
-		if !canReturnInTime {
-			newPatientOrder := r.Patients
-			newPatientOrder = append(newPatientOrder[:index+1], newPatientOrder[index:]...)
-			newPatientOrder[index] = patientToAdd
+			if !canReturnInTime {
+				newPatientOrder := r.Patients
+				newPatientOrder = append(newPatientOrder[:index+1], newPatientOrder[index:]...)
+				newPatientOrder[index] = patientToAdd
 
-			newRoute := createRouteFromPatientsVisited(newPatientOrder, instance)
+				newRoute := createRouteFromPatientsVisited(newPatientOrder, instance)
 
-			if newRoute.CurrentTime <= float64(instance.Depot.ReturnTime) {
-				finalRoute = newRoute
-				canReturnInTime = true
-			}
-		}*/
+				if newRoute.CurrentTime <= float64(instance.Depot.ReturnTime) {
+					finalRoute = newRoute
+					canReturnInTime = true
+				}
+			}*/
 	}
 
-	if instance.CapacityNurse > (demandCovered + patientToAdd.Demand) {
+	if instance.CapacityNurse <= (demandCovered + patientToAdd.Demand) {
 		return finalRoute, false
+	} else {
+		oldPatients := r.Patients
+		newPatients := append(oldPatients, patientToAdd)
+		return createRouteFromPatientsVisited(newPatients, instance), true
 	}
+}
 
-	return finalRoute, true
+// Checks if route contains duplicate patients. Returns array of patient id visited, and bool on whether there is duplicate
+func (r Route) checkIfRouteContainsDuplicates() ([]int, bool) {
+	visited := []int{}
+	for _, p := range r.Patients {
+		visited = append(visited, p.ID)
+	}
+	return visited, hasDuplicates(visited)
 }
