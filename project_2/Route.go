@@ -120,3 +120,12 @@ func calculateRouteFitness(route Route, instance Instance) float64 {
     }
     return fitness
 }
+
+// Outputs all patient ID's visited
+func (r Route) extractAllVisitedPatients() []int {
+	visited := make([]int, 0)
+	for _, p := range r.Patients {
+		visited = append(visited, p.ID)
+	}
+	return visited
+}

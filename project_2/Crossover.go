@@ -1,7 +1,9 @@
 package main
 
 import (
+	"math/rand"
 	"slices"
+	"time"
 )
 
 //"math"
@@ -22,10 +24,10 @@ func crossover(parent1 Individual, parent2 Individual, instance Instance, mutati
 	matchedRoutes := make(map[int][]int, 0)
 	childRoutes := make([]Route, 0)
 
-	//source := rand.NewSource(time.Now().UnixNano())
-	//random := rand.New(source)
+	source := rand.NewSource(time.Now().UnixNano())
+	random := rand.New(source)
 	for i, r1 := range parent1.Routes {
-	
+
 		scoreTable := make([]int, len(parent2.Routes))
 		for j, r2 := range parent2.Routes {
 			score := calculateSimularityScore(r1, r2)
@@ -41,36 +43,13 @@ func crossover(parent1 Individual, parent2 Individual, instance Instance, mutati
 		for _, i := range preferedRoutesIndexesFromParent2 {
 			if !(slices.Contains(usedRoutesFromParent2, i)) {
 				r1 := parent1.Routes[parent1RouteIndex]
-				r2 := parent2.Routes[i] 
+				r2 := parent2.Routes[i]
 				child := edgeRecombination(r1, r2, instance)
 				childRoutes = append(childRoutes, child)
 				usedRoutesFromParent2 = append(usedRoutesFromParent2, i)
 			}
 		}
 	}
-
-	// does not work..
-	/*
-		for i, r1 := range parent1.Routes {
-			i += len(parent2.Routes)
-			mostSimularScore := int(math.Inf(-1))
-			var mostSimularRoute Route
-			var mostSimularRouteIndex int
-			for j, r2 := range parent2.Routes {
-				score := calculateSimularityScore(r1, r2)
-				if score > mostSimularScore {
-					mostSimularScore = score
-					mostSimularRoute = r2
-					mostSimularRouteIndex = j
-				}
-			}
-
-			if !(slices.Contains(matchedRoutes, mostSimularRouteIndex)) {
-				matchedRoutes = append(matchedRoutes, mostSimularRouteIndex)
-				child := edgeRecombination(r1, mostSimularRoute, instance)
-				childRoutes = append(childRoutes, child)
-			}
-		}*/
 
 	child := Individual{
 		Fitness: 0.0,
@@ -79,10 +58,10 @@ func crossover(parent1 Individual, parent2 Individual, instance Instance, mutati
 	}
 
 	child.calculateFitness(instance)
-	/*
-		if random.Float64() < mutationRate {
-			child = inversionMutationIndividual(child, instance)
-		}*/
+
+	if random.Float64() < mutationRate {
+		child = inversionMutationIndividual(child, instance)
+	}
 	return child
 }
 

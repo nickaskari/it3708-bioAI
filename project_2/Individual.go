@@ -188,3 +188,7 @@ func deepCopyIndividual(original Individual) Individual {
 
 	return copy
 }
+
+func (i *Individual) addRoute(route Route) {
+	i.Routes = append(i.Routes, route)
+}
