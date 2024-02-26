@@ -8,6 +8,17 @@ import (
 	"strconv"
 	"time"
 )
+/*
+Things that work:
+- Adding routes from parent1, registering them as visited. 
+- Adding routes from parent2 with patients that are not visited in any of the routes from parent1.
+
+
+Potential issues:
+- Potensielle feil med måten registerPatients brukes på
+- Visited (og følgelig unvisited) patients blir ikke oppdatert riktig etter første iterasjon. Tror dette har noe å gjøre med at visitedPatients settes til 0 for hver iterasjon.
+- Det er duplikater av pasienter i individet mpic returnerer.
+*/
 
 // Multi Parent Insertion Crossover operator
 func mpic(allParents []Individual, numParents int, instance Instance, crossoverRate float64) Individual {
@@ -16,7 +27,6 @@ func mpic(allParents []Individual, numParents int, instance Instance, crossoverR
 	source := rand.NewSource(time.Now().UnixNano())
 	random := rand.New(source)
 
-	// Choose one random parent
 	randomIndex := random.Intn(len(allParents))
 	parent1 := allParents[randomIndex]
 
@@ -27,7 +37,7 @@ func mpic(allParents []Individual, numParents int, instance Instance, crossoverR
 			Routes:  make([]Route, 0),
 		}
 		parent2 := allParents[random.Intn(len(allParents))]
-
+		
 		visitedPatients := make([]int, 0)
 
 		routesAdded := 0
@@ -39,7 +49,10 @@ func mpic(allParents []Individual, numParents int, instance Instance, crossoverR
 				routesAdded++
 			}
 		}
-		fmt.Println("Routes added from parent1 =", routesAdded)
+		fmt.Println("visitedPatients: ", visitedPatients) 
+		printSolution(offspring, instance)
+
+		//fmt.Println("Routes added from parent1 =", routesAdded)
 
 		routesAddedFromparent2 := 0
 		for _, route := range parent2.Routes {
@@ -47,15 +60,20 @@ func mpic(allParents []Individual, numParents int, instance Instance, crossoverR
 			if !checkAlreadyVisited(route.extractAllVisitedPatients(), visitedPatients) &&
 				(len(offspring.Routes) < instance.NbrNurses) {
 				offspring.addRoute(route)
+				visitedPatients = registerPatients(route, visitedPatients)
 				routesAddedFromparent2++
 			}
+			fmt.Println("route.extractAllVisitedPatients()", route.extractAllVisitedPatients()) 
 		}
-		fmt.Println("Routes added from parent2 =", routesAddedFromparent2)
+		//fmt.Println("Routes added from parent2 =", routesAddedFromparent2)
+		printSolution(offspring, instance)
 
+		fmt.Println("visitedPatients: ", len(visitedPatients))
 		for _, pID := range extractUnvisitedPatients(visitedPatients, instance) {
-
+			fmt.Println("extractUnvisitedPatients(visitedPatients, instance) ", len(extractUnvisitedPatients(visitedPatients, instance))) 
 			patientAdded := false
-			for _, route := range offspring.Routes { // this is fucked
+			
+			for _, route := range offspring.Routes { 
 				feasibleRoute, ok := route.canAddPatient(pID, instance)
 				if ok {
 					if len(offspring.Routes) < instance.NbrNurses {
@@ -65,7 +83,10 @@ func mpic(allParents []Individual, numParents int, instance Instance, crossoverR
 					}
 				}
 			}
-			//fmt.Println("NUMBER OF ROUTES =", len(offspring.Routes))
+			
+			// CORRECT FOR FIRST ITERATION, NOT AFTERWARDS. something must be wrong in the update of these
+			fmt.Println("visitedPatients: ", len(visitedPatients))
+			fmt.Println("extractUnvisitedPatients(visitedPatients, instance) ", len(extractUnvisitedPatients(visitedPatients, instance))) 
 
 			if !patientAdded && (len(offspring.Routes) < instance.NbrNurses) {
 				newRoute := initalizeOneRoute(instance)
@@ -77,12 +98,19 @@ func mpic(allParents []Individual, numParents int, instance Instance, crossoverR
 
 		parent1 = offspring
 		iteration++
-		fmt.Println("LENGTH OF TOTAL OFFSPRING ROUTE ", len(offspring.Routes))
-		fmt.Println("LENGTH OF TOTAL unvisit ", len(offspring.Routes))
+		fmt.Println("NUMBER OF OFFSPRING ROUTES ", len(offspring.Routes))
+		fmt.Println("LENGTH OF TOTAL UNVISITED PATIENTS ", len(extractUnvisitedPatients(visitedPatients, instance)))
 		fmt.Println("LENTH OF VISITED PATIENTS", len(visitedPatients))
-		fmt.Println("\n\niteration =", iteration, "AND numPArents =", numParents, "\n")
+		fmt.Println("\n\niteration =", iteration, "AND numPArents =", numParents)
 	}
 	parent1.calculateFitness(instance)
+
+	if checkForDuplicates(parent1) {
+		fmt.Println("Duplicates found")
+	} else {
+		fmt.Println("No duplicates found")
+	}
+
 	return parent1
 }
 
@@ -94,6 +122,8 @@ func registerPatients(route Route, patients []int) []int {
 	}
 	return patients
 }
+
+
 
 // Checks if the patient ID of one route is already visited in another patient ID array
 func checkAlreadyVisited(routePatients []int, visitedPatients []int) bool {
@@ -117,4 +147,19 @@ func extractUnvisitedPatients(visitedPatients []int, instance Instance) []int {
 	}
 
 	return unvistedPatients
+}
+
+func checkForDuplicates(individual Individual) bool {
+	allPatients := make([]int, 0)
+	for _, route := range individual.Routes {
+		for _, patient := range route.Patients {
+			if slices.Contains(allPatients, patient.ID) {
+				return true
+			}
+			allPatients = append(allPatients, patient.ID)
+		}
+	}
+
+	return false
+	
 }

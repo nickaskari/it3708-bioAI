@@ -17,8 +17,8 @@ func main() {
 
 	population := initPopulation(instance, populationSize)
 
-	population.printPopulationStats()
-	population.printBestIndividual(instance)
+	//population.printPopulationStats()
+	//population.printBestIndividual(instance)
 	population.BestIndividual.checkIndividualRoutes(instance)
 
 	fmt.Println("\n ------------------CHILD INCOMING --------------------------")

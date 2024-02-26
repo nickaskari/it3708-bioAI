@@ -135,6 +135,8 @@ func (r Route) extractAllVisitedPatients() []int {
 Checks whether a patient can be added to a route. Checks capacity and returntime constraints.
 Returns Route and bool on whether this can indeed happen.
 */
+
+
 func (r *Route) canAddPatient(patientID int, instance Instance) (Route, bool) {
 	patientToAdd := instance.Patients[strconv.Itoa(patientID)]
 
