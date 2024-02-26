@@ -1,10 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"math"
 	"math/rand"
-	"time"
 	"slices"
+	"strconv"
+	"time"
 )
 
 // Multi Parent Insertion Crossover operator
@@ -28,36 +30,65 @@ func mpic(allParents []Individual, numParents int, instance Instance, crossoverR
 
 		visitedPatients := make([]int, 0)
 
+		routesAdded := 0
 		for _, route := range parent1.Routes {
 			randomNum := random.Float64()
 			if randomNum < crossoverRate {
 				offspring.addRoute(route)
 				visitedPatients = registerPatients(route, visitedPatients)
+				routesAdded++
 			}
 		}
+		fmt.Println("Routes added from parent1 =", routesAdded)
 
+		routesAddedFromparent2 := 0
 		for _, route := range parent2.Routes {
-			// check if can add route, based on visited patients			
-			if !checkAlreadyVisited(route.extractAllVisitedPatients(), visitedPatients) {
+			// check if can add route, based on visited patients
+			if !checkAlreadyVisited(route.extractAllVisitedPatients(), visitedPatients) &&
+				(len(offspring.Routes) < instance.NbrNurses) {
 				offspring.addRoute(route)
+				routesAddedFromparent2++
 			}
 		}
-		
+		fmt.Println("Routes added from parent2 =", routesAddedFromparent2)
 
 		for _, pID := range extractUnvisitedPatients(visitedPatients, instance) {
-			
+
 			patientAdded := false
-			for _, route := range offspring.Routes {
-				//if pId.CanBeFeasiblyAdded(route) { 
+			for _, route := range offspring.Routes { // this is fucked
+				feasibleRoute, ok := route.canAddPatient(pID, instance)
+				if ok {
+					if len(offspring.Routes) < instance.NbrNurses {
+						offspring.addRoute(feasibleRoute)
+						visitedPatients = registerPatients(route, visitedPatients)
+						patientAdded = true
+					}
+				}
+			}
+			//fmt.Println("NUMBER OF ROUTES =", len(offspring.Routes))
+
+			if !patientAdded && (len(offspring.Routes) < instance.NbrNurses) {
+				newRoute := initalizeOneRoute(instance)
+				newRoute.visitPatient(instance.Patients[strconv.Itoa(pID)], instance)
+				offspring.addRoute(newRoute)
+				visitedPatients = registerPatients(newRoute, visitedPatients)
+			}
 		}
+
+		parent1 = offspring
+		iteration++
+		fmt.Println("LENGTH OF TOTAL OFFSPRING ROUTE ", len(offspring.Routes))
+		fmt.Println("LENGTH OF TOTAL unvisit ", len(offspring.Routes))
+		fmt.Println("LENTH OF VISITED PATIENTS", len(visitedPatients))
+		fmt.Println("\n\niteration =", iteration, "AND numPArents =", numParents, "\n")
 	}
+	parent1.calculateFitness(instance)
+	return parent1
 }
-
-
 
 // Adds patients from route to patient (ID's only) array. Returns patients array.
 func registerPatients(route Route, patients []int) []int {
-	routePatients := route.Patients 
+	routePatients := route.Patients
 	for _, p := range routePatients {
 		patients = append(patients, p.ID)
 	}
@@ -87,5 +118,3 @@ func extractUnvisitedPatients(visitedPatients []int, instance Instance) []int {
 
 	return unvistedPatients
 }
-
-

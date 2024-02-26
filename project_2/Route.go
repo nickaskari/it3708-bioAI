@@ -2,14 +2,15 @@ package main
 
 import (
 	"math/rand"
+	"strconv"
 	"time"
 )
 
 type Route struct {
-	Depot Depot `json:"depot"`
-	NurseCapacity int `json:"nurse_capacity"`
-	CurrentTime float64 `json:"current_time"`
-	Patients []Patient `json:"patients"`
+	Depot         Depot     `json:"depot"`
+	NurseCapacity int       `json:"nurse_capacity"`
+	CurrentTime   float64   `json:"current_time"`
+	Patients      []Patient `json:"patients"`
 }
 
 // Outputs the current location for nurse. 0 means depot. 1, 2, 3, .. denotes the patient.
@@ -17,7 +18,7 @@ func (r Route) getCurrentLocation() int {
 	if len(r.Patients) == 0 {
 		return 0
 	} else {
-		lastPatientID := r.Patients[len(r.Patients) - 1].ID
+		lastPatientID := r.Patients[len(r.Patients)-1].ID
 		return lastPatientID
 	}
 }
@@ -39,12 +40,12 @@ func createRouteFromPatientsVisited(patients []Patient, instance Instance) Route
 
 	newPatients := make([]Patient, 0)
 	for _, patient := range patients {
-		currentTime += instance.getTravelTime(lastLocation, patient.ID) 
+		currentTime += instance.getTravelTime(lastLocation, patient.ID)
 		if currentTime < float64(patient.StartTime) {
 			currentTime += float64(patient.StartTime) - currentTime
-		} 
+		}
 		patient.VisitTime = currentTime
-	
+
 		currentTime += float64(patient.CareTime)
 		patient.LeavingTime = currentTime
 
@@ -55,27 +56,27 @@ func createRouteFromPatientsVisited(patients []Patient, instance Instance) Route
 	currentTime += instance.getTravelTime(lastLocation, 0)
 
 	return Route{
-		Depot:          instance.Depot,
-		NurseCapacity:  instance.CapacityNurse,
-		CurrentTime:    currentTime,
-		Patients:       newPatients,
+		Depot:         instance.Depot,
+		NurseCapacity: instance.CapacityNurse,
+		CurrentTime:   currentTime,
+		Patients:      newPatients,
 	}
 }
 
 // Returns a route with currentTime = 0 and zero patients.
 func initalizeOneRoute(instance Instance) Route {
-	return Route {
-		Depot:          instance.Depot,
-		NurseCapacity:  instance.CapacityNurse,
-		CurrentTime:    0,
-		Patients:       make([]Patient, 0),
+	return Route{
+		Depot:         instance.Depot,
+		NurseCapacity: instance.CapacityNurse,
+		CurrentTime:   0,
+		Patients:      make([]Patient, 0),
 	}
 }
 
 // Visits a patient to a Route. Updates currentTime
 func (r *Route) visitPatient(patient Patient, instance Instance) {
 	currentLocation := r.getCurrentLocation()
-	
+
 	// Travel
 	r.CurrentTime += instance.getTravelTime(currentLocation, patient.ID)
 	// Wait
@@ -94,31 +95,31 @@ func (r *Route) visitPatient(patient Patient, instance Instance) {
 
 // Deep copy function for Route
 func deepCopyRoute(originalRoute Route) Route {
-    var r Route
-    r.Depot = originalRoute.Depot
-    r.NurseCapacity = originalRoute.NurseCapacity
+	var r Route
+	r.Depot = originalRoute.Depot
+	r.NurseCapacity = originalRoute.NurseCapacity
 	r.CurrentTime = originalRoute.CurrentTime
 
-    // Manually copying the slice
-    r.Patients = make([]Patient, len(originalRoute.Patients))
-    copy(r.Patients, originalRoute.Patients) // This is correct usage of copy for slice
+	// Manually copying the slice
+	r.Patients = make([]Patient, len(originalRoute.Patients))
+	copy(r.Patients, originalRoute.Patients) // This is correct usage of copy for slice
 
-    return r
+	return r
 }
 
 func calculateRouteFitness(route Route, instance Instance) float64 {
-    var fitness float64 = 0
-    if len(route.Patients) > 0 {
-        lastLocation := 0 
-        for _, patient := range route.Patients {
-            fitness += instance.getTravelTime(lastLocation, patient.ID)
-            lastLocation = patient.ID
-            fitness += calculatePenalty(patient)
-        }
-        
-        fitness += instance.getTravelTime(lastLocation, 0) 
-    }
-    return fitness
+	var fitness float64 = 0
+	if len(route.Patients) > 0 {
+		lastLocation := 0
+		for _, patient := range route.Patients {
+			fitness += instance.getTravelTime(lastLocation, patient.ID)
+			lastLocation = patient.ID
+			fitness += calculatePenalty(patient)
+		}
+
+		fitness += instance.getTravelTime(lastLocation, 0)
+	}
+	return fitness
 }
 
 // Outputs all patient ID's visited
@@ -128,4 +129,39 @@ func (r Route) extractAllVisitedPatients() []int {
 		visited = append(visited, p.ID)
 	}
 	return visited
+}
+
+/*
+Checks whether a patient can be added to a route. Checks capacity and returntime constraints.
+Returns Route and bool on whether this can indeed happen.
+*/
+func (r *Route) canAddPatient(patientID int, instance Instance) (Route, bool) {
+	patientToAdd := instance.Patients[strconv.Itoa(patientID)]
+
+	demandCovered := 0
+	//canReturnInTime := false
+	finalRoute := initalizeOneRoute(instance)
+	for _, patient := range r.Patients {
+		demandCovered += patient.Demand
+
+		/*
+		if !canReturnInTime {
+			newPatientOrder := r.Patients
+			newPatientOrder = append(newPatientOrder[:index+1], newPatientOrder[index:]...)
+			newPatientOrder[index] = patientToAdd
+
+			newRoute := createRouteFromPatientsVisited(newPatientOrder, instance)
+
+			if newRoute.CurrentTime <= float64(instance.Depot.ReturnTime) {
+				finalRoute = newRoute
+				canReturnInTime = true
+			}
+		}*/
+	}
+
+	if instance.CapacityNurse > (demandCovered + patientToAdd.Demand) {
+		return finalRoute, false
+	}
+
+	return finalRoute, true
 }

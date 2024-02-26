@@ -10,6 +10,7 @@ var train_file string = "train/train_0.json"
 // GA paramters
 var numParents int = 5
 var populationSize int = 100
+var crossoverRate float64 = 0.2
 
 func main() {
 	instance := getProblemInstance(train_file)
@@ -20,9 +21,10 @@ func main() {
 	population.printBestIndividual(instance)
 	population.BestIndividual.checkIndividualRoutes(instance)
 
+	fmt.Println("\n ------------------CHILD INCOMING --------------------------")
+
 	parents := population.tournamentSelection(numParents)
-	child := crossover(parents[0], parents[1], instance, 0)
+	child := mpic(parents, numParents, instance, crossoverRate)
 	printSolution(child, instance)
 	child.checkIndividualRoutes(instance)
-	fmt.Println("")
 }
