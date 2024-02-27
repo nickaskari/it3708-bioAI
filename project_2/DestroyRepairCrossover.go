@@ -26,6 +26,9 @@ func destroyRepairCrossover(parent1 Individual, parent2 Individual, instance Ins
 	offspring1.fixAllRoutesAndCalculateFitness(instance)
 	offspring2.fixAllRoutesAndCalculateFitness(instance)
 
+	printSolution(offspring1, instance)
+	offspring1.checkIndividualRoutes(instance, false)
+
 	// Perform local search with mutations
 
 	fmt.Println("yo")

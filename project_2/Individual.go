@@ -131,7 +131,7 @@ func reportViolation(timeWindow Violation, capacity Violation, returnTime Violat
 	sumViolations := timeWindow.Count + capacity.Count + returnTime.Count
 	fmt.Printf("\nSum violations = %d\n", sumViolations)
 
-	if len(visitedPatients) != len(instance.getPatients()) {
+	if len(visitedPatients) != len(instance.PatientArray) {
 		fmt.Println("\nNumber of distinct patients", len(visitedPatients), "is not correct!")
 	}
 	fmt.Println("\nTotal number of patients", len(totalPatients))
