@@ -1,0 +1,36 @@
+
+Large Neighbourhood Search (LNS)
+
+Mutation bør kanskje kunne gjøre endringer inter-route
+- Inter route swap or other types
+
+Destroy and repair. 
+- Take a cluster and destroy the route(s) connected. Then apply an algorithnm to fix it. 
+
+
+Need to apply/enforce feasibility in the end. 
+
+GA boosting:
+- Local search (swapping and moving, both intra and entra)
+- Paralell compution (biological aspect), let computing happen independently in different islands
+- Choosing efficient data structures. 
+
+Improving population management:
+- Sometimes want to choose infeasible solutions, to investigate new areas, and turn them into feasible in the end.
+     Large destroy 
+- No improving?
+    - keep the x best, and initialize y new individuals. To get out of local minima
+
+Construction heuristics, initialization:
+- random
+- greedy - assign patient to route that increases travel time by smallest amount
+- cluster-analysis. Assign nurses to clusters
+
+Other tips:
+- We have handled penalties correctly. Cannot treat time window violations as binary, need a quantitative measure 
+    such that the algorithm understands which way to improve. 
+
+Crossover:
+- select random small subset of patients (preferably in a bad route), destroy it, and local seacrh to find an optimal
+     route for these patients. In the slides, they didnt actually combine several individuals, it was rather a type of 
+     cheeky mutation. The professor said that after this thing, one could do a more traditional crossover.  
