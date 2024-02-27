@@ -8,9 +8,9 @@ import (
 var train_file string = "train/train_0.json"
 
 // GA paramters
-var numParents int = 2
-var populationSize int = 1000
-var crossoverRate float64 = 0.2
+var numParents int = 50
+var populationSize int = 100
+var crossoverRate float64 = 0.1
 
 func main() {
 	instance := getProblemInstance(train_file)
