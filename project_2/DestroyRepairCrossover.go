@@ -14,9 +14,6 @@ func destroyRepairCrossover(parent1 Individual, parent2 Individual, instance Ins
 
 	offspring1.Age, offspring2.Age = 0, 0
 
-	// When the routes of parent 1 and 2 get manipulated, the patient values, return times, and individual fitness are not fixed
-	// These should be taken care of in the local search algorithm?
-
 	offspring1.removePatients(worstRoutePatients2, instance)
 	offspring2.removePatients(worstRoutePatients1, instance)
 
