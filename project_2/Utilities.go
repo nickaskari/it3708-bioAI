@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"math/rand"
 	"os"
@@ -17,29 +16,6 @@ func readJSON(filename string) ([]byte, error) {
 		fmt.Print(err)
 	}
 	return data, err
-}
-
-// Reads problem instance from JSON and returns an Instance object.
-func getProblemInstance(filename string) Instance {
-	data, err := readJSON(filename)
-	if err != nil {
-		fmt.Println("failed to read JSON data: %w", err)
-		os.Exit(1)
-	}
-
-	if data == nil {
-		// Check for empty data
-		fmt.Println("empty JSON data")
-		os.Exit(1)
-	}
-
-	var instance Instance
-	err = json.Unmarshal(data, &instance)
-	if err != nil {
-		fmt.Println("error unmarshaling JSON: %w", err)
-		os.Exit(1)
-	}
-	return instance
 }
 
 // A struct to perform random math operations

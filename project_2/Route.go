@@ -103,7 +103,7 @@ func deepCopyRoute(originalRoute Route) Route {
 	r.Patients = make([]Patient, len(originalRoute.Patients))
 	copy(r.Patients, originalRoute.Patients) // This is correct usage of copy for slice
 
-	return r
+	return r  
 }
 
 func calculateRouteFitness(route Route, instance Instance) float64 {
