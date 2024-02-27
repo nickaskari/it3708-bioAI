@@ -130,7 +130,7 @@ func checkAlreadyVisited(routePatients []int, visitedPatients []int) bool {
 
 // Extract unvisited patients from visitied patients. Returns []int of patient ID's that are unvisited.
 func extractUnvisitedPatients(visitedPatients []int, instance Instance) []int {
-	allPatients := instance.getPatients()
+	allPatients := instance.PatientArray
 	unvistedPatients := make([]int, 0)
 
 	for _, patient := range allPatients {

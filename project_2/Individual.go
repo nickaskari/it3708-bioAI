@@ -3,9 +3,13 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"math"
 	"os"
 	"reflect"
+	"slices"
 	"strings"
+	"math/rand"
+	"time"
 )
 
 /*
@@ -67,6 +71,7 @@ func (i *Individual) growOlder() {
 	i.Age++
 }
 
+// Prints violations of an individual
 func (individual Individual) checkIndividualRoutes(instance Instance, force bool) {
 	timeWindowViolation := Violation{Count: 0, Example: ""}
 	capacityViolation := Violation{Count: 0, Example: ""}
@@ -126,7 +131,7 @@ func reportViolation(timeWindow Violation, capacity Violation, returnTime Violat
 	sumViolations := timeWindow.Count + capacity.Count + returnTime.Count
 	fmt.Printf("\nSum violations = %d\n", sumViolations)
 
-	if len(visitedPatients) != len(instance.getPatients()) {
+	if len(visitedPatients) != len(instance.PatientArray) {
 		fmt.Println("\nNumber of distinct patients", len(visitedPatients), "is not correct!")
 	}
 	fmt.Println("\nTotal number of patients", len(totalPatients))
@@ -181,7 +186,7 @@ func deepCopyIndividual(original Individual) Individual {
 	copy.Routes = make([]Route, len(original.Routes))
 	for i, route := range original.Routes {
 		// If Route itself contains reference types, you'll need to deep copy those too
-		copy.Routes[i] = route // Assuming Route can be shallow copied; adjust if necessary
+		copy.Routes[i] = deepCopyRoute(route) // Assuming Route can be shallow copied; adjust if necessary
 	}
 
 	// Deep copy other fields as necessary
@@ -206,4 +211,74 @@ func(i Individual) getNumPatients() (int, bool) {
 		} 
 	}
 	return num, hasDuplicates(visited)
+}
+
+// Finds the worst cost route within an individual. Returns the an int array of
+func (i Individual) findWorstCostRoute(instance Instance) []int {
+	var worstCostRouteIndex int
+
+	worstFitness := math.Inf(-1)	
+	for index, r := range i.Routes {
+		routeFitness := calculateRouteFitness(r, instance)
+		if routeFitness > worstFitness {
+			worstFitness = routeFitness
+			worstCostRouteIndex = index
+		}
+	}
+
+	return i.Routes[worstCostRouteIndex].extractAllVisitedPatients()
+}
+
+/* 
+	Removes a list of patients from the routes in the individual. Does NOT recalculate individual fitness.
+	Does NOT update patient attributes!
+*/
+func (i *Individual) removePatients(patientsToRemove []int, instance Instance) {
+	removed := 0
+	for rIndex, r := range i.Routes {
+		var newPatients []Patient
+		modified := false
+		for _, p := range r.Patients {
+			if !slices.Contains(patientsToRemove, p.ID) {
+				newPatients = append(newPatients, p)
+			} else {
+				removed++
+				modified = true
+			}
+		}
+		if modified {
+			r.Patients = newPatients
+			i.Routes[rIndex] = r
+		}
+		if removed == len(patientsToRemove) {
+			break
+		}
+	}
+}
+
+// Adds patients from list to random routes. Does NOT fix patient values for routes!
+func (i *Individual) distributePatientsOnRoutes(patients []int, instance Instance) {
+	source := rand.NewSource(time.Now().UnixNano())
+	random := rand.New(source)
+	
+	for _, pID := range patients {
+		patientAdded := false
+
+		for !patientAdded {
+			randomRouteIndex := random.Intn(instance.NbrNurses)
+			newRoute, ok := i.Routes[randomRouteIndex].canAddPatientEnforced(pID, instance)
+			if ok {
+				i.Routes[randomRouteIndex] = newRoute
+				patientAdded = true
+			}
+		}
+	}
+}
+
+// Fixes all routes to contain the correct values. Also calculates and updates fitness. 
+func (i *Individual) fixAllRoutesAndCalculateFitness(instance Instance) {
+	for index, r := range i.Routes {
+		i.Routes[index] = createRouteFromPatientsVisited(r.Patients, instance)
+	}
+	i.calculateFitness(instance)
 }

@@ -20,6 +20,9 @@ Maybe ignore them if an optimal solution never has empty route. Not sure whether
 function.
 
 
+- Remeber to increase penalty for time window violation
+
+
 ----------------------------------------------------------------------------------------------------------
 Old version of satisfiesConstraints():
 

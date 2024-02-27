@@ -8,7 +8,7 @@ import (
 func createIndividual(instance Instance) Individual {
 	routes := createInitialRoutes(instance)
 
-	for _, patient := range instance.getPatients() {
+	for _, patient := range instance.PatientArray {
 		
 		availableRoutes := sliceToMap(routes)
 		searchForRoute := true
