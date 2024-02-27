@@ -131,7 +131,7 @@ func (r Route) extractAllVisitedPatients() []int {
 }
 
 /*
-Checks whether a patient can be added to a route. Checks capacity and returntime constraints.
+Checks whether a patient can be added to a route. Checks capacity.
 Returns Route and bool on whether this can indeed happen.
 */
 func (r Route) canAddPatient(patientID int, instance Instance) (Route, bool) {
@@ -164,6 +164,40 @@ func (r Route) canAddPatient(patientID int, instance Instance) (Route, bool) {
 		oldPatients := r.Patients
 		newPatients := append(oldPatients, patientToAdd)
 		return createRouteFromPatientsVisited(newPatients, instance), true
+	}
+}
+
+/*
+Checks whether a patient can be added to a route. Checks capacity AND returntime constraints.
+Returns Route and bool on whether this can indeed happen.
+*/
+func (r Route) canAddPatientEnforced(patientID int, instance Instance) (Route, bool) {
+	patientToAdd := instance.getPatientAtID(patientID)
+
+	demandCovered := 0
+	canReturnInTime := false
+	finalRoute := initalizeOneRoute(instance)
+	for index, patient := range r.Patients {
+		demandCovered += patient.Demand
+
+		if canReturnInTime == false {
+			routeCopy := deepCopyRoute(r)
+			newPatientOrder := routeCopy.Patients
+			newPatientOrder = append(newPatientOrder[:index+1], newPatientOrder[index:]...)
+			newPatientOrder[index] = patientToAdd
+			newRoute := createRouteFromPatientsVisited(newPatientOrder, instance)
+
+			if newRoute.CurrentTime <= float64(instance.Depot.ReturnTime) {
+				finalRoute = newRoute
+				canReturnInTime = true
+			}
+		}
+	}
+
+	if instance.CapacityNurse > (demandCovered+patientToAdd.Demand) && canReturnInTime {
+		return finalRoute, true
+	} else {
+		return finalRoute, false
 	}
 }
 

@@ -69,7 +69,7 @@ func mpic(allParents []Individual, numParents int, instance Instance, crossoverR
 			if !slices.Contains(visitedPatients, pID) {
 				patientAdded := false
 				for index, route := range offspring.Routes {
-					feasibleRoute, ok := route.canAddPatient(pID, instance)
+					feasibleRoute, ok := route.canAddPatientEnforced(pID, instance)
 
 					if ok {
 						if !slices.Contains(visitedPatients, pID) {
@@ -78,8 +78,10 @@ func mpic(allParents []Individual, numParents int, instance Instance, crossoverR
 							visitedPatients = append(visitedPatients, pID)
 							patientAdded = true
 
+							//Added
+							break
 						}
-					} 
+					}
 				}
 
 				if !patientAdded {
@@ -88,7 +90,7 @@ func mpic(allParents []Individual, numParents int, instance Instance, crossoverR
 						newRoute.visitPatient(instance.getPatientAtID(pID), instance)
 						offspring.addRoute(newRoute)
 						visitedPatients = append(visitedPatients, pID)
-					} 
+					}
 				}
 			}
 		}
