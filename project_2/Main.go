@@ -5,7 +5,7 @@ import (
 )
 
 // Declare what file you want problem instance from
-var train_file string = "train/train_8.json"
+var train_file string = "train/train_0.json"
 
 // GA paramters
 var numParents int = 25
@@ -17,7 +17,7 @@ func main() {
 	instance := getProblemInstance(train_file)
 
 	population := initPopulation(instance, populationSize)
-	fmt.Println("Im here 1")
+	population.printBestIndividual(instance)
 
 	//population.printPopulationStats()
 	//population.printBestIndividual(instance)
@@ -28,11 +28,7 @@ func main() {
 
 	parents := population.tournamentSelection(numParents)
 	fmt.Println("Im here 2")
-	for i := 0; i < 100; i++ {
-		destroyRepairCrossover(parents[0], parents[1], instance)
-		print(i, "\n\n")
-	}
-
+	destroyRepairCrossover(parents[0], parents[1], instance)
 	//child := mpic(parents, numParents, instance, crossoverRate)
 	//printSolution(child, instance)
 	//child.checkIndividualRoutes(instance, false)

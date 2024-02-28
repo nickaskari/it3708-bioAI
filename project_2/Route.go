@@ -36,7 +36,7 @@ func (r Route) getRandomPatient() Patient {
 func createRouteFromPatientsVisited(patients []Patient, instance Instance) Route {
 	var currentTime float64 = 0
 	lastLocation := 0
-
+	capacity := instance.CapacityNurse
 	newPatients := make([]Patient, 0)
 	for _, patient := range patients {
 		currentTime += instance.getTravelTime(lastLocation, patient.ID)
@@ -50,13 +50,15 @@ func createRouteFromPatientsVisited(patients []Patient, instance Instance) Route
 
 		lastLocation = patient.ID
 		newPatients = append(newPatients, patient)
+		
+		capacity -= patient.Demand
 	}
 	// Go back to depot
 	currentTime += instance.getTravelTime(lastLocation, 0)
 
 	return Route{
 		Depot:         instance.Depot,
-		NurseCapacity: instance.CapacityNurse,
+		NurseCapacity: capacity,
 		CurrentTime:   currentTime,
 		Patients:      newPatients,
 	}
@@ -89,6 +91,8 @@ func (r *Route) visitPatient(patient Patient, instance Instance) {
 	// Leave
 	patient.LeavingTime = r.CurrentTime
 
+	r.NurseCapacity -= patient.Demand
+
 	r.Patients = append(r.Patients, patient)
 }
 
@@ -106,6 +110,7 @@ func deepCopyRoute(originalRoute Route) Route {
 	return r  
 }
 
+// Calculates fitness of route. Returns fitness
 func calculateRouteFitness(route Route, instance Instance) float64 {
 	var fitness float64 = 0
 	if len(route.Patients) > 0 {
@@ -208,4 +213,19 @@ func (r Route) checkIfRouteContainsDuplicates() ([]int, bool) {
 		visited = append(visited, p.ID)
 	}
 	return visited, hasDuplicates(visited)
+}
+
+// Finds best insertion of patient. Outputs route and route objective value FIX THIS TOO TIRED
+func (r Route) findBestInsertion(patient Patient, instance Instance) (Route, float64) {
+	if r.NurseCapacity < patient.Demand {
+		return r, calculateRouteFitness(r, instance)
+	}
+
+	for index, p := range r.Patients {
+		routeCopy := deepCopyRoute(r)
+		newPatientOrder := routeCopy.Patients
+		newPatientOrder = append(newPatientOrder[:index+1], newPatientOrder[index:]...)
+		newPatientOrder[index] = patient
+		newRoute := createRouteFromPatientsVisited(newPatientOrder, instance)
+	}
 }

@@ -56,7 +56,7 @@ func (i *Individual) calculateFitness(instance Instance) {
 
 // Calculates a penalty if patient is visited after endtime, or nurse leaves after endtime.
 func calculatePenalty(patient Patient) float64 {
-	var penaltyFactor float64 = 1
+	var penaltyFactor float64 = 10
 
 	if patient.VisitTime > float64(patient.EndTime) {
 		return (patient.VisitTime - float64(patient.EndTime)) * penaltyFactor

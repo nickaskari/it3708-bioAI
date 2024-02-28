@@ -21,6 +21,8 @@ func destroyRepairCrossover(parent1 Individual, parent2 Individual, instance Ins
 	offspring1.distributePatientsOnRoutes(worstRoutePatients2, instance)
 	offspring2.distributePatientsOnRoutes(worstRoutePatients1, instance)
 
+	// create function that distributes patients on routes
+
 
 	// Updates Route values and assignes fitness
 	offspring1.fixAllRoutesAndCalculateFitness(instance)
