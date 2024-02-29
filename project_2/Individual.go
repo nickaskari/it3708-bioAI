@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
+	"math/rand"
 	"os"
 	"reflect"
 	"slices"
 	"strings"
-	"math/rand"
 	"time"
 )
 
@@ -103,9 +103,9 @@ func (individual Individual) checkIndividualRoutes(instance Instance, force bool
 			returnTimeViolation.countViolation()
 		}
 	}
-	if timeWindowViolation.Count > 0 || capacityViolation.Count > 0 || returnTimeViolation.Count > 0 || force{
+	if timeWindowViolation.Count > 0 || capacityViolation.Count > 0 || returnTimeViolation.Count > 0 || force {
 		reportViolation(timeWindowViolation, capacityViolation, returnTimeViolation, distinctVisitedPatients, totalPatients, instance)
-	} 
+	}
 }
 
 // Helper function for checkIndividualRoutes(). Prints out a report of violations.
@@ -201,14 +201,14 @@ func (i *Individual) addRoute(route Route) {
 }
 
 // return num patients in individual, and if duplicates
-func(i Individual) getNumPatients() (int, bool) {
+func (i Individual) getNumPatients() (int, bool) {
 	num := 0
 	visited := []int{}
-	for _, r := range i.Routes{
+	for _, r := range i.Routes {
 		for _, p := range r.Patients {
-			num ++
+			num++
 			visited = append(visited, p.ID)
-		} 
+		}
 	}
 	return num, hasDuplicates(visited)
 }
@@ -217,7 +217,7 @@ func(i Individual) getNumPatients() (int, bool) {
 func (i Individual) findWorstCostRoute(instance Instance) []int {
 	var worstCostRouteIndex int
 
-	worstFitness := math.Inf(-1)	
+	worstFitness := math.Inf(-1)
 	for index, r := range i.Routes {
 		routeFitness := calculateRouteFitness(r, instance)
 		if routeFitness > worstFitness {
@@ -229,9 +229,9 @@ func (i Individual) findWorstCostRoute(instance Instance) []int {
 	return i.Routes[worstCostRouteIndex].extractAllVisitedPatients()
 }
 
-/* 
-	Removes a list of patients from the routes in the individual. Does NOT recalculate individual fitness.
-	Does NOT update patient attributes!
+/*
+Removes a list of patients from the routes in the individual. Does NOT recalculate individual fitness.
+Does NOT update patient attributes!
 */
 func (i *Individual) removePatients(patientsToRemove []int, instance Instance) {
 	removed := 0
@@ -260,7 +260,7 @@ func (i *Individual) removePatients(patientsToRemove []int, instance Instance) {
 func (i *Individual) distributePatientsOnRoutes(patients []int, instance Instance) {
 	source := rand.NewSource(time.Now().UnixNano())
 	random := rand.New(source)
-	
+
 	for _, pID := range patients {
 		patientAdded := false
 
@@ -275,7 +275,7 @@ func (i *Individual) distributePatientsOnRoutes(patients []int, instance Instanc
 	}
 }
 
-// Fixes all routes to contain the correct values. Also calculates and updates fitness. 
+// Fixes all routes to contain the correct values. Also calculates and updates fitness.
 func (i *Individual) fixAllRoutesAndCalculateFitness(instance Instance) {
 	for index, r := range i.Routes {
 		i.Routes[index] = createRouteFromPatientsVisited(r.Patients, instance)
@@ -283,7 +283,7 @@ func (i *Individual) fixAllRoutesAndCalculateFitness(instance Instance) {
 	i.calculateFitness(instance)
 }
 
-// Inserts a list of patients in the best routes
+// Inserts a list of patients in the best routes. Recalculates fitness in the end.
 func (i *Individual) findBestRoutesForPatients(patients []int, instance Instance) {
 	for _, pID := range patients {
 		leastChange := math.Inf(1)

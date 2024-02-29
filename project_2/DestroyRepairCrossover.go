@@ -1,11 +1,8 @@
 package main
 
-import (
-	"fmt"
-)
 
 // Performs crossover between two parents with the destroy/repair method as detailed in the visma lecture
-func destroyRepairCrossover(parent1 Individual, parent2 Individual, instance Instance) {
+func destroyRepairCrossover(parent1 Individual, parent2 Individual, instance Instance) (Individual, Individual) {
 	// Finds per now the route with worst objectve value. Maybe want to change to most inefficient route in the future. 
 	worstRoutePatients1 := parent1.findWorstCostRoute(instance) 
 	worstRoutePatients2 := parent2.findWorstCostRoute(instance)
@@ -14,10 +11,6 @@ func destroyRepairCrossover(parent1 Individual, parent2 Individual, instance Ins
 	offspring2 := deepCopyIndividual(parent2)
 
 	offspring1.Age, offspring2.Age = 0, 0
-
-	fmt.Println("\nBefore Crossover\n")
-	printSolution(offspring1, instance)
-	offspring1.checkIndividualRoutes(instance, false)
 
 	offspring1.removePatients(worstRoutePatients2, instance)
 	offspring2.removePatients(worstRoutePatients1, instance)
@@ -30,9 +23,7 @@ func destroyRepairCrossover(parent1 Individual, parent2 Individual, instance Ins
 	offspring1.findBestRoutesForPatients(worstRoutePatients2, instance)
 	offspring2.findBestRoutesForPatients(worstRoutePatients1, instance)
 
-	fmt.Println("\nAfter Crossover\n")
-	printSolution(offspring1, instance)
-	offspring1.checkIndividualRoutes(instance, false)
+	return offspring1, offspring2
 }
 
 

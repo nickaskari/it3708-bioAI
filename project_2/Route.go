@@ -227,6 +227,18 @@ func (r Route) findBestInsertion(patientID int, instance Instance) (Route, float
 	oldRouteFitness := calculateRouteFitness(r, instance)
 	var bestRoute Route
 	changedObjectiveValue := math.Inf(1)
+
+	// Handle Empty Route
+	if len(r.Patients) == 0 {
+		newPatientOrder := []Patient{patient}
+		newRoute := createRouteFromPatientsVisited(newPatientOrder, instance)
+		// check for return time violation
+		if newRoute.CurrentTime <= float64(instance.Depot.ReturnTime) {
+			newRouteFitness := calculateRouteFitness(newRoute, instance)
+			return bestRoute, newRouteFitness
+		}
+	}
+
 	for index := 0; index < len(r.Patients); index++ {
 		routeCopy := deepCopyRoute(r)
 		newPatientOrder := routeCopy.Patients
