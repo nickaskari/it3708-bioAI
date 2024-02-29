@@ -25,6 +25,8 @@ func destroyRepairCrossover(parent1 Individual, parent2 Individual, instance Ins
 
 	return offspring1, offspring2
 }
+ 
+
 
 
 

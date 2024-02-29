@@ -39,20 +39,23 @@ func createRouteFromPatientsVisited(patients []Patient, instance Instance) Route
 	lastLocation := 0
 	capacity := instance.CapacityNurse
 	newPatients := make([]Patient, 0)
+
 	for _, patient := range patients {
-		currentTime += instance.getTravelTime(lastLocation, patient.ID)
-		if currentTime < float64(patient.StartTime) {
-			currentTime += float64(patient.StartTime) - currentTime
+		patientCopy := instance.getPatientAtID(patient.ID)
+
+		currentTime += instance.getTravelTime(lastLocation, patientCopy.ID)
+		if currentTime < float64(patientCopy.StartTime) {
+			currentTime += float64(patientCopy.StartTime) - currentTime
 		}
-		patient.VisitTime = currentTime
+		patientCopy.VisitTime = currentTime
 
-		currentTime += float64(patient.CareTime)
-		patient.LeavingTime = currentTime
+		currentTime += float64(patientCopy.CareTime)
+		patientCopy.LeavingTime = currentTime
 
-		lastLocation = patient.ID
-		newPatients = append(newPatients, patient)
+		lastLocation = patientCopy.ID
+		newPatients = append(newPatients, patientCopy)
 
-		capacity -= patient.Demand
+		capacity -= patientCopy.Demand
 	}
 	// Go back to depot
 	currentTime += instance.getTravelTime(lastLocation, 0)
@@ -244,7 +247,7 @@ func (r Route) findBestInsertion(patientID int, instance Instance) (Route, float
 		newPatientOrder := routeCopy.Patients
 		newPatientOrder = append(newPatientOrder[:index+1], newPatientOrder[index:]...)
 
-		if index == len(r.Patients) - 1 {
+		if index == len(r.Patients)-1 {
 			newPatientOrder[index+1] = patient
 		} else {
 			newPatientOrder[index] = patient
@@ -265,4 +268,29 @@ func (r Route) findBestInsertion(patientID int, instance Instance) (Route, float
 	}
 
 	return bestRoute, changedObjectiveValue
+}
+
+/*
+Performs a patient swap for inter route mutations.
+Takes in patient from current route, changes it with the spesified patient.
+Returns the changed route. Performs swap only if capacity and returntime are not violated.
+*/
+func (r Route) performPatientSwap(exsistingPatient Patient, outsidePatient Patient, instance Instance) (Route, bool) {
+	newPatients := []Patient{}
+
+	for _, p := range r.Patients {
+		if p.ID == exsistingPatient.ID {
+			newPatients = append(newPatients, instance.getPatientAtID(outsidePatient.ID))
+		} else {
+			newPatients = append(newPatients, instance.getPatientAtID(p.ID))
+		}
+	}
+	
+	newRoute := createRouteFromPatientsVisited(newPatients, instance)
+	if newRoute.NurseCapacity <= instance.CapacityNurse {
+		if newRoute.CurrentTime <= float64(instance.Depot.ReturnTime) {
+			return newRoute, true
+		}
+	}
+	return r, false
 }

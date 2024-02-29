@@ -54,9 +54,25 @@ func (i *Individual) calculateFitness(instance Instance) {
 	i.Fitness = fitness
 }
 
+// Version 2 of fitness calc
+func (i Individual) calculateFitness2(instance Instance) float64{
+	var fitness float64 = 0
+	for _, route := range i.Routes {
+		if len(route.Patients) > 0 {
+			lastLocation := 0
+			for pNum, patient := range route.Patients {
+				fitness += instance.getTravelTime(lastLocation, pNum)
+				lastLocation = pNum
+				fitness += calculatePenalty(patient)
+			}
+		}
+	}
+	return fitness
+}
+
 // Calculates a penalty if patient is visited after endtime, or nurse leaves after endtime.
 func calculatePenalty(patient Patient) float64 {
-	var penaltyFactor float64 = 10
+	var penaltyFactor float64 = 50
 
 	if patient.VisitTime > float64(patient.EndTime) {
 		return (patient.VisitTime - float64(patient.EndTime)) * penaltyFactor
@@ -300,4 +316,22 @@ func (i *Individual) findBestRoutesForPatients(patients []int, instance Instance
 		i.Routes[index] = newRoute
 	}
 	i.calculateFitness(instance)
+}
+
+// Get a random non-empty (>1) route from the individual. Returns index of the route.
+func (i Individual) getRandomRoute() int {
+	source := rand.NewSource(time.Now().UnixNano())
+	random := rand.New(source)
+
+	for {
+		randomIndex := random.Intn(len(i.Routes))
+		if len(i.Routes[randomIndex].Patients) > 1 {
+			return randomIndex
+		}
+	}
+}
+
+// updates a route at a certain index
+func (i *Individual) updateRouteAtIndex(route *Route, index int) {
+	i.Routes[index] = *route
 }

@@ -8,10 +8,10 @@ import (
 	"time"
 )
 
+
 type Population struct {
 	Individuals    []Individual
 	BestIndividual Individual
-	Size           int
 }
 
 // Initializes a new population
@@ -31,7 +31,7 @@ func initPopulation(instance Instance, populationSize int) Population {
 
 	bestIndividual.writeIndividualToJson()
 
-	return Population{Individuals: individuals, BestIndividual: bestIndividual, Size: populationSize}
+	return Population{Individuals: individuals, BestIndividual: bestIndividual}
 }
 
 // Prints average fitnees of the population, best fitness and worst fitness
@@ -83,6 +83,7 @@ func (p Population) printPopulationStats() {
 // Prints the best individual in a pretty format
 func (p Population) printBestIndividual(instance Instance) {
 	printSolution(p.BestIndividual, instance)
+	p.BestIndividual.checkIndividualRoutes(instance, true)
 }
 
 // Performs tournamentselection for parent selection. Input is number of desired parents. Returns all chosen parents. (deterministic)
@@ -94,7 +95,7 @@ func (p Population) tournamentSelection(numParents int) []Individual {
 
 	for len(winners) != numParents {
 		if len(contestants) > 1 {
-			size := 2 + r.Intn(p.Size-1)
+			size := 2 + r.Intn(p.size() -1)
 			match := chooseRandomUnique[Individual](contestants, size)
 			winner := getBestIndividual(match)
 			winner.removeIndividualFrom(match)
@@ -120,7 +121,7 @@ func getBestIndividual(individuals []Individual) Individual {
 }
 
 // Performs elitism for surivior selection. Returns the new population
-func (p *Population) applyElitismWithPercentage(newPopulation []Individual, elitismPercentage float64) []Individual {
+func (p *Population) applyElitismWithPercentage(newPopulation []Individual, elitismPercentage float64) ([]Individual, Individual) {
 	numToPreserve := int(float64(len(p.Individuals))*elitismPercentage/100.0 + 0.5) // Percentage to absolute number
 
 	// Sort the old population by fitness to find the fittest individuals, by making a copy
@@ -161,6 +162,14 @@ func (p *Population) applyElitismWithPercentage(newPopulation []Individual, elit
 			}
 		}
 	}
-
-	return newPopulation
+	
+	bestIndividual := getBestIndividual(newPopulation)
+	return newPopulation, bestIndividual
 }
+
+// Returns the size of the population
+func (p Population) size() int {
+	return len(p.Individuals)
+}
+
+// gets two random parents that are not the same
