@@ -1,6 +1,7 @@
 package main
 
 import (
+	"math"
 	"math/rand"
 	"time"
 )
@@ -50,7 +51,7 @@ func createRouteFromPatientsVisited(patients []Patient, instance Instance) Route
 
 		lastLocation = patient.ID
 		newPatients = append(newPatients, patient)
-		
+
 		capacity -= patient.Demand
 	}
 	// Go back to depot
@@ -107,7 +108,7 @@ func deepCopyRoute(originalRoute Route) Route {
 	r.Patients = make([]Patient, len(originalRoute.Patients))
 	copy(r.Patients, originalRoute.Patients) // This is correct usage of copy for slice
 
-	return r  
+	return r
 }
 
 // Calculates fitness of route. Returns fitness
@@ -215,17 +216,41 @@ func (r Route) checkIfRouteContainsDuplicates() ([]int, bool) {
 	return visited, hasDuplicates(visited)
 }
 
-// Finds best insertion of patient. Outputs route and route objective value FIX THIS TOO TIRED
-func (r Route) findBestInsertion(patient Patient, instance Instance) (Route, float64) {
+// Finds best insertion of patient in a route. Outputs new route and route objective value changed (after - before)
+func (r Route) findBestInsertion(patientID int, instance Instance) (Route, float64) {
+	patient := instance.getPatientAtID(patientID)
+
 	if r.NurseCapacity < patient.Demand {
-		return r, calculateRouteFitness(r, instance)
+		return r, math.Inf(1)
 	}
 
-	for index, p := range r.Patients {
+	oldRouteFitness := calculateRouteFitness(r, instance)
+	var bestRoute Route
+	changedObjectiveValue := math.Inf(1)
+	for index := 0; index < len(r.Patients); index++ {
 		routeCopy := deepCopyRoute(r)
 		newPatientOrder := routeCopy.Patients
 		newPatientOrder = append(newPatientOrder[:index+1], newPatientOrder[index:]...)
-		newPatientOrder[index] = patient
+
+		if index == len(r.Patients) - 1 {
+			newPatientOrder[index+1] = patient
+		} else {
+			newPatientOrder[index] = patient
+		}
+
 		newRoute := createRouteFromPatientsVisited(newPatientOrder, instance)
+
+		// check for return time violation
+		if newRoute.CurrentTime <= float64(instance.Depot.ReturnTime) {
+			newRouteFitness := calculateRouteFitness(newRoute, instance)
+
+			change := newRouteFitness - oldRouteFitness
+			if change < changedObjectiveValue {
+				changedObjectiveValue = change
+				bestRoute = newRoute
+			}
+		}
 	}
+
+	return bestRoute, changedObjectiveValue
 }

@@ -282,3 +282,22 @@ func (i *Individual) fixAllRoutesAndCalculateFitness(instance Instance) {
 	}
 	i.calculateFitness(instance)
 }
+
+// Inserts a list of patients in the best routes
+func (i *Individual) findBestRoutesForPatients(patients []int, instance Instance) {
+	for _, pID := range patients {
+		leastChange := math.Inf(1)
+		var index int
+		var newRoute Route
+		for rIndex, r := range i.Routes {
+			possibleRoute, change := r.findBestInsertion(pID, instance)
+			if change < leastChange {
+				leastChange = change
+				newRoute = possibleRoute
+				index = rIndex
+			}
+		}
+		i.Routes[index] = newRoute
+	}
+	i.calculateFitness(instance)
+}

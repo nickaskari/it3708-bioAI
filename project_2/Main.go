@@ -29,6 +29,7 @@ func main() {
 	parents := population.tournamentSelection(numParents)
 	fmt.Println("Im here 2")
 	destroyRepairCrossover(parents[0], parents[1], instance)
+
 	//child := mpic(parents, numParents, instance, crossoverRate)
 	//printSolution(child, instance)
 	//child.checkIndividualRoutes(instance, false)
