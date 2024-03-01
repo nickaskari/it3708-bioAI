@@ -28,6 +28,7 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 
 		parents := population.tournamentSelection(numParents)
 
+		// This condition is wrong? population size gets altered..
 		for population.size() > len(newIndividuals) {
 			source := rand.NewSource(time.Now().UnixNano())
 			r := rand.New(source)
