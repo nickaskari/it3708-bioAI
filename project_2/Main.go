@@ -5,15 +5,15 @@ import (
 )
 
 // Declare what file you want problem instance from
-var train_file string = "train/train_7.json"
+var train_file string = "train/train_8.json"
 
 // GA paramters
-var numParents int = 40
+var numParents int = 60
 var populationSize int = 100
-var crossoverRate float64 = 0.8
-var mutationRate float64 = 0.2
-var gMax int = 100
-var temp int = 1000
+var crossoverRate float64 = 1
+var mutationRate float64 = 0.8
+var gMax int = 20
+var temp int = 200
 
 func main() {
 	fmt.Println("")

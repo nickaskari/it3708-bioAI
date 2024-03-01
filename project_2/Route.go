@@ -238,7 +238,7 @@ func (r Route) findBestInsertion(patientID int, instance Instance) (Route, float
 		// check for return time violation
 		if newRoute.CurrentTime <= float64(instance.Depot.ReturnTime) {
 			newRouteFitness := calculateRouteFitness(newRoute, instance)
-			return bestRoute, newRouteFitness
+			return newRoute, newRouteFitness
 		}
 	}
 
