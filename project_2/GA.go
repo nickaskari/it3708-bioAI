@@ -7,7 +7,8 @@ import (
 )
 
 
-func GA(populationSize int, gMax int, numParents int, temp int, crossoverRate float64, mutationRate float64, instance Instance) {
+func GA(populationSize int, gMax int, numParents int, temp int, 
+	crossoverRate float64, mutationRate float64, elitismPercentage float64, instance Instance) {
 	
 	generation := 0
 	
@@ -32,30 +33,26 @@ func GA(populationSize int, gMax int, numParents int, temp int, crossoverRate fl
 					parent1, parent2 := parents[i], parents[j]
 					child1, child2 := destroyRepairCrossover(parent1, parent2, instance)
 
+					// Remeber to also add parents
 					if r.Float64() < mutationRate {
 						mutated1, mutated2 := hillClimbing(child1, temp, instance), hillClimbing(child2, temp, instance)
 						newIndividuals = append(newIndividuals, mutated1, mutated2)
 					} else {
 						newIndividuals = append(newIndividuals, child1, child2)
 					}
-					
 				}
 			}
 		
-			// GHETTO solution
-		fmt.Println("\n\n")
+
+		// Perform survivor selection NOT SURE IF THIS WORKS
 		fmt.Println("GENEREATION", generation)
-		population = Population {
-			Individuals: newIndividuals,
-			BestIndividual: getBestIndividual(newIndividuals),
-		}
+		population = population.applyElitismWithPercentage(newIndividuals, elitismPercentage)
 		population.printPopulationStats()
 		population.printBestIndividual(instance)
-		fmt.Println("\n\n")
 
 		generation++
 	}
-	// Perform survivor selection SKIPPING FOR NOW
+
 }
 
 // Get Two random indexes that are not the same

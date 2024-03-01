@@ -8,7 +8,6 @@ import (
 	"time"
 )
 
-
 type Population struct {
 	Individuals    []Individual
 	BestIndividual Individual
@@ -95,7 +94,7 @@ func (p Population) tournamentSelection(numParents int) []Individual {
 
 	for len(winners) != numParents {
 		if len(contestants) > 1 {
-			size := 2 + r.Intn(p.size() -1)
+			size := 2 + r.Intn(p.size()-1)
 			match := chooseRandomUnique[Individual](contestants, size)
 			winner := getBestIndividual(match)
 			winner.removeIndividualFrom(match)
@@ -120,51 +119,76 @@ func getBestIndividual(individuals []Individual) Individual {
 	return bestIndividual
 }
 
-// Performs elitism for surivior selection. Returns the new population
-func (p *Population) applyElitismWithPercentage(newPopulation []Individual, elitismPercentage float64) ([]Individual, Individual) {
-	numToPreserve := int(float64(len(p.Individuals))*elitismPercentage/100.0 + 0.5) // Percentage to absolute number
+// Performs elitism for surivior selection. Returns the new population.
+func (p Population) applyElitismWithPercentage(newPopulation []Individual, elitismPercentage float64) Population {
+	numToPreserve := int(math.Floor(float64(p.size()) * elitismPercentage))
 
-	// Sort the old population by fitness to find the fittest individuals, by making a copy
-	sortedIndividuals := make([]Individual, len(p.Individuals))
-	copy(sortedIndividuals, p.Individuals)
-	sort.Slice(sortedIndividuals, func(i, j int) bool {
-		return sortedIndividuals[i].Fitness < sortedIndividuals[j].Fitness // For minimization
+	// Sort the old population by fitness to find the fittest individuals, by making a copy. BEST TO WORST
+	sortedOldIndividuals := make([]Individual, p.size())
+	copy(sortedOldIndividuals, p.Individuals)
+	sort.Slice(sortedOldIndividuals, func(i, j int) bool {
+		return sortedOldIndividuals[i].Fitness < sortedOldIndividuals[j].Fitness // For minimization
 	})
 
-	// Select the n fittest individuals based on the elitism percentage
-	fittestIndividuals := sortedIndividuals[:numToPreserve]
+	// Sort the new population by fitness for WORST TO BEST (opposite of last one)
+	sortedNewIndividuals := make([]Individual, len(newPopulation))
+	copy(sortedNewIndividuals, newPopulation)
+	sort.Slice(sortedNewIndividuals, func(i, j int) bool {
+		return sortedNewIndividuals[i].Fitness > sortedNewIndividuals[j].Fitness
+	})
 
-	for _, fittest := range fittestIndividuals {
-		// Check if this fittest individual is already in the new generation
-		found := false
-		for _, individual := range newPopulation {
-			if individual.Fitness == fittest.Fitness {
-				found = true
-				// If found, break the loop
-				break
-			}
+	finalIndividuals := []Individual{}
+
+	fmt.Println("NUM TO PRESERVE:", numToPreserve)
+	for index, individual := range sortedNewIndividuals {
+		if index < numToPreserve {
+			oldFitIndividual := deepCopyIndividual(sortedOldIndividuals[index])
+			finalIndividuals = append(finalIndividuals, oldFitIndividual)
+			//fmt.Println("\n\n\n\n\n\nIIMMMM HERE \n\n\n\n")
+		} else {
+			newIndividual := deepCopyIndividual(individual)
+			finalIndividuals = append(finalIndividuals, newIndividual)
+			//fmt.Println("\n\n\n\n\n\nNOOOOO IM GAAAA \n\n\n\n")
 		}
+	}
 
-		// If not found, replace the least fit individual in the new generation with this fittest individual from the old generation
-		if !found {
-			// Find the least fit individual in the new generation
-			worstFitnessIndex := -1
-			worstFitness := -1.0
-			for i, individual := range newPopulation {
-				if worstFitnessIndex == -1 || individual.Fitness > worstFitness {
-					worstFitness = individual.Fitness
-					worstFitnessIndex = i
+	return Population{
+		Individuals:    finalIndividuals,
+		BestIndividual: getBestIndividual(finalIndividuals),
+	}
+
+	/*
+
+		for _, fittest := range fittestIndividuals {
+			// Check if this fittest individual is already in the new generation
+			found := false
+			for _, individual := range newPopulation {
+				if individual.Fitness == fittest.Fitness {
+					found = true
+					// If found, break the loop
+					break
 				}
 			}
 
-			if worstFitnessIndex != -1 {
-				newPopulation[worstFitnessIndex] = fittest
+			// If not found, replace the least fit individual in the new generation with this fittest individual from the old generation
+			if !found {
+				// Find the least fit individual in the new generation.
+				// Does not make sense
+				worstFitnessIndex := -1
+				worstFitness := -1.0
+				for i, individual := range newPopulation {
+					if worstFitnessIndex == -1 || individual.Fitness > worstFitness {
+						worstFitness = individual.Fitness
+						worstFitnessIndex = i
+					}
+				}
+
+				if worstFitnessIndex != -1 {
+					newPopulation[worstFitnessIndex] = fittest
+				}
 			}
 		}
-	}
-	
-	bestIndividual := getBestIndividual(newPopulation)
-	return newPopulation, bestIndividual
+	*/
 }
 
 // Returns the size of the population

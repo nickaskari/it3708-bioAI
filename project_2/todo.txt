@@ -22,6 +22,7 @@ function.
 
 - Remeber to increase penalty for time window violation
 
+- Satisfiesconstraint has omitted return time --> solved train8 problem.
 
 ----------------------------------------------------------------------------------------------------------
 Old version of satisfiesConstraints():

@@ -55,6 +55,7 @@ func createInitialRoutes(instance Instance) []Route {
 }
 
 // Checks whether a given nurse can visit a potential patient. DOES NOT CHECK ALL CONSTRAINTS (TIME WINDOW LEFT OUT)
+// Left out return time for now!!
 func satisfiesConstraints(nurseRoute Route, potentialPatient Patient, instance Instance) bool {
 
 	currentPatient := 0
@@ -79,6 +80,7 @@ func satisfiesConstraints(nurseRoute Route, potentialPatient Patient, instance I
 			
 			return true
 		}
+		return true
 	} else {
 		if (timeAtArival + float64(potentialPatient.CareTime) + potentialPatientToDepot) <= float64(instance.Depot.ReturnTime) {
 
@@ -90,6 +92,7 @@ func satisfiesConstraints(nurseRoute Route, potentialPatient Patient, instance I
 
 			return true
 		}
+		return true
 	}
 	return false
 }
