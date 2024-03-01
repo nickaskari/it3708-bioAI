@@ -9,8 +9,7 @@ import (
 )
 
 type Population struct {
-	Individuals    []Individual
-	BestIndividual Individual
+	Individuals []Individual
 }
 
 // Initializes a new population
@@ -30,7 +29,7 @@ func initPopulation(instance Instance, populationSize int) Population {
 
 	bestIndividual.writeIndividualToJson()
 
-	return Population{Individuals: individuals, BestIndividual: bestIndividual}
+	return Population{Individuals: individuals}
 }
 
 // Prints average fitnees of the population, best fitness and worst fitness
@@ -80,14 +79,15 @@ func (p Population) printPopulationStats() {
 }
 
 // Prints the best individual in a pretty format
-func (p Population) printBestIndividual(instance Instance) {
-	printSolution(p.BestIndividual, instance)
-	p.BestIndividual.checkIndividualRoutes(instance, true)
+func printBestIndividual(i []Individual, instance Instance) {
+	best := getBestIndividual(i)
+	printSolution(best, instance)
+	best.checkIndividualRoutes(instance, true)
 }
 
 // Performs tournamentselection for parent selection. Input is number of desired parents. Returns all chosen parents. (deterministic)
 func (p Population) tournamentSelection(numParents int) []Individual {
-	contestants := p.Individuals
+	contestants := deepCopyIndividuals(p.Individuals)
 	winners := make([]Individual, 0)
 	source := rand.NewSource(time.Now().UnixNano())
 	r := rand.New(source)
@@ -124,22 +124,20 @@ func (p Population) applyElitismWithPercentage(newPopulation []Individual, eliti
 	numToPreserve := int(math.Floor(float64(p.size()) * elitismPercentage))
 
 	// Sort the old population by fitness to find the fittest individuals, by making a copy. BEST TO WORST
-	sortedOldIndividuals := make([]Individual, p.size())
-	copy(sortedOldIndividuals, p.Individuals)
+	sortedOldIndividuals := deepCopyIndividuals(p.Individuals)
+
 	sort.Slice(sortedOldIndividuals, func(i, j int) bool {
 		return sortedOldIndividuals[i].Fitness < sortedOldIndividuals[j].Fitness // For minimization
 	})
 
 	// Sort the new population by fitness for WORST TO BEST (opposite of last one)
-	sortedNewIndividuals := make([]Individual, len(newPopulation))
-	copy(sortedNewIndividuals, newPopulation)
+	sortedNewIndividuals := deepCopyIndividuals(newPopulation)
 	sort.Slice(sortedNewIndividuals, func(i, j int) bool {
 		return sortedNewIndividuals[i].Fitness > sortedNewIndividuals[j].Fitness
 	})
 
 	finalIndividuals := []Individual{}
 
-	fmt.Println("NUM TO PRESERVE:", numToPreserve)
 	for index, individual := range sortedNewIndividuals {
 		if index < numToPreserve {
 			oldFitIndividual := deepCopyIndividual(sortedOldIndividuals[index])
@@ -152,43 +150,9 @@ func (p Population) applyElitismWithPercentage(newPopulation []Individual, eliti
 		}
 	}
 
-	return Population{
-		Individuals:    finalIndividuals,
-		BestIndividual: getBestIndividual(finalIndividuals),
+	return Population {
+		Individuals: finalIndividuals,
 	}
-
-	/*
-
-		for _, fittest := range fittestIndividuals {
-			// Check if this fittest individual is already in the new generation
-			found := false
-			for _, individual := range newPopulation {
-				if individual.Fitness == fittest.Fitness {
-					found = true
-					// If found, break the loop
-					break
-				}
-			}
-
-			// If not found, replace the least fit individual in the new generation with this fittest individual from the old generation
-			if !found {
-				// Find the least fit individual in the new generation.
-				// Does not make sense
-				worstFitnessIndex := -1
-				worstFitness := -1.0
-				for i, individual := range newPopulation {
-					if worstFitnessIndex == -1 || individual.Fitness > worstFitness {
-						worstFitness = individual.Fitness
-						worstFitnessIndex = i
-					}
-				}
-
-				if worstFitnessIndex != -1 {
-					newPopulation[worstFitnessIndex] = fittest
-				}
-			}
-		}
-	*/
 }
 
 // Returns the size of the population
@@ -196,4 +160,44 @@ func (p Population) size() int {
 	return len(p.Individuals)
 }
 
-// gets two random parents that are not the same
+func deepCopyPopulation(original Population) Population {
+	copy := original
+
+	copy.Individuals = make([]Individual, len(original.Individuals))
+	for i, individual := range original.Individuals {
+		copy.Individuals[i] = deepCopyIndividual(individual)
+	}
+
+	return copy
+}
+
+// Does elitism with destruction of all the other individuals. Performs create individual again. Returns new population
+func (p Population) applyGenecoideWithElitism(elitismPercentage float64, instance Instance) Population {
+	numToPreserve := int(math.Floor(float64(p.size()) * elitismPercentage))
+
+	// Sort the old population by fitness to find the fittest individuals, by making a copy. BEST TO WORST
+	sortedOldIndividuals := deepCopyIndividuals(p.Individuals)
+
+	sort.Slice(sortedOldIndividuals, func(i, j int) bool {
+		return sortedOldIndividuals[i].Fitness < sortedOldIndividuals[j].Fitness // For minimization
+	})
+
+	finalIndividuals := []Individual{}
+
+
+	for index := range p.size() {
+		if index < numToPreserve {
+			oldFitIndividual := deepCopyIndividual(sortedOldIndividuals[index])
+			finalIndividuals = append(finalIndividuals, oldFitIndividual)
+		} else {
+			individual := createIndividual(instance)
+			newIndividual := deepCopyIndividual(individual)
+			finalIndividuals = append(finalIndividuals, newIndividual)
+		}
+	}
+
+	return Population {
+		Individuals: finalIndividuals,
+	}
+	
+}

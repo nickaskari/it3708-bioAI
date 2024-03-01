@@ -1,5 +1,5 @@
 {
-    "fitness": 1793642.0939776162,
+    "fitness": 3568083.610808511,
     "age": 0,
     "routes": [
         {
@@ -8,9 +8,17 @@
                 "x_coord": 40,
                 "y_coord": 50
             },
-            "nurse_capacity": 610,
-            "current_time": 3120.6633797724903,
+            "nurse_capacity": 670,
+            "current_time": 1378.3553390593274,
             "patients": [
+                {
+                    "x_coord": 0,
+                    "y_coord": 45,
+                    "demand": 20,
+                    "start_time": 1158,
+                    "end_time": 1408,
+                    "care_time": 90
+                },
                 {
                     "x_coord": 5,
                     "y_coord": 45,
@@ -18,53 +26,32 @@
                     "start_time": 1253,
                     "end_time": 1503,
                     "care_time": 90
-                },
+                }
+            ]
+        },
+        {
+            "depot": {
+                "return_time": 3390,
+                "x_coord": 40,
+                "y_coord": 50
+            },
+            "nurse_capacity": 630,
+            "current_time": 3024.142135623731,
+            "patients": [
                 {
-                    "x_coord": 44,
-                    "y_coord": 5,
+                    "x_coord": 78,
+                    "y_coord": 40,
                     "demand": 20,
-                    "start_time": 1256,
-                    "end_time": 1506,
+                    "start_time": 2802,
+                    "end_time": 3052,
                     "care_time": 90
                 },
                 {
-                    "x_coord": 60,
-                    "y_coord": 66,
-                    "demand": 10,
-                    "start_time": 1261,
-                    "end_time": 1511,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 33,
-                    "y_coord": 32,
-                    "demand": 20,
-                    "start_time": 2666,
-                    "end_time": 2916,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 30,
-                    "y_coord": 35,
-                    "demand": 10,
-                    "start_time": 2480,
-                    "end_time": 2730,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 22,
-                    "y_coord": 85,
-                    "demand": 10,
-                    "start_time": 2026,
-                    "end_time": 2276,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 35,
-                    "y_coord": 66,
-                    "demand": 10,
-                    "start_time": 2791,
-                    "end_time": 3041,
+                    "x_coord": 50,
+                    "y_coord": 40,
+                    "demand": 50,
+                    "start_time": 25,
+                    "end_time": 275,
                     "care_time": 90
                 }
             ]
@@ -75,74 +62,15 @@
                 "x_coord": 40,
                 "y_coord": 50
             },
-            "nurse_capacity": 650,
-            "current_time": 2787.6957707744496,
+            "nurse_capacity": 610,
+            "current_time": 1936.1553655897355,
             "patients": [
-                {
-                    "x_coord": 16,
-                    "y_coord": 42,
-                    "demand": 20,
-                    "start_time": 497,
-                    "end_time": 747,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 92,
-                    "y_coord": 30,
-                    "demand": 10,
-                    "start_time": 2414,
-                    "end_time": 2664,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 66,
-                    "y_coord": 55,
-                    "demand": 10,
-                    "start_time": 1736,
-                    "end_time": 1986,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 65,
-                    "y_coord": 82,
-                    "demand": 10,
-                    "start_time": 788,
-                    "end_time": 1038,
-                    "care_time": 90
-                }
-            ]
-        },
-        {
-            "depot": {
-                "return_time": 3390,
-                "x_coord": 40,
-                "y_coord": 50
-            },
-            "nurse_capacity": 540,
-            "current_time": 3278.245663861326,
-            "patients": [
-                {
-                    "x_coord": 22,
-                    "y_coord": 66,
-                    "demand": 40,
-                    "start_time": 2504,
-                    "end_time": 2754,
-                    "care_time": 90
-                },
                 {
                     "x_coord": 60,
                     "y_coord": 85,
                     "demand": 30,
                     "start_time": 597,
                     "end_time": 847,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 62,
-                    "y_coord": 80,
-                    "demand": 30,
-                    "start_time": 881,
-                    "end_time": 1131,
                     "care_time": 90
                 },
                 {
@@ -154,81 +82,19 @@
                     "care_time": 90
                 },
                 {
-                    "x_coord": 78,
-                    "y_coord": 40,
+                    "x_coord": 14,
+                    "y_coord": 66,
+                    "demand": 10,
+                    "start_time": 1643,
+                    "end_time": 1893,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 44,
+                    "y_coord": 5,
                     "demand": 20,
-                    "start_time": 2802,
-                    "end_time": 3052,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 36,
-                    "y_coord": 40,
-                    "demand": 10,
-                    "start_time": 2856,
-                    "end_time": 3106,
-                    "care_time": 90
-                }
-            ]
-        },
-        {
-            "depot": {
-                "return_time": 3390,
-                "x_coord": 40,
-                "y_coord": 50
-            },
-            "nurse_capacity": 670,
-            "current_time": 2124.709920264365,
-            "patients": [
-                {
-                    "x_coord": 34,
-                    "y_coord": 25,
-                    "demand": 30,
-                    "start_time": 2009,
-                    "end_time": 2259,
-                    "care_time": 90
-                }
-            ]
-        },
-        {
-            "depot": {
-                "return_time": 3390,
-                "x_coord": 40,
-                "y_coord": 50
-            },
-            "nurse_capacity": 650,
-            "current_time": 1390.2449120838326,
-            "patients": [
-                {
-                    "x_coord": 5,
-                    "y_coord": 35,
-                    "demand": 10,
-                    "start_time": 876,
-                    "end_time": 1126,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 58,
-                    "y_coord": 75,
-                    "demand": 20,
-                    "start_time": 978,
-                    "end_time": 1228,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 23,
-                    "y_coord": 52,
-                    "demand": 10,
-                    "start_time": 209,
-                    "end_time": 459,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 47,
-                    "y_coord": 35,
-                    "demand": 10,
-                    "start_time": 588,
-                    "end_time": 838,
+                    "start_time": 1256,
+                    "end_time": 1506,
                     "care_time": 90
                 }
             ]
@@ -240,129 +106,8 @@
                 "y_coord": 50
             },
             "nurse_capacity": 640,
-            "current_time": 3022.3882694814033,
+            "current_time": 2342.05551275464,
             "patients": [
-                {
-                    "x_coord": 8,
-                    "y_coord": 62,
-                    "demand": 10,
-                    "start_time": 1545,
-                    "end_time": 1795,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 10,
-                    "y_coord": 35,
-                    "demand": 20,
-                    "start_time": 781,
-                    "end_time": 1031,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 47,
-                    "y_coord": 40,
-                    "demand": 10,
-                    "start_time": 12,
-                    "end_time": 262,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 42,
-                    "y_coord": 30,
-                    "demand": 10,
-                    "start_time": 776,
-                    "end_time": 1026,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 72,
-                    "y_coord": 45,
-                    "demand": 10,
-                    "start_time": 2900,
-                    "end_time": 3150,
-                    "care_time": 90
-                }
-            ]
-        },
-        {
-            "depot": {
-                "return_time": 3390,
-                "x_coord": 40,
-                "y_coord": 50
-            },
-            "nurse_capacity": 640,
-            "current_time": 1026.9602284261553,
-            "patients": [
-                {
-                    "x_coord": 67,
-                    "y_coord": 85,
-                    "demand": 20,
-                    "start_time": 694,
-                    "end_time": 944,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 45,
-                    "y_coord": 70,
-                    "demand": 30,
-                    "start_time": 213,
-                    "end_time": 463,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 52,
-                    "y_coord": 75,
-                    "demand": 10,
-                    "start_time": 311,
-                    "end_time": 561,
-                    "care_time": 90
-                }
-            ]
-        },
-        {
-            "depot": {
-                "return_time": 3390,
-                "x_coord": 40,
-                "y_coord": 50
-            },
-            "nurse_capacity": 640,
-            "current_time": 2988.431576428721,
-            "patients": [
-                {
-                    "x_coord": 85,
-                    "y_coord": 35,
-                    "demand": 30,
-                    "start_time": 2703,
-                    "end_time": 2953,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 22,
-                    "y_coord": 75,
-                    "demand": 30,
-                    "start_time": 2405,
-                    "end_time": 2655,
-                    "care_time": 90
-                }
-            ]
-        },
-        {
-            "depot": {
-                "return_time": 3390,
-                "x_coord": 40,
-                "y_coord": 50
-            },
-            "nurse_capacity": 620,
-            "current_time": 3229.6155281280885,
-            "patients": [
-                {
-                    "x_coord": 36,
-                    "y_coord": 18,
-                    "demand": 10,
-                    "start_time": 1819,
-                    "end_time": 2069,
-                    "care_time": 90
-                },
                 {
                     "x_coord": 62,
                     "y_coord": 69,
@@ -372,27 +117,19 @@
                     "care_time": 90
                 },
                 {
+                    "x_coord": 42,
+                    "y_coord": 65,
+                    "demand": 10,
+                    "start_time": 25,
+                    "end_time": 275,
+                    "care_time": 90
+                },
+                {
                     "x_coord": 20,
-                    "y_coord": 85,
-                    "demand": 40,
-                    "start_time": 1934,
-                    "end_time": 2184,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 15,
                     "y_coord": 80,
-                    "demand": 10,
-                    "start_time": 1837,
-                    "end_time": 2087,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 60,
-                    "y_coord": 55,
-                    "demand": 10,
-                    "start_time": 3119,
-                    "end_time": 3369,
+                    "demand": 40,
+                    "start_time": 2216,
+                    "end_time": 2466,
                     "care_time": 90
                 }
             ]
@@ -403,15 +140,23 @@
                 "x_coord": 40,
                 "y_coord": 50
             },
-            "nurse_capacity": 670,
+            "nurse_capacity": 660,
             "current_time": 3084.6619037896908,
             "patients": [
                 {
-                    "x_coord": 14,
-                    "y_coord": 66,
+                    "x_coord": 30,
+                    "y_coord": 30,
                     "demand": 10,
-                    "start_time": 1643,
-                    "end_time": 1893,
+                    "start_time": 2105,
+                    "end_time": 2355,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 20,
+                    "y_coord": 55,
+                    "demand": 10,
+                    "start_time": 303,
+                    "end_time": 553,
                     "care_time": 90
                 },
                 {
@@ -430,284 +175,15 @@
                 "x_coord": 40,
                 "y_coord": 50
             },
-            "nurse_capacity": 610,
-            "current_time": 2496.2132034355964,
+            "nurse_capacity": 630,
+            "current_time": 2643.819912486062,
             "patients": [
                 {
-                    "x_coord": 45,
-                    "y_coord": 65,
-                    "demand": 20,
-                    "start_time": 118,
-                    "end_time": 368,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 55,
-                    "y_coord": 80,
-                    "demand": 10,
-                    "start_time": 407,
-                    "end_time": 657,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 50,
-                    "y_coord": 40,
-                    "demand": 50,
-                    "start_time": 25,
-                    "end_time": 275,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 25,
-                    "y_coord": 35,
-                    "demand": 10,
-                    "start_time": 2385,
-                    "end_time": 2635,
-                    "care_time": 90
-                }
-            ]
-        },
-        {
-            "depot": {
-                "return_time": 3390,
-                "x_coord": 40,
-                "y_coord": 50
-            },
-            "nurse_capacity": 590,
-            "current_time": 3073.8337374798393,
-            "patients": [
-                {
-                    "x_coord": 33,
-                    "y_coord": 35,
-                    "demand": 10,
-                    "start_time": 2573,
-                    "end_time": 2823,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 35,
-                    "y_coord": 69,
-                    "demand": 10,
-                    "start_time": 2698,
-                    "end_time": 2948,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 53,
-                    "y_coord": 35,
-                    "demand": 50,
-                    "start_time": 213,
-                    "end_time": 463,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 42,
-                    "y_coord": 10,
-                    "demand": 40,
-                    "start_time": 1160,
-                    "end_time": 1410,
-                    "care_time": 90
-                }
-            ]
-        },
-        {
-            "depot": {
-                "return_time": 3390,
-                "x_coord": 40,
-                "y_coord": 50
-            },
-            "nurse_capacity": 650,
-            "current_time": 2165.1735855224606,
-            "patients": [
-                {
-                    "x_coord": 50,
-                    "y_coord": 30,
-                    "demand": 10,
-                    "start_time": 401,
-                    "end_time": 651,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 44,
-                    "y_coord": 25,
-                    "demand": 10,
-                    "start_time": 871,
-                    "end_time": 1121,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 86,
-                    "y_coord": 46,
-                    "demand": 30,
-                    "start_time": 2029,
-                    "end_time": 2279,
-                    "care_time": 90
-                }
-            ]
-        },
-        {
-            "depot": {
-                "return_time": 3390,
-                "x_coord": 40,
-                "y_coord": 50
-            },
-            "nurse_capacity": 570,
-            "current_time": 3423.8870222315145,
-            "patients": [
-                {
-                    "x_coord": 18,
-                    "y_coord": 75,
-                    "demand": 20,
-                    "start_time": 2311,
-                    "end_time": 2561,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 75,
+                    "x_coord": 72,
                     "y_coord": 55,
-                    "demand": 20,
-                    "start_time": 1925,
-                    "end_time": 2175,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 70,
-                    "y_coord": 58,
-                    "demand": 20,
-                    "start_time": 1641,
-                    "end_time": 1891,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 40,
-                    "y_coord": 5,
-                    "demand": 30,
-                    "start_time": 1350,
-                    "end_time": 1600,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 30,
-                    "y_coord": 50,
                     "demand": 10,
-                    "start_time": 10,
-                    "end_time": 260,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 85,
-                    "y_coord": 25,
-                    "demand": 10,
-                    "start_time": 2513,
-                    "end_time": 2763,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 38,
-                    "y_coord": 10,
-                    "demand": 10,
-                    "start_time": 1630,
-                    "end_time": 1880,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 90,
-                    "y_coord": 35,
-                    "demand": 10,
-                    "start_time": 2131,
-                    "end_time": 2381,
-                    "care_time": 90
-                }
-            ]
-        },
-        {
-            "depot": {
-                "return_time": 3390,
-                "x_coord": 40,
-                "y_coord": 50
-            },
-            "nurse_capacity": 680,
-            "current_time": 1573.3455636907725,
-            "patients": [
-                {
-                    "x_coord": 4,
-                    "y_coord": 55,
-                    "demand": 20,
-                    "start_time": 1447,
-                    "end_time": 1697,
-                    "care_time": 90
-                }
-            ]
-        },
-        {
-            "depot": {
-                "return_time": 3390,
-                "x_coord": 40,
-                "y_coord": 50
-            },
-            "nurse_capacity": 660,
-            "current_time": 1850.0570962859163,
-            "patients": [
-                {
-                    "x_coord": 38,
-                    "y_coord": 15,
-                    "demand": 40,
-                    "start_time": 1725,
-                    "end_time": 1975,
-                    "care_time": 90
-                }
-            ]
-        },
-        {
-            "depot": {
-                "return_time": 3390,
-                "x_coord": 40,
-                "y_coord": 50
-            },
-            "nurse_capacity": 680,
-            "current_time": 2866.6815416922695,
-            "patients": [
-                {
-                    "x_coord": 48,
-                    "y_coord": 30,
-                    "demand": 10,
-                    "start_time": 493,
-                    "end_time": 743,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 35,
-                    "y_coord": 32,
-                    "demand": 10,
-                    "start_time": 2758,
-                    "end_time": 3008,
-                    "care_time": 90
-                }
-            ]
-        },
-        {
-            "depot": {
-                "return_time": 3390,
-                "x_coord": 40,
-                "y_coord": 50
-            },
-            "nurse_capacity": 640,
-            "current_time": 1670.276925690687,
-            "patients": [
-                {
-                    "x_coord": 42,
-                    "y_coord": 65,
-                    "demand": 10,
-                    "start_time": 25,
-                    "end_time": 275,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 38,
-                    "y_coord": 5,
-                    "demand": 30,
-                    "start_time": 1442,
-                    "end_time": 1692,
+                    "start_time": 1832,
+                    "end_time": 2082,
                     "care_time": 90
                 },
                 {
@@ -716,6 +192,22 @@
                     "demand": 20,
                     "start_time": 1535,
                     "end_time": 1785,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 22,
+                    "y_coord": 75,
+                    "demand": 30,
+                    "start_time": 2405,
+                    "end_time": 2655,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 30,
+                    "y_coord": 35,
+                    "demand": 10,
+                    "start_time": 2480,
+                    "end_time": 2730,
                     "care_time": 90
                 }
             ]
@@ -727,22 +219,81 @@
                 "y_coord": 50
             },
             "nurse_capacity": 630,
-            "current_time": 1468.3882694814033,
+            "current_time": 3321.1680762265078,
             "patients": [
                 {
-                    "x_coord": 20,
-                    "y_coord": 50,
+                    "x_coord": 56,
+                    "y_coord": 64,
                     "demand": 10,
-                    "start_time": 398,
-                    "end_time": 648,
+                    "start_time": 1355,
+                    "end_time": 1605,
                     "care_time": 90
                 },
                 {
-                    "x_coord": 42,
+                    "x_coord": 66,
+                    "y_coord": 55,
+                    "demand": 10,
+                    "start_time": 1736,
+                    "end_time": 1986,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 70,
                     "y_coord": 58,
-                    "demand": 40,
-                    "start_time": 8,
-                    "end_time": 258,
+                    "demand": 20,
+                    "start_time": 1641,
+                    "end_time": 1891,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 64,
+                    "y_coord": 46,
+                    "demand": 20,
+                    "start_time": 3097,
+                    "end_time": 3347,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 48,
+                    "y_coord": 30,
+                    "demand": 10,
+                    "start_time": 493,
+                    "end_time": 743,
+                    "care_time": 90
+                }
+            ]
+        },
+        {
+            "depot": {
+                "return_time": 3390,
+                "x_coord": 40,
+                "y_coord": 50
+            },
+            "nurse_capacity": 600,
+            "current_time": 2993.03490495262,
+            "patients": [
+                {
+                    "x_coord": 25,
+                    "y_coord": 85,
+                    "demand": 20,
+                    "start_time": 2119,
+                    "end_time": 2369,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 62,
+                    "y_coord": 80,
+                    "demand": 30,
+                    "start_time": 881,
+                    "end_time": 1131,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 85,
+                    "y_coord": 35,
+                    "demand": 30,
+                    "start_time": 2703,
+                    "end_time": 2953,
                     "care_time": 90
                 },
                 {
@@ -761,31 +312,509 @@
                 "x_coord": 40,
                 "y_coord": 50
             },
-            "nurse_capacity": 620,
+            "nurse_capacity": 640,
+            "current_time": 1477.2958657511838,
+            "patients": [
+                {
+                    "x_coord": 0,
+                    "y_coord": 40,
+                    "demand": 30,
+                    "start_time": 1063,
+                    "end_time": 1313,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 50,
+                    "y_coord": 30,
+                    "demand": 10,
+                    "start_time": 401,
+                    "end_time": 651,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 55,
+                    "y_coord": 85,
+                    "demand": 20,
+                    "start_time": 502,
+                    "end_time": 752,
+                    "care_time": 90
+                }
+            ]
+        },
+        {
+            "depot": {
+                "return_time": 3390,
+                "x_coord": 40,
+                "y_coord": 50
+            },
+            "nurse_capacity": 570,
+            "current_time": 2585.063554788232,
+            "patients": [
+                {
+                    "x_coord": 65,
+                    "y_coord": 82,
+                    "demand": 10,
+                    "start_time": 788,
+                    "end_time": 1038,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 8,
+                    "y_coord": 40,
+                    "demand": 40,
+                    "start_time": 685,
+                    "end_time": 935,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 42,
+                    "y_coord": 58,
+                    "demand": 40,
+                    "start_time": 8,
+                    "end_time": 258,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 25,
+                    "y_coord": 30,
+                    "demand": 10,
+                    "start_time": 2200,
+                    "end_time": 2450,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 67,
+                    "y_coord": 85,
+                    "demand": 20,
+                    "start_time": 694,
+                    "end_time": 944,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 60,
+                    "y_coord": 66,
+                    "demand": 10,
+                    "start_time": 1261,
+                    "end_time": 1511,
+                    "care_time": 90
+                }
+            ]
+        },
+        {
+            "depot": {
+                "return_time": 3390,
+                "x_coord": 40,
+                "y_coord": 50
+            },
+            "nurse_capacity": 650,
+            "current_time": 3240.7071345327067,
+            "patients": [
+                {
+                    "x_coord": 34,
+                    "y_coord": 60,
+                    "demand": 20,
+                    "start_time": 2887,
+                    "end_time": 3137,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 16,
+                    "y_coord": 42,
+                    "demand": 20,
+                    "start_time": 497,
+                    "end_time": 747,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 32,
+                    "y_coord": 20,
+                    "demand": 10,
+                    "start_time": 1913,
+                    "end_time": 2163,
+                    "care_time": 90
+                }
+            ]
+        },
+        {
+            "depot": {
+                "return_time": 3390,
+                "x_coord": 40,
+                "y_coord": 50
+            },
+            "nurse_capacity": 590,
+            "current_time": 2541.127666922578,
+            "patients": [
+                {
+                    "x_coord": 20,
+                    "y_coord": 85,
+                    "demand": 40,
+                    "start_time": 1934,
+                    "end_time": 2184,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 15,
+                    "y_coord": 80,
+                    "demand": 10,
+                    "start_time": 1837,
+                    "end_time": 2087,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 45,
+                    "y_coord": 70,
+                    "demand": 30,
+                    "start_time": 213,
+                    "end_time": 463,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 18,
+                    "y_coord": 75,
+                    "demand": 20,
+                    "start_time": 2311,
+                    "end_time": 2561,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 22,
+                    "y_coord": 85,
+                    "demand": 10,
+                    "start_time": 2026,
+                    "end_time": 2276,
+                    "care_time": 90
+                }
+            ]
+        },
+        {
+            "depot": {
+                "return_time": 3390,
+                "x_coord": 40,
+                "y_coord": 50
+            },
+            "nurse_capacity": 670,
+            "current_time": 2807.6468827043886,
+            "patients": [
+                {
+                    "x_coord": 42,
+                    "y_coord": 30,
+                    "demand": 10,
+                    "start_time": 776,
+                    "end_time": 1026,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 47,
+                    "y_coord": 35,
+                    "demand": 10,
+                    "start_time": 588,
+                    "end_time": 838,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 35,
+                    "y_coord": 69,
+                    "demand": 10,
+                    "start_time": 2698,
+                    "end_time": 2948,
+                    "care_time": 90
+                }
+            ]
+        },
+        {
+            "depot": {
+                "return_time": 3390,
+                "x_coord": 40,
+                "y_coord": 50
+            },
+            "nurse_capacity": 670,
+            "current_time": 2404.803508501983,
+            "patients": [
+                {
+                    "x_coord": 2,
+                    "y_coord": 40,
+                    "demand": 20,
+                    "start_time": 971,
+                    "end_time": 1221,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 26,
+                    "y_coord": 32,
+                    "demand": 10,
+                    "start_time": 2292,
+                    "end_time": 2542,
+                    "care_time": 90
+                }
+            ]
+        },
+        {
+            "depot": {
+                "return_time": 3390,
+                "x_coord": 40,
+                "y_coord": 50
+            },
+            "nurse_capacity": 540,
+            "current_time": 3340.039053341696,
+            "patients": [
+                {
+                    "x_coord": 50,
+                    "y_coord": 35,
+                    "demand": 20,
+                    "start_time": 120,
+                    "end_time": 370,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 58,
+                    "y_coord": 70,
+                    "demand": 20,
+                    "start_time": 1073,
+                    "end_time": 1323,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 42,
+                    "y_coord": 15,
+                    "demand": 10,
+                    "start_time": 1065,
+                    "end_time": 1315,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 53,
+                    "y_coord": 30,
+                    "demand": 10,
+                    "start_time": 308,
+                    "end_time": 558,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 22,
+                    "y_coord": 66,
+                    "demand": 40,
+                    "start_time": 2504,
+                    "end_time": 2754,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 60,
+                    "y_coord": 55,
+                    "demand": 10,
+                    "start_time": 3119,
+                    "end_time": 3369,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 53,
+                    "y_coord": 35,
+                    "demand": 50,
+                    "start_time": 213,
+                    "end_time": 463,
+                    "care_time": 90
+                }
+            ]
+        },
+        {
+            "depot": {
+                "return_time": 3390,
+                "x_coord": 40,
+                "y_coord": 50
+            },
+            "nurse_capacity": 650,
+            "current_time": 3499.357669197879,
+            "patients": [
+                {
+                    "x_coord": 47,
+                    "y_coord": 40,
+                    "demand": 10,
+                    "start_time": 12,
+                    "end_time": 262,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 62,
+                    "y_coord": 40,
+                    "demand": 10,
+                    "start_time": 3001,
+                    "end_time": 3251,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 25,
+                    "y_coord": 35,
+                    "demand": 10,
+                    "start_time": 2385,
+                    "end_time": 2635,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 38,
+                    "y_coord": 10,
+                    "demand": 10,
+                    "start_time": 1630,
+                    "end_time": 1880,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 35,
+                    "y_coord": 66,
+                    "demand": 10,
+                    "start_time": 2791,
+                    "end_time": 3041,
+                    "care_time": 90
+                }
+            ]
+        },
+        {
+            "depot": {
+                "return_time": 3390,
+                "x_coord": 40,
+                "y_coord": 50
+            },
+            "nurse_capacity": 590,
+            "current_time": 2589.993333663538,
+            "patients": [
+                {
+                    "x_coord": 42,
+                    "y_coord": 10,
+                    "demand": 40,
+                    "start_time": 1160,
+                    "end_time": 1410,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 75,
+                    "y_coord": 55,
+                    "demand": 20,
+                    "start_time": 1925,
+                    "end_time": 2175,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 15,
+                    "y_coord": 75,
+                    "demand": 20,
+                    "start_time": 1742,
+                    "end_time": 1992,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 23,
+                    "y_coord": 52,
+                    "demand": 10,
+                    "start_time": 209,
+                    "end_time": 459,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 20,
+                    "y_coord": 50,
+                    "demand": 10,
+                    "start_time": 398,
+                    "end_time": 648,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 90,
+                    "y_coord": 35,
+                    "demand": 10,
+                    "start_time": 2131,
+                    "end_time": 2381,
+                    "care_time": 90
+                }
+            ]
+        },
+        {
+            "depot": {
+                "return_time": 3390,
+                "x_coord": 40,
+                "y_coord": 50
+            },
+            "nurse_capacity": 590,
+            "current_time": 3152.2202566273068,
+            "patients": [
+                {
+                    "x_coord": 48,
+                    "y_coord": 20,
+                    "demand": 10,
+                    "start_time": 967,
+                    "end_time": 1217,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 40,
+                    "y_coord": 5,
+                    "demand": 30,
+                    "start_time": 1350,
+                    "end_time": 1600,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 45,
+                    "y_coord": 65,
+                    "demand": 20,
+                    "start_time": 118,
+                    "end_time": 368,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 92,
+                    "y_coord": 30,
+                    "demand": 10,
+                    "start_time": 2414,
+                    "end_time": 2664,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 52,
+                    "y_coord": 75,
+                    "demand": 10,
+                    "start_time": 311,
+                    "end_time": 561,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 36,
+                    "y_coord": 40,
+                    "demand": 10,
+                    "start_time": 2856,
+                    "end_time": 3106,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 95,
+                    "y_coord": 35,
+                    "demand": 20,
+                    "start_time": 2226,
+                    "end_time": 2476,
+                    "care_time": 90
+                }
+            ]
+        },
+        {
+            "depot": {
+                "return_time": 3390,
+                "x_coord": 40,
+                "y_coord": 50
+            },
+            "nurse_capacity": 650,
             "current_time": 2469.523499553598,
             "patients": [
                 {
-                    "x_coord": 72,
-                    "y_coord": 55,
+                    "x_coord": 45,
+                    "y_coord": 35,
                     "demand": 10,
-                    "start_time": 1832,
-                    "end_time": 2082,
+                    "start_time": 680,
+                    "end_time": 930,
                     "care_time": 90
                 },
                 {
-                    "x_coord": 56,
-                    "y_coord": 64,
-                    "demand": 10,
-                    "start_time": 1355,
-                    "end_time": 1605,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 65,
+                    "x_coord": 60,
                     "y_coord": 60,
-                    "demand": 30,
-                    "start_time": 1546,
-                    "end_time": 1796,
+                    "demand": 10,
+                    "start_time": 1451,
+                    "end_time": 1701,
                     "care_time": 90
                 },
                 {
@@ -804,106 +833,47 @@
                 "x_coord": 40,
                 "y_coord": 50
             },
-            "nurse_capacity": 610,
-            "current_time": 3372.840310920143,
+            "nurse_capacity": 620,
+            "current_time": 2690.7956504419167,
             "patients": [
                 {
-                    "x_coord": 50,
+                    "x_coord": 86,
+                    "y_coord": 46,
+                    "demand": 30,
+                    "start_time": 2029,
+                    "end_time": 2279,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 25,
+                    "y_coord": 50,
+                    "demand": 10,
+                    "start_time": 116,
+                    "end_time": 366,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 10,
                     "y_coord": 35,
                     "demand": 20,
-                    "start_time": 120,
-                    "end_time": 370,
+                    "start_time": 781,
+                    "end_time": 1031,
                     "care_time": 90
                 },
                 {
-                    "x_coord": 32,
-                    "y_coord": 20,
+                    "x_coord": 36,
+                    "y_coord": 18,
                     "demand": 10,
-                    "start_time": 1913,
-                    "end_time": 2163,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 34,
-                    "y_coord": 60,
-                    "demand": 20,
-                    "start_time": 2887,
-                    "end_time": 3137,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 87,
-                    "y_coord": 30,
-                    "demand": 10,
-                    "start_time": 2608,
-                    "end_time": 2858,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 64,
-                    "y_coord": 46,
-                    "demand": 20,
-                    "start_time": 3097,
-                    "end_time": 3347,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 60,
-                    "y_coord": 60,
-                    "demand": 10,
-                    "start_time": 1451,
-                    "end_time": 1701,
-                    "care_time": 90
-                }
-            ]
-        },
-        {
-            "depot": {
-                "return_time": 3390,
-                "x_coord": 40,
-                "y_coord": 50
-            },
-            "nurse_capacity": 590,
-            "current_time": 1699.1155366246023,
-            "patients": [
-                {
-                    "x_coord": 42,
-                    "y_coord": 15,
-                    "demand": 10,
-                    "start_time": 1065,
-                    "end_time": 1315,
+                    "start_time": 1819,
+                    "end_time": 2069,
                     "care_time": 90
                 },
                 {
                     "x_coord": 55,
-                    "y_coord": 85,
-                    "demand": 20,
-                    "start_time": 502,
-                    "end_time": 752,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 0,
-                    "y_coord": 45,
-                    "demand": 20,
-                    "start_time": 1158,
-                    "end_time": 1408,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 2,
-                    "y_coord": 40,
-                    "demand": 20,
-                    "start_time": 971,
-                    "end_time": 1221,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 8,
-                    "y_coord": 40,
-                    "demand": 40,
-                    "start_time": 685,
-                    "end_time": 935,
+                    "y_coord": 80,
+                    "demand": 10,
+                    "start_time": 407,
+                    "end_time": 657,
                     "care_time": 90
                 }
             ]
@@ -915,54 +885,22 @@
                 "y_coord": 50
             },
             "nurse_capacity": 580,
-            "current_time": 2914.686722137868,
+            "current_time": 3184.1188182953674,
             "patients": [
                 {
-                    "x_coord": 25,
-                    "y_coord": 85,
-                    "demand": 20,
-                    "start_time": 2119,
-                    "end_time": 2369,
+                    "x_coord": 34,
+                    "y_coord": 25,
+                    "demand": 30,
+                    "start_time": 2009,
+                    "end_time": 2259,
                     "care_time": 90
                 },
                 {
-                    "x_coord": 20,
-                    "y_coord": 80,
-                    "demand": 40,
-                    "start_time": 2216,
-                    "end_time": 2466,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 30,
-                    "y_coord": 30,
+                    "x_coord": 44,
+                    "y_coord": 25,
                     "demand": 10,
-                    "start_time": 2105,
-                    "end_time": 2355,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 25,
-                    "y_coord": 30,
-                    "demand": 10,
-                    "start_time": 2200,
-                    "end_time": 2450,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 53,
-                    "y_coord": 30,
-                    "demand": 10,
-                    "start_time": 308,
-                    "end_time": 558,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 28,
-                    "y_coord": 52,
-                    "demand": 20,
-                    "start_time": 22,
-                    "end_time": 272,
+                    "start_time": 871,
+                    "end_time": 1121,
                     "care_time": 90
                 },
                 {
@@ -972,56 +910,29 @@
                     "start_time": 2601,
                     "end_time": 2851,
                     "care_time": 90
-                }
-            ]
-        },
-        {
-            "depot": {
-                "return_time": 3390,
-                "x_coord": 40,
-                "y_coord": 50
-            },
-            "nurse_capacity": 620,
-            "current_time": 3115.166091947189,
-            "patients": [
+                },
                 {
-                    "x_coord": 95,
-                    "y_coord": 35,
-                    "demand": 20,
-                    "start_time": 2226,
-                    "end_time": 2476,
+                    "x_coord": 87,
+                    "y_coord": 30,
+                    "demand": 10,
+                    "start_time": 2608,
+                    "end_time": 2858,
                     "care_time": 90
                 },
                 {
                     "x_coord": 58,
-                    "y_coord": 70,
-                    "demand": 20,
-                    "start_time": 1073,
-                    "end_time": 1323,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 15,
                     "y_coord": 75,
                     "demand": 20,
-                    "start_time": 1742,
-                    "end_time": 1992,
+                    "start_time": 978,
+                    "end_time": 1228,
                     "care_time": 90
                 },
                 {
-                    "x_coord": 26,
-                    "y_coord": 32,
-                    "demand": 10,
-                    "start_time": 2292,
-                    "end_time": 2542,
-                    "care_time": 90
-                },
-                {
-                    "x_coord": 62,
-                    "y_coord": 40,
-                    "demand": 10,
-                    "start_time": 3001,
-                    "end_time": 3251,
+                    "x_coord": 38,
+                    "y_coord": 15,
+                    "demand": 40,
+                    "start_time": 1725,
+                    "end_time": 1975,
                     "care_time": 90
                 }
             ]
@@ -1032,47 +943,136 @@
                 "x_coord": 40,
                 "y_coord": 50
             },
-            "nurse_capacity": 630,
-            "current_time": 1240.2310562561765,
+            "nurse_capacity": 640,
+            "current_time": 3280.5560168688003,
             "patients": [
                 {
-                    "x_coord": 25,
+                    "x_coord": 72,
+                    "y_coord": 45,
+                    "demand": 10,
+                    "start_time": 2900,
+                    "end_time": 3150,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 33,
+                    "y_coord": 32,
+                    "demand": 20,
+                    "start_time": 2666,
+                    "end_time": 2916,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 65,
+                    "y_coord": 60,
+                    "demand": 30,
+                    "start_time": 1546,
+                    "end_time": 1796,
+                    "care_time": 90
+                }
+            ]
+        },
+        {
+            "depot": {
+                "return_time": 3390,
+                "x_coord": 40,
+                "y_coord": 50
+            },
+            "nurse_capacity": 670,
+            "current_time": 1577.044422518221,
+            "patients": [
+                {
+                    "x_coord": 38,
+                    "y_coord": 5,
+                    "demand": 30,
+                    "start_time": 1442,
+                    "end_time": 1692,
+                    "care_time": 90
+                }
+            ]
+        },
+        {
+            "depot": {
+                "return_time": 3390,
+                "x_coord": 40,
+                "y_coord": 50
+            },
+            "nurse_capacity": 650,
+            "current_time": 1881.1661076721189,
+            "patients": [
+                {
+                    "x_coord": 30,
                     "y_coord": 50,
                     "demand": 10,
-                    "start_time": 116,
-                    "end_time": 366,
+                    "start_time": 10,
+                    "end_time": 260,
                     "care_time": 90
                 },
                 {
-                    "x_coord": 45,
+                    "x_coord": 8,
+                    "y_coord": 62,
+                    "demand": 10,
+                    "start_time": 1545,
+                    "end_time": 1795,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 4,
+                    "y_coord": 55,
+                    "demand": 20,
+                    "start_time": 1447,
+                    "end_time": 1697,
+                    "care_time": 90
+                },
+                {
+                    "x_coord": 5,
                     "y_coord": 35,
                     "demand": 10,
-                    "start_time": 680,
-                    "end_time": 930,
+                    "start_time": 876,
+                    "end_time": 1126,
+                    "care_time": 90
+                }
+            ]
+        },
+        {
+            "depot": {
+                "return_time": 3390,
+                "x_coord": 40,
+                "y_coord": 50
+            },
+            "nurse_capacity": 650,
+            "current_time": 3136.036511159894,
+            "patients": [
+                {
+                    "x_coord": 28,
+                    "y_coord": 52,
+                    "demand": 20,
+                    "start_time": 22,
+                    "end_time": 272,
                     "care_time": 90
                 },
                 {
-                    "x_coord": 20,
-                    "y_coord": 55,
+                    "x_coord": 35,
+                    "y_coord": 32,
                     "demand": 10,
-                    "start_time": 303,
-                    "end_time": 553,
+                    "start_time": 2758,
+                    "end_time": 3008,
                     "care_time": 90
                 },
                 {
-                    "x_coord": 48,
-                    "y_coord": 20,
+                    "x_coord": 33,
+                    "y_coord": 35,
                     "demand": 10,
-                    "start_time": 967,
-                    "end_time": 1217,
+                    "start_time": 2573,
+                    "end_time": 2823,
                     "care_time": 90
                 },
                 {
-                    "x_coord": 0,
-                    "y_coord": 40,
-                    "demand": 30,
-                    "start_time": 1063,
-                    "end_time": 1313,
+                    "x_coord": 85,
+                    "y_coord": 25,
+                    "demand": 10,
+                    "start_time": 2513,
+                    "end_time": 2763,
                     "care_time": 90
                 }
             ]

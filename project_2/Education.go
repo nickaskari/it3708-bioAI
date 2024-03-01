@@ -1,10 +1,15 @@
 package main
 
+import (
+	"math"
+	"math/rand"
+	"time"
+)
+
 /*
-	Performs education (local search) by doing mutations if there is improved objective value. Returns
-	educated individual. Purpose of this is to only find LOCAL optima.
+Performs education (local search) by doing mutations if there is improved objective value. Returns
+educated individual. Purpose of this is to only find LOCAL optima.
 */
-// understand why this kills people when zero violations
 func hillClimbing(individual Individual, temp int, instance Instance) Individual {
 	currentState := deepCopyIndividual(individual)
 
@@ -33,4 +38,49 @@ func hillClimbing(individual Individual, temp int, instance Instance) Individual
 		temp--
 	}
 	return currentState
+}
+
+// Simulated anhealing of individual. Returns optimized individual
+func simulatedAnnealing(initialIndividual Individual, initialTemp int, coolingRate float64, instance Instance) Individual {
+  
+	source := rand.NewSource(time.Now().UnixNano())
+	random := rand.New(source)
+
+    currentState := deepCopyIndividual(initialIndividual)
+    currentTemp := float64(initialTemp)
+
+    mutations := []func(Individual, Instance) Individual {
+        randomInversionMutation,
+        randomSwapMutation,
+        randomInterRouteSwapMutation,
+    }
+
+    for currentTemp > 1 {
+        mutation := mutations[random.Intn(len(mutations))]
+        mutatedIndividual := mutation(currentState, instance)
+        mutatedIndividual.fixAllRoutesAndCalculateFitness(instance)
+
+        acceptMutation := shouldAcceptMutation(currentState.Fitness, mutatedIndividual.Fitness, currentTemp)
+        if acceptMutation {
+            currentState = mutatedIndividual
+        }
+
+        currentTemp *= coolingRate
+    }
+    currentState.fixAllRoutesAndCalculateFitness(instance)
+    return currentState
+}
+
+
+func shouldAcceptMutation(currentFitness, newFitness, temperature float64) bool {
+    if newFitness < currentFitness {
+        return true
+    }
+    changeFitness := newFitness - currentFitness
+    probability := math.Exp(-changeFitness / temperature)
+
+	source := rand.NewSource(time.Now().UnixNano())
+	random := rand.New(source)
+
+    return random.Float64() < probability
 }

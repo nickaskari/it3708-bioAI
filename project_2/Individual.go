@@ -55,7 +55,7 @@ func (i *Individual) calculateFitness(instance Instance) {
 }
 
 // Version 2 of fitness calc
-func (i Individual) calculateFitness2(instance Instance) float64{
+func (i Individual) calculateFitness2(instance Instance) float64 {
 	var fitness float64 = 0
 	for _, route := range i.Routes {
 		if len(route.Patients) > 0 {
@@ -72,7 +72,7 @@ func (i Individual) calculateFitness2(instance Instance) float64{
 
 // Calculates a penalty if patient is visited after endtime, or nurse leaves after endtime.
 func calculatePenalty(patient Patient) float64 {
-	var penaltyFactor float64 = 50
+	var penaltyFactor float64 = 80
 
 	if patient.VisitTime > float64(patient.EndTime) {
 		return (patient.VisitTime - float64(patient.EndTime)) * penaltyFactor
@@ -334,4 +334,15 @@ func (i Individual) getRandomRoute() int {
 // updates a route at a certain index
 func (i *Individual) updateRouteAtIndex(route *Route, index int) {
 	i.Routes[index] = *route
+}
+
+// Takes deepcopy of a list of individuals
+func deepCopyIndividuals(individuals []Individual) []Individual {
+	copy := make([]Individual, len(individuals))
+
+	for i, individual := range individuals {
+		copy[i] = deepCopyIndividual(individual)
+	}
+
+	return copy
 }
