@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
+	"time"
 )
 
 type Patient struct {
@@ -39,4 +41,26 @@ func (p Patient) deletePatientFrom(patients []Patient) ([]Patient) {
 
 func createDummyPatient() Patient {
 	return Patient{-1, -1, -1, -1, -1, -1, -1, -1, -1}
+}
+
+// Generate a list of random patient ID's
+func generateRandomPatientIDs(Instance Instance) []int {
+	source := rand.NewSource(time.Now().UnixNano())
+	random := rand.New(source)
+
+	numbers := make([]int, Instance.NbrNurses)
+    for i := range numbers {
+        numbers[i] = i + 1
+    }
+
+    // Shuffle the array.
+    random.Shuffle(len(numbers), func(i, j int) {
+        numbers[i], numbers[j] = numbers[j], numbers[i]
+    })
+
+    // Decide the size of the subset. This example uses a random size between 1 and 25.
+    subsetSize := rand.Intn(25) + 1
+
+    // Slice the shuffled array to get a random subset of the desired size.
+    return numbers[:subsetSize]
 }
