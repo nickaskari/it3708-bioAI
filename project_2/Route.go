@@ -223,9 +223,9 @@ func (r Route) checkIfRouteContainsDuplicates() ([]int, bool) {
 func (r Route) findBestInsertion(patientID int, instance Instance) (Route, float64) {
 	patient := instance.getPatientAtID(patientID)
 
-	if r.NurseCapacity < patient.Demand {
-		return r, math.Inf(1)
-	}
+	//if r.NurseCapacity < patient.Demand {
+	//	return r, math.Inf(1)
+	//}
 
 	oldRouteFitness := calculateRouteFitness(r, instance)
 	var bestRoute Route
@@ -236,10 +236,10 @@ func (r Route) findBestInsertion(patientID int, instance Instance) (Route, float
 		newPatientOrder := []Patient{patient}
 		newRoute := createRouteFromPatientsVisited(newPatientOrder, instance)
 		// check for return time violation
-		if newRoute.CurrentTime <= float64(instance.Depot.ReturnTime) {
-			newRouteFitness := calculateRouteFitness(newRoute, instance)
-			return newRoute, newRouteFitness
-		}
+		//if newRoute.CurrentTime <= float64(instance.Depot.ReturnTime) {
+		newRouteFitness := calculateRouteFitness(newRoute, instance)
+		return newRoute, newRouteFitness
+		//}
 	}
 
 	for index := 0; index < len(r.Patients); index++ {
@@ -256,7 +256,7 @@ func (r Route) findBestInsertion(patientID int, instance Instance) (Route, float
 		newRoute := createRouteFromPatientsVisited(newPatientOrder, instance)
 
 		// check for return time violation
-		if newRoute.CurrentTime <= float64(instance.Depot.ReturnTime) {
+		//if newRoute.CurrentTime <= float64(instance.Depot.ReturnTime) {
 			newRouteFitness := calculateRouteFitness(newRoute, instance)
 
 			change := newRouteFitness - oldRouteFitness
@@ -264,7 +264,7 @@ func (r Route) findBestInsertion(patientID int, instance Instance) (Route, float
 				changedObjectiveValue = change
 				bestRoute = newRoute
 			}
-		}
+		//}
 	}
 
 	return bestRoute, changedObjectiveValue
@@ -285,7 +285,7 @@ func (r Route) performPatientSwap(exsistingPatient Patient, outsidePatient Patie
 			newPatients = append(newPatients, instance.getPatientAtID(p.ID))
 		}
 	}
-	
+
 	newRoute := createRouteFromPatientsVisited(newPatients, instance)
 	if newRoute.NurseCapacity <= instance.CapacityNurse {
 		if newRoute.CurrentTime <= float64(instance.Depot.ReturnTime) {

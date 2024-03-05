@@ -9,7 +9,7 @@ import (
 
 func GA(populationSize int, gMax int, numParents int, temp int,
 	crossoverRate float64, mutationRate float64, elitismPercentage float64, coolingRate float64,
-	instance Instance) {
+	annealingRate float64, instance Instance) {
 
 	source := rand.NewSource(time.Now().UnixNano())
 	random := rand.New(source)
@@ -41,13 +41,13 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 					var mutated1 Individual
 					var mutated2 Individual
 
-					if 0.99 > random.Float64() {
+					if annealingRate > random.Float64() {
 						mutated1 = simulatedAnnealing(child1, temp, coolingRate, instance)
 					} else {
 						mutated1 = hillClimbing(child1, temp, instance)
 					}
 
-					if 0.99 > random.Float64() {
+					if annealingRate > random.Float64() {
 						mutated2 = simulatedAnnealing(child2, temp, coolingRate, instance)
 					} else {
 						mutated2 = hillClimbing(child2, temp, instance)

@@ -24,6 +24,10 @@ function.
 
 - Satisfiesconstraint has omitted return time --> solved train8 problem.
 
+- Remeber to age population..
+
+- changed findBestInsertion. 
+
 ----------------------------------------------------------------------------------------------------------
 Old version of satisfiesConstraints():
 

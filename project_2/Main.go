@@ -8,21 +8,22 @@ import (
 var train_file string = "train/train_6.json"
 
 // GA paramters
-var numParents int = 150
-var populationSize int = 300
+var numParents int = 10
+var populationSize int = 100
 var crossoverRate float64 = 0.8
-var mutationRate float64 = 0.9
+var mutationRate float64 = 0.2
 var gMax int = 200
-var temp int = 1000
-var coolingRate float64 = 0.9
+var temp int = 10000
+var coolingRate float64 = 0.99
 var elitismPercentage float64 = 0.01
+var annealingRate float64 = 1
 
 func main() {
 	fmt.Println("")
 	instance := getProblemInstance(train_file)
 
 	GA(populationSize, gMax, numParents, temp, crossoverRate, mutationRate,
-		elitismPercentage, coolingRate, instance)
+		elitismPercentage, coolingRate, annealingRate, instance)
 
 }
 
