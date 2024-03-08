@@ -93,6 +93,7 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 	}
 
 	getBestIndividual(population.Individuals).writeIndividualToJson()
+	getBestIndividual(population.Individuals).writeIndividualToVismaFormat()
 }
 
 // Get Two random indexes that are not the same

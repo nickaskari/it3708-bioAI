@@ -38,6 +38,25 @@ func (i Individual) writeIndividualToJson() {
 	}
 }
 
+// This is a list of lists where each inner list is a nurse’s route. The elements are the patient IDs of the instance.
+func (i Individual) writeIndividualToVismaFormat() {
+    var routes [][]int
+    for _, route := range i.Routes {
+        routes = append(routes, route.extractAllVisitedPatients())
+    }
+
+    jsonData, err := json.Marshal(routes)
+    if err != nil {
+        fmt.Printf("Error marshaling to JSON: %v", err)
+    }
+
+    err = os.WriteFile("plotting/IndividualVisma.json", jsonData, 0644)
+    if err != nil {
+        fmt.Printf("Error writing JSON to file: %v", err)
+    }
+}
+
+
 // Calculates the fitness of an individual, and assignes a penalty if neccesary. Updated the individuals fitness.
 func (i *Individual) calculateFitness(instance Instance) {
 	var fitness float64 = 0

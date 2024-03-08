@@ -4,15 +4,17 @@ import (
 	"fmt"
 )
 
+// https://it3708.resolve.visma.com/
+
 // Declare what file you want problem instance from
-var train_file string = "train/train_6.json"
+var train_file string = "train/train_0.json"
 
 // GA paramters
 var numParents int = 10
 var populationSize int = 100
 var crossoverRate float64 = 0.8
 var mutationRate float64 = 0.2
-var gMax int = 200
+var gMax int = 50
 var temp int = 10000
 var coolingRate float64 = 0.99
 var elitismPercentage float64 = 0.01
@@ -24,7 +26,6 @@ func main() {
 
 	GA(populationSize, gMax, numParents, temp, crossoverRate, mutationRate,
 		elitismPercentage, coolingRate, annealingRate, instance)
-
 }
 
 /*
@@ -35,4 +36,16 @@ var crossoverRate float64 = 0.8
 var mutationRate float64 = 0.1
 var gMax int = 50
 var temp int = 100
+*/
+
+/*
+TA help
+
+Island Mode - Feks, hver 25 gen lar man et individ fra en øy flytte til en annen, for å introdusere diversity. Øyene
+vil være stuck forskjellige steder. 
+
+Niching og crowding - trenger diversity
+
+
+
 */
