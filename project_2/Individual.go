@@ -64,26 +64,27 @@ func (i *Individual) calculateFitness(instance Instance) {
 		if len(route.Patients) > 0 {
 			lastLocation := 0
 			for pNum, patient := range route.Patients {
+				// fmt.Println("pNum: ", pNum, "patient: ", patient)
 				fitness += instance.getTravelTime(lastLocation, pNum)
 				lastLocation = pNum
 				fitness += calculatePenalty(patient)
 			}
+			fitness += instance.getTravelTime(lastLocation, 0) // added this. To calculate travel time from last patient to depot
 		}
 	}
 	i.Fitness = fitness
 }
 
-// Version 2 of fitness calc
-func (i Individual) calculateFitness2(instance Instance) float64 {
+func (i *Individual) calculateFitnessWithoutPenalty(instance Instance) float64 {
 	var fitness float64 = 0
 	for _, route := range i.Routes {
 		if len(route.Patients) > 0 {
 			lastLocation := 0
-			for pNum, patient := range route.Patients {
+			for pNum, _ := range route.Patients {
 				fitness += instance.getTravelTime(lastLocation, pNum)
 				lastLocation = pNum
-				fitness += calculatePenalty(patient)
 			}
+			fitness += instance.getTravelTime(lastLocation, 0) 
 		}
 	}
 	return fitness

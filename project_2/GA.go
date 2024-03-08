@@ -36,6 +36,8 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 			parent1, parent2 := parents[i], parents[j]
 			if r.Float64() < crossoverRate {
 				child1, child2 := destroyRepairCrossover(parent1, parent2, instance)
+				child1.calculateFitness(instance)
+				child2.calculateFitness(instance)
 
 				if r.Float64() < mutationRate {
 					var mutated1 Individual
@@ -43,14 +45,18 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 
 					if annealingRate > random.Float64() {
 						mutated1 = simulatedAnnealing(child1, temp, coolingRate, instance)
+						mutated1.calculateFitness(instance)
 					} else {
 						mutated1 = hillClimbing(child1, temp, instance)
+						mutated1.calculateFitness(instance)
 					}
 
 					if annealingRate > random.Float64() {
 						mutated2 = simulatedAnnealing(child2, temp, coolingRate, instance)
+						mutated2.calculateFitness(instance)
 					} else {
 						mutated2 = hillClimbing(child2, temp, instance)
+						mutated2.calculateFitness(instance)
 					}
 
 					newIndividuals = addToPopulation(mutated1, population.size(), newIndividuals)
@@ -68,7 +74,7 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 
 		// grows populationx
 		newPopulation := deepCopyPopulation(population.applyElitismWithPercentage(newIndividuals, elitismPercentage))
-		population = newPopulation
+		population = deepCopyPopulation(newPopulation)
 
 		fmt.Println("GENEREATION", generation+1)
 		population.printPopulationStats()
@@ -88,12 +94,18 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 			population = newPopulation
 			stuck = 0
 		}
-
 		generation++
+
+		bestIndividual := getBestIndividual(population.Individuals)
+		bestFit := bestIndividual.calculateFitnessWithoutPenalty(instance)
+		fmt.Println("Best individual fitness without penalty: ", bestFit)
+		
+
 	}
 
 	getBestIndividual(population.Individuals).writeIndividualToJson()
 	getBestIndividual(population.Individuals).writeIndividualToVismaFormat()
+
 }
 
 // Get Two random indexes that are not the same

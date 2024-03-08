@@ -24,8 +24,15 @@ func main() {
 	fmt.Println("")
 	instance := getProblemInstance(train_file)
 
+	pop := initPopulation(instance, 10)
+	testInd := pop.Individuals[0]
+
+	printSolution(testInd, instance)
+	
+
 	GA(populationSize, gMax, numParents, temp, crossoverRate, mutationRate,
 		elitismPercentage, coolingRate, annealingRate, instance)
+	
 }
 
 /*
