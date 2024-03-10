@@ -87,7 +87,6 @@ func randomInversionMutation(individual Individual, instance Instance) Individua
 
 // Performs random inter route mutation. Returns mutated individual (if mutated)..
 
-// This shit is wrong
 func randomInterRouteSwapMutation(individual Individual, instance Instance) Individual {
 	mutated := deepCopyIndividual(individual)
 

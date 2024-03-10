@@ -26,7 +26,8 @@ function.
 
 - Remeber to age population..
 
-- changed findBestInsertion. 
+- create benchmark reached for GA
+- Great 50/50 between genocide and covid
 
 ----------------------------------------------------------------------------------------------------------
 Old version of satisfiesConstraints():

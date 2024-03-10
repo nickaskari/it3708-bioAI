@@ -150,7 +150,7 @@ func (p Population) applyElitismWithPercentage(newPopulation []Individual, eliti
 		}
 	}
 
-	return Population {
+	return Population{
 		Individuals: finalIndividuals,
 	}
 }
@@ -184,7 +184,6 @@ func (p Population) applyGenecoideWithElitism(elitismPercentage float64, instanc
 
 	finalIndividuals := []Individual{}
 
-
 	for index := range p.size() {
 		if index < numToPreserve {
 			oldFitIndividual := deepCopyIndividual(sortedOldIndividuals[index])
@@ -196,7 +195,7 @@ func (p Population) applyGenecoideWithElitism(elitismPercentage float64, instanc
 		}
 	}
 
-	return Population {
+	return Population{
 		Individuals: finalIndividuals,
 	}
 }
@@ -205,34 +204,32 @@ func (p Population) applyGenecoideWithElitism(elitismPercentage float64, instanc
 func (p Population) spreadDisease(elitismPercentage float64, instance Instance) Population {
 	numToPreserve := int(math.Floor(float64(p.size()) * elitismPercentage))
 
-		// Sort the old population by fitness to find the fittest individuals, by making a copy. BEST TO WORST
-		sortedOldIndividuals := deepCopyIndividuals(p.Individuals)
+	// Sort the old population by fitness to find the fittest individuals, by making a copy. BEST TO WORST
+	sortedOldIndividuals := deepCopyIndividuals(p.Individuals)
 
-		sort.Slice(sortedOldIndividuals, func(i, j int) bool {
-			return sortedOldIndividuals[i].Fitness < sortedOldIndividuals[j].Fitness // For minimization
-		})
-	
-		finalIndividuals := []Individual{}
-	
-	
-		for index, elite := range sortedOldIndividuals {
-			if index < numToPreserve {
-				oldFitIndividual := deepCopyIndividual(elite)
-				finalIndividuals = append(finalIndividuals, oldFitIndividual)
-			} else {
-				newIndividual := deepCopyIndividual(elite)
-				randomPatients := generateRandomPatientIDs(instance)
-				newIndividual.removePatients(randomPatients, instance)
-				newIndividual.distributePatientsOnRoutes(randomPatients, instance)
-				newIndividual.fixAllRoutesAndCalculateFitness(instance)
-				finalIndividuals = append(finalIndividuals, newIndividual)
-			}
+	sort.Slice(sortedOldIndividuals, func(i, j int) bool {
+		return sortedOldIndividuals[i].Fitness < sortedOldIndividuals[j].Fitness // For minimization
+	})
+
+	finalIndividuals := []Individual{}
+
+	for index, elite := range sortedOldIndividuals {
+		if index < numToPreserve {
+			oldFitIndividual := deepCopyIndividual(elite)
+			finalIndividuals = append(finalIndividuals, oldFitIndividual)
+		} else {
+			newIndividual := deepCopyIndividual(elite)
+
+			randomPatients := generateRandomPatientIDs(instance)
+			newIndividual.removePatients(randomPatients, instance)
+			newIndividual.distributePatientsOnRoutes(randomPatients, instance)
+
+			newIndividual.fixAllRoutesAndCalculateFitness(instance)
+			finalIndividuals = append(finalIndividuals, newIndividual)
 		}
-	
-		return Population {
-			Individuals: finalIndividuals,
-		}
+	}
+
+	return Population{
+		Individuals: finalIndividuals,
+	}
 }
-
-
-

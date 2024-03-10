@@ -189,7 +189,7 @@ func (r Route) canAddPatientEnforced(patientID int, instance Instance) (Route, b
 	for index, patient := range r.Patients {
 		demandCovered += patient.Demand
 
-		if canReturnInTime == false {
+		if !canReturnInTime {
 			routeCopy := deepCopyRoute(r)
 			newPatientOrder := routeCopy.Patients
 			newPatientOrder = append(newPatientOrder[:index+1], newPatientOrder[index:]...)
@@ -200,14 +200,26 @@ func (r Route) canAddPatientEnforced(patientID int, instance Instance) (Route, b
 				finalRoute = newRoute
 				canReturnInTime = true
 			}
+
+			if instance.CapacityNurse > (demandCovered+patientToAdd.Demand) && canReturnInTime {
+				return finalRoute, true
+			}
 		}
 	}
 
-	if instance.CapacityNurse > (demandCovered+patientToAdd.Demand) && canReturnInTime {
-		return finalRoute, true
+	routeCopy := deepCopyRoute(r)
+	newPatientOrder := routeCopy.Patients
+	if len(newPatientOrder) == 0 {
+		newPatientOrder = append(newPatientOrder, patientToAdd)
 	} else {
-		return finalRoute, false
+		newPatientOrder = append(newPatientOrder[:0+1], newPatientOrder[0:]...)
+		newPatientOrder[0] = patientToAdd
 	}
+
+	newRoute := createRouteFromPatientsVisited(newPatientOrder, instance)
+
+	return newRoute, false
+
 }
 
 // Checks if route contains duplicate patients. Returns array of patient id visited, and bool on whether there is duplicate
@@ -223,9 +235,9 @@ func (r Route) checkIfRouteContainsDuplicates() ([]int, bool) {
 func (r Route) findBestInsertion(patientID int, instance Instance) (Route, float64) {
 	patient := instance.getPatientAtID(patientID)
 
-	//if r.NurseCapacity < patient.Demand {
-	//	return r, math.Inf(1)
-	//}
+	if r.NurseCapacity < patient.Demand {
+		return r, math.Inf(1)
+	}
 
 	oldRouteFitness := calculateRouteFitness(r, instance)
 	var bestRoute Route
@@ -257,13 +269,13 @@ func (r Route) findBestInsertion(patientID int, instance Instance) (Route, float
 
 		// check for return time violation
 		//if newRoute.CurrentTime <= float64(instance.Depot.ReturnTime) {
-			newRouteFitness := calculateRouteFitness(newRoute, instance)
+		newRouteFitness := calculateRouteFitness(newRoute, instance)
 
-			change := newRouteFitness - oldRouteFitness
-			if change < changedObjectiveValue {
-				changedObjectiveValue = change
-				bestRoute = newRoute
-			}
+		change := newRouteFitness - oldRouteFitness
+		if change < changedObjectiveValue {
+			changedObjectiveValue = change
+			bestRoute = newRoute
+		}
 		//}
 	}
 
@@ -293,4 +305,8 @@ func (r Route) performPatientSwap(exsistingPatient Patient, outsidePatient Patie
 		}
 	}
 	return r, false
+}
+
+func (r *Route) addPatient(patient Patient) {
+	r.Patients = append(r.Patients, patient)
 }

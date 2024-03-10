@@ -63,10 +63,9 @@ func (i *Individual) calculateFitness(instance Instance) {
 	for _, route := range i.Routes {
 		if len(route.Patients) > 0 {
 			lastLocation := 0
-			for pNum, patient := range route.Patients {
-				// fmt.Println("pNum: ", pNum, "patient: ", patient)
-				fitness += instance.getTravelTime(lastLocation, pNum)
-				lastLocation = pNum
+			for _, patient := range route.Patients {
+				fitness += instance.getTravelTime(lastLocation, patient.ID)
+				lastLocation = patient.ID
 				fitness += calculatePenalty(patient)
 			}
 			fitness += instance.getTravelTime(lastLocation, 0) // added this. To calculate travel time from last patient to depot
@@ -75,20 +74,6 @@ func (i *Individual) calculateFitness(instance Instance) {
 	i.Fitness = fitness
 }
 
-func (i *Individual) calculateFitnessWithoutPenalty(instance Instance) float64 {
-	var fitness float64 = 0
-	for _, route := range i.Routes {
-		if len(route.Patients) > 0 {
-			lastLocation := 0
-			for pNum, _ := range route.Patients {
-				fitness += instance.getTravelTime(lastLocation, pNum)
-				lastLocation = pNum
-			}
-			fitness += instance.getTravelTime(lastLocation, 0) 
-		}
-	}
-	return fitness
-}
 
 // Calculates a penalty if patient is visited after endtime, or nurse leaves after endtime.
 func calculatePenalty(patient Patient) float64 {
@@ -300,6 +285,7 @@ func (i *Individual) distributePatientsOnRoutes(patients []int, instance Instanc
 	for _, pID := range patients {
 		patientAdded := false
 
+		count := 0
 		for !patientAdded {
 			randomRouteIndex := random.Intn(instance.NbrNurses)
 			newRoute, ok := i.Routes[randomRouteIndex].canAddPatientEnforced(pID, instance)
@@ -307,6 +293,13 @@ func (i *Individual) distributePatientsOnRoutes(patients []int, instance Instanc
 				i.Routes[randomRouteIndex] = newRoute
 				patientAdded = true
 			}
+
+			if count > 25 {
+				i.Routes[randomRouteIndex] = newRoute
+				patientAdded = true
+			}
+
+			count++
 		}
 	}
 }

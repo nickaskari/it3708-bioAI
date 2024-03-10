@@ -33,7 +33,8 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 			r := rand.New(source)
 
 			i, j := getTwoRandomParents(parents)
-			parent1, parent2 := parents[i], parents[j]
+			//i, j := getTwoSimilarParents(parents)
+			parent1, parent2 := parents[i], parents[j] // choose based on similarity
 			if r.Float64() < crossoverRate {
 				child1, child2 := destroyRepairCrossover(parent1, parent2, instance)
 				child1.calculateFitness(instance)
@@ -87,25 +88,23 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 			lastFitness = bestFitness
 		}
 
-		if stuck > 20 {
-			fmt.Println("\nPERFORM DESTRUCTION AND REBUILD POPULATION..\n")
-			//newPopulation := deepCopyPopulation(population.applyGenecoideWithElitism(elitismPercentage, instance))
-			newPopulation := deepCopyPopulation(population.spreadDisease(elitismPercentage, instance))
+		if stuck > 5 {
+			var newPopulation Population
+			if 0.8 > random.Float64() {
+				fmt.Println("\nPERFORM GENOCIDE AND REBUILD POPULATION..\n")
+				newPopulation = deepCopyPopulation(population.applyGenecoideWithElitism(elitismPercentage, instance))
+			} else {
+				fmt.Println("\nSPREAD DISEASE..\n")
+				newPopulation = deepCopyPopulation(population.spreadDisease(elitismPercentage, instance))
+			}
 			population = newPopulation
 			stuck = 0
 		}
 		generation++
-
-		bestIndividual := getBestIndividual(population.Individuals)
-		bestFit := bestIndividual.calculateFitnessWithoutPenalty(instance)
-		fmt.Println("Best individual fitness without penalty: ", bestFit)
-		
-
 	}
 
 	getBestIndividual(population.Individuals).writeIndividualToJson()
 	getBestIndividual(population.Individuals).writeIndividualToVismaFormat()
-
 }
 
 // Get Two random indexes that are not the same
