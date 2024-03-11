@@ -9,7 +9,7 @@ import (
 // https://it3708.resolve.visma.com/
 
 // Declare what file you want problem instance from
-var train_file string = "train/train_2.json"
+var train_file string = "train/train_0.json"
 
 // GA paramters
 var numParents int = 50

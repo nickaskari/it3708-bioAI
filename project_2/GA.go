@@ -10,6 +10,9 @@ import (
 func GA(populationSize int, gMax int, numParents int, temp int,
 	crossoverRate float64, mutationRate float64, elitismPercentage float64, coolingRate float64,
 	annealingRate float64, instance Instance) {
+	
+	// initialize an emtpy array
+	bestFitnesses := []float64{}
 
 	source := rand.NewSource(time.Now().UnixNano())
 	random := rand.New(source)
@@ -82,6 +85,8 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 		printBestIndividual(population.Individuals, instance)
 
 		bestFitness := getBestIndividual(population.Individuals).Fitness
+		bestFitnesses = append(bestFitnesses, bestFitness)
+
 		if bestFitness == lastFitness {
 			stuck++
 		} else {
@@ -105,6 +110,8 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 
 	getBestIndividual(population.Individuals).writeIndividualToJson()
 	getBestIndividual(population.Individuals).writeIndividualToVismaFormat()
+	writeBestFitnessesToJSON(bestFitnesses)
+
 }
 
 // Get Two random indexes that are not the same

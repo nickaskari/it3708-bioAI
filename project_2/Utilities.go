@@ -1,12 +1,13 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"math/rand"
 	"os"
+	"sort"
 	"strconv"
 	"time"
-	"sort"
 )
 
 // Reads file at filename and returns JSON.
@@ -178,4 +179,20 @@ func sortWithReflection(a []int) ([]int, []int) {
     }
 
     return sortedA, reflectedB
+}
+
+func writeBestFitnessesToJSON(bestFitnesses []float64) {
+
+    jsonData, err := json.Marshal(bestFitnesses)
+    if err != nil {
+        fmt.Printf("Error marshaling bestFitnesses to JSON: %v\n", err)
+        return
+    }
+
+    fileName := "plotting/bestFitnesses.json"
+    err = os.WriteFile(fileName, jsonData, 0644)
+    if err != nil {
+        fmt.Printf("Error writing JSON to file: %v\n", err)
+        return
+    }
 }
