@@ -76,7 +76,7 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 
 					if annealingRate > random.Float64() {
 						mutated2 = simulatedAnnealing(child2, temp, coolingRate, instance)
-						//mutated2 = destroyRepairCluster(mutated2, instance)
+						mutated2 = destroyRepairCluster(mutated2, instance)
 						mutated2.calculateFitness(instance)
 					} else {
 						mutated2 = hillClimbing(child2, temp, instance)
@@ -119,7 +119,7 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 			lastFitness = bestFitness
 		}
 
-		if stuck > 7 {
+		if stuck > 5 {
 			var newPopulation Population
 			if 0.5 > random.Float64() {
 				fmt.Println("\nPERFORM GENOCIDE AND REBUILD POPULATION..\n")

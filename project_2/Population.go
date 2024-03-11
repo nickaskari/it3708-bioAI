@@ -202,7 +202,7 @@ func (p Population) applyGenecoideWithElitism(elitismPercentage float64, instanc
 
 // Spreads a disease on all individual except elites. (Patients are scrambled) returns new population
 func (p Population) spreadDisease(elitismPercentage float64, instance Instance) Population {
-	numToPreserve := int(math.Floor(float64(p.size()) * elitismPercentage))
+	//numToPreserve := int(math.Floor(float64(p.size()) * elitismPercentage))
 
 	// Sort the old population by fitness to find the fittest individuals, by making a copy. BEST TO WORST
 	sortedOldIndividuals := deepCopyIndividuals(p.Individuals)
@@ -214,7 +214,7 @@ func (p Population) spreadDisease(elitismPercentage float64, instance Instance) 
 	finalIndividuals := []Individual{}
 
 	for index, elite := range sortedOldIndividuals {
-		if index < numToPreserve {
+		if index < len(sortedOldIndividuals) {
 			oldFitIndividual := deepCopyIndividual(elite)
 			finalIndividuals = append(finalIndividuals, oldFitIndividual)
 		} else {
@@ -222,8 +222,8 @@ func (p Population) spreadDisease(elitismPercentage float64, instance Instance) 
 
 			randomPatients := generateRandomPatientIDs(instance)
 			newIndividual.removePatients(randomPatients, instance)
+			//newIndividual.findBestRoutesForPatients(randomPatients, instance)
 			newIndividual.distributePatientsOnRoutes(randomPatients, instance)
-
 			newIndividual.fixAllRoutesAndCalculateFitness(instance)
 			finalIndividuals = append(finalIndividuals, newIndividual)
 		}

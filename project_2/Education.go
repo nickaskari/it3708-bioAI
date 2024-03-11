@@ -98,7 +98,7 @@ func educateTheElite(elitismPercentage float64, individuals []Individual, initia
 		//	coolingRate, instance)
 
 		individuals[i] = destroyRepairCluster(individuals[i], instance)
-		individuals[i] = hillClimbing(educatedIndividual, 80, instance)
+		individuals[i] = hillClimbing(educatedIndividual, 500, instance)
 	}
 	return educatedIndividuals
 }

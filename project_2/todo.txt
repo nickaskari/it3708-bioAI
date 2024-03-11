@@ -1,44 +1,9 @@
-Constraint to be handled in GA:
-
-if (timeAtArival + float64(potentialPatient.CareTime)) <= float64(potentialPatient.EndTime) {
-    // If the nurse arrives late, check if the nurse will treat in time before the end time.
-    return true
-}
-
-Essentially time windows are in genreal not handled.
-
-Fitness function solution:
-- Add how much time the nurses are off (compared to patients time window) in time
-- Or, calculate how many time windows are missed
-
-- Possibly differentiate between traveltime value and penalty value when deciding penalty factor
-
-- Add number of times constraint has been violated in printout
-
-- When calling edgeRecombination in some crossover function we must take in two indivudals. And then pair up simular routes to perform this on. Dont know how to handle empty routes? 
-Maybe ignore them if an optimal solution never has empty route. Not sure whether this is the case. Also we might have to incorporate some constrain handling in the edge recombination 
-function.
-
-
-- Remeber to increase penalty for time window violation
 
 - Satisfiesconstraint has omitted return time --> solved train8 problem.
 
-- Remeber to age population..
 
-- create benchmark reached for GA
-- Great 50/50 between genocide and covid
 
-----------------------------------------------------------------------------------------------------------
-Old version of satisfiesConstraints():
+- random mutation changed to slack on return time and performPatientSwap in Route.Go
+- train8 has a really tight returntime
 
-currentTime := nurseRoute.CurrentTime
-if (nurseRoute.NurseCapacity >= potentialPatient.Demand) && 
-    (potentialPatient.EndTime - potentialPatient.StartTime >= potentialPatient.CareTime) && //Not scam
-    (currentTime + float64(potentialPatient.CareTime) <= float64(potentialPatient.EndTime)) &&
-    (nurseRoute.CurrentTime + curentToPotentialPatient + float64(potentialPatient.CareTime) + potentialPatientToDepot <=
-        float64(instance.Depot.ReturnTime)) {
-    return true
-} else {
-    return false
-}
+- possible mistake in generateRandomPatientIDs

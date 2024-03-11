@@ -39,6 +39,7 @@ func randomSwapMutation(individual Individual, instance Instance) Individual {
 		mutated.Routes[randomRouteIndex] = newRoute
 		return mutated
 	}
+	mutated.Routes[randomRouteIndex] = newRoute
 	return mutated
 }
 
@@ -76,12 +77,13 @@ func randomInversionMutation(individual Individual, instance Instance) Individua
 		r.Patients[i], r.Patients[j] = r.Patients[j], r.Patients[i]
 	}
 
+	
 	newRoute := createRouteFromPatientsVisited(r.Patients, instance)
 	if newRoute.CurrentTime <= float64(instance.Depot.ReturnTime) {
 		mutated.Routes[randomRouteIndex] = newRoute
 		return mutated
 	}
-
+	mutated.Routes[randomRouteIndex] = newRoute
 	return mutated
 }
 

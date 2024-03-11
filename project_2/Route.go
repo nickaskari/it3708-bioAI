@@ -248,10 +248,10 @@ func (r Route) findBestInsertion(patientID int, instance Instance) (Route, float
 		newPatientOrder := []Patient{patient}
 		newRoute := createRouteFromPatientsVisited(newPatientOrder, instance)
 		// check for return time violation
-		//if newRoute.CurrentTime <= float64(instance.Depot.ReturnTime) {
-		newRouteFitness := calculateRouteFitness(newRoute, instance)
-		return newRoute, newRouteFitness
-		//}
+		if newRoute.CurrentTime <= float64(instance.Depot.ReturnTime) {
+			newRouteFitness := calculateRouteFitness(newRoute, instance)
+			return newRoute, newRouteFitness
+		}
 	}
 
 	for index := 0; index < len(r.Patients); index++ {
@@ -325,7 +325,7 @@ func (r Route) findPatientsInCluster(instance Instance) []int {
 					longestTravel = instance.getTravelTime(lastLocation, patient.ID)
 					clusterStartIndex = i
 				}
-				
+
 			}
 			lastLocation = patient.ID
 		}
@@ -337,4 +337,3 @@ func (r Route) findPatientsInCluster(instance Instance) []int {
 
 	return finalPatients
 }
-

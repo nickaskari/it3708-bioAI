@@ -10,10 +10,10 @@ import (
 // https://it3708.resolve.visma.com/
 
 // Declare what file you want problem instance from
-var train_file string = "train/train_9.json"
+var train_file string = "train/train_7.json"
 
 // Benchmark stop criteria. 0 essentially deactivates this.
-var benchmark float64 = 869
+var benchmark float64 = 1102
 
 // GA paramters
 /*
@@ -42,9 +42,12 @@ var islandConfigs = []struct {
 }{
 	{25, 50, 0.4, 0.8, 600, 1000, 0.5, 0.05, 1},
 	{25, 50, 0.4, 0.8, 600, 1000, 0.2, 0.05, 1},
-	{25, 50, 0.4, 0.8, 600, 1000, 0.1, 0.05, 1},
-	{25, 50, 0.4, 0.8, 600, 1000, 0.6, 0.05, 1},
-	{25, 50, 0.4, 0.8, 600, 1000, 0.5, 0.01, 1},
+	{25, 50, 0.4, 0.8, 600, 1000, 0.1, 0.1, 1},
+	{25, 50, 0.1, 1.0, 600, 1000, 0.5, 0.05, 1},
+	{25, 50, 0.2, 0.4, 600, 1000, 0.5, 0.01, 1},
+	{25, 50, 0.9, 0.1, 600, 1000, 0.5, 0.1, 1},
+	{25, 50, 0.9, 0.1, 600, 1000, 0.5, 0.05, 1},
+	{25, 50, 0.9, 0.1, 600, 1000, 0.5, 0.1, 1},
 }
 
 func main() {
