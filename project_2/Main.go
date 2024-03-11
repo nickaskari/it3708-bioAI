@@ -1,89 +1,126 @@
 package main
 
 import (
-	"encoding/json"
+	"context"
 	"fmt"
-	"os"
+	"sort"
+	"sync"
 )
 
 // https://it3708.resolve.visma.com/
 
 // Declare what file you want problem instance from
-var train_file string = "train/train_0.json"
+var train_file string = "train/train_2.json"
+
+// Benchmark stop criteria. 0 essentially deactivates this.
+var benchmark float64 = 865
 
 // GA paramters
+/*
 var numParents int = 50
 var populationSize int = 100
-var crossoverRate float64 = 0.6
-var mutationRate float64 = 1
-var gMax int = 1000
+var crossoverRate float64 = 0.4
+var mutationRate float64 = 0.8
+var gMax int = 2000
 var temp int = 1000
 var coolingRate float64 = 0.5
-var elitismPercentage float64 = 0.01
+var elitismPercentage float64 = 0.05
 var annealingRate float64 = 1
+*/
 
+// Island parameters
+var islandConfigs = []struct {
+	numParents        int
+	populationSize    int
+	crossoverRate     float64
+	mutationRate      float64
+	gMax              int
+	temp              int
+	coolingRate       float64
+	elitismPercentage float64
+	annealingRate     float64
+}{
+	{25, 50, 0.4, 0.8, 600, 1000, 0.5, 0.05, 1},
+	{25, 50, 0.4, 0.8, 600, 1000, 0.2, 0.05, 1},
+	{25, 50, 0.4, 0.8, 600, 1000, 0.1, 0.05, 1},
+	{25, 50, 0.4, 0.8, 600, 1000, 0.6, 0.05, 1},
+	{25, 50, 0.4, 0.8, 600, 1000, 0.5, 0.01, 1},
+}
+
+func main() {
+	fmt.Println("Starting GA on islands...")
+
+	instance := getProblemInstance(train_file)
+
+	// Use a context with cancel to signal goroutines to stop
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel() // Ensure all paths cancel to avoid context leak
+
+	// Use a WaitGroup to wait for all islands to finish
+	var wg sync.WaitGroup
+
+	// Channel to collect the best individuals from each island
+	bestIndividuals := make(chan Individual, len(islandConfigs))
+
+	for _, config := range islandConfigs {
+		wg.Add(1)
+		go func(c struct {
+			numParents        int
+			populationSize    int
+			crossoverRate     float64
+			mutationRate      float64
+			gMax              int
+			temp              int
+			coolingRate       float64
+			elitismPercentage float64
+			annealingRate     float64
+		}) {
+			defer wg.Done()
+
+			// Run GA on each island with its configuration and capture the best individual
+			best, reachedBenchmark := GA(c.populationSize, c.gMax, c.numParents, c.temp, c.crossoverRate, c.mutationRate,
+				c.elitismPercentage, c.coolingRate, c.annealingRate, benchmark, ctx, instance)
+
+			bestIndividuals <- best
+
+			if reachedBenchmark {
+				fmt.Println("BENCHMARK WAS REACHED -- EXITING ALL CURRENT GO ROUTINES..")
+				cancel() // Reached benchmark, signal other goroutines to stop
+			}
+
+		}(config)
+	}
+
+	wg.Wait()              // Wait for all goroutines to finish
+	close(bestIndividuals) // Close the channel after all sends are complete
+
+	// Slice to collect all best individuals
+	allBest := make([]Individual, 0, len(islandConfigs))
+	for ind := range bestIndividuals {
+		allBest = append(allBest, ind)
+	}
+
+	fmt.Println("\nAll islands have completed. Best individual collected:\n")
+
+	sort.Slice(allBest, func(i, j int) bool {
+		return allBest[i].Fitness < allBest[j].Fitness
+	})
+
+	best := allBest[0]
+	printSolution(best, instance)
+	best.checkIndividualRoutes(instance, true)
+	best.writeIndividualToJson()
+	best.writeIndividualToVismaFormat()
+}
+
+/*
 func main() {
 	fmt.Println("")
 	instance := getProblemInstance(train_file)
 
-	pop := initPopulation(instance, 10)
-	testInd := pop.Individuals[0]
-
-	printSolution(testInd, instance)
-
 	GA(populationSize, gMax, numParents, temp, crossoverRate, mutationRate,
-		elitismPercentage, coolingRate, annealingRate, instance)
+		elitismPercentage, coolingRate, annealingRate, benchmark, instance)
 
-	fmt.Println("\nTRAVEL TIME =", instance.getTravelTime(0, 1))
 	fmt.Println("Calculating fintess from json..", readFromJson(instance))
 }
-
-/*
-PARAMTERS FOR TRAIN 8
-var numParents int = 50
-var populationSize int = 100
-var crossoverRate float64 = 0.8
-var mutationRate float64 = 0.1
-var gMax int = 50
-var temp int = 100
 */
-
-/*
-TA help
-
-Island Mode - Feks, hver 25 gen lar man et individ fra en øy flytte til en annen, for å introdusere diversity. Øyene
-vil være stuck forskjellige steder.
-
-Niching og crowding - trenger diversity
-
-
-
-*/
-
-func readFromJson(instance Instance) float64 {
-	file, err := os.Open("plotting/IndividualVisma.json")
-	if err != nil {
-		fmt.Println("Error opening JSON file:", err)
-		return 0.0
-	}
-	defer file.Close()
-
-	// Read JSON data from file
-	var jsonData [][]int
-	err = json.NewDecoder(file).Decode(&jsonData)
-	if err != nil {
-		fmt.Println("Error parsing JSON:", err)
-		return 0.0
-	}
-
-	var fitness float64 = 0
-	for _, subArray := range jsonData {
-		start := 0
-		for _, element := range subArray {
-			fitness += instance.getTravelTime(start, element)
-			start = element
-		}
-		fitness += instance.getTravelTime(start, 0)
-	}
-	return fitness
-}

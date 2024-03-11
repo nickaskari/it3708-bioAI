@@ -125,3 +125,25 @@ func getTwoRouteIndexes(individual Individual) (int, int) {
 		}
 	}
 }
+
+// Random inter move. Returns mutated individual (if mutated).. NOT FINISHED
+
+func randomInterRouteMoveMutation(individual Individual, instance Instance) Individual {
+	mutated := deepCopyIndividual(individual)
+
+	i, j := getTwoRouteIndexes(mutated)
+
+	route1, route2 := mutated.Routes[i], mutated.Routes[j]
+
+	patient1, patient2 := route1.getRandomPatient(), route2.getRandomPatient()
+
+	route1, ok1 := route1.performPatientSwap(patient1, patient2, instance)
+	route2, ok2 := route2.performPatientSwap(patient2, patient1, instance)
+
+	if ok1 && ok2 {
+		mutated.Routes[i], mutated.Routes[j] = route1, route2
+		return mutated
+	}
+
+	return mutated
+}

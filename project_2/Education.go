@@ -42,45 +42,63 @@ func hillClimbing(individual Individual, temp int, instance Instance) Individual
 
 // Simulated anhealing of individual. Returns optimized individual
 func simulatedAnnealing(initialIndividual Individual, initialTemp int, coolingRate float64, instance Instance) Individual {
-  
+
 	source := rand.NewSource(time.Now().UnixNano())
 	random := rand.New(source)
 
-    currentState := deepCopyIndividual(initialIndividual)
-    currentTemp := float64(initialTemp)
+	currentState := deepCopyIndividual(initialIndividual)
+	currentTemp := float64(initialTemp)
 
-    mutations := []func(Individual, Instance) Individual {
-        randomInversionMutation,
-        randomSwapMutation,
-        randomInterRouteSwapMutation,
-    }
+	mutations := []func(Individual, Instance) Individual{
+		randomInversionMutation,
+		randomSwapMutation,
+		randomInterRouteSwapMutation,
+	}
 
-    for currentTemp > 1 {
-        mutation := mutations[random.Intn(len(mutations))]
-        mutatedIndividual := mutation(currentState, instance)
-        mutatedIndividual.fixAllRoutesAndCalculateFitness(instance)
+	for currentTemp > 1 {
+		mutation := mutations[random.Intn(len(mutations))]
+		mutatedIndividual := mutation(currentState, instance)
+		mutatedIndividual.fixAllRoutesAndCalculateFitness(instance)
 
-        acceptMutation := shouldAcceptMutation(currentState.Fitness, mutatedIndividual.Fitness, currentTemp)
-        if acceptMutation {
-            currentState = mutatedIndividual
-        }
+		acceptMutation := shouldAcceptMutation(currentState.Fitness, mutatedIndividual.Fitness, currentTemp)
+		if acceptMutation {
+			currentState = mutatedIndividual
+		}
 
-        currentTemp *= coolingRate
-    }
-    currentState.fixAllRoutesAndCalculateFitness(instance)
-    return currentState
+		currentTemp *= coolingRate
+	}
+	currentState.fixAllRoutesAndCalculateFitness(instance)
+	return currentState
 }
 
-
 func shouldAcceptMutation(currentFitness, newFitness, temperature float64) bool {
-    if newFitness < currentFitness {
-        return true
-    }
-    changeFitness := newFitness - currentFitness
-    probability := math.Exp(-changeFitness / temperature)
+	if newFitness < currentFitness {
+		return true
+	}
+	changeFitness := newFitness - currentFitness
+	probability := math.Exp(-changeFitness / temperature)
 
 	source := rand.NewSource(time.Now().UnixNano())
 	random := rand.New(source)
 
-    return random.Float64() < probability
+	return random.Float64() < probability
+}
+
+// Educates the Elite. Returns educated population
+func educateTheElite(elitismPercentage float64, individuals []Individual, initialTemp int, coolingRate float64, instance Instance) []Individual {
+
+	educatedIndividuals := deepCopyIndividuals(individuals)
+	numToEducate := int(math.Floor(float64(len(individuals)) * elitismPercentage))
+	for i := range len(individuals) {
+		if (i + 1) > numToEducate {
+			break
+		}
+		educatedIndividual := deepCopyIndividual(individuals[i])
+		//individuals[i] = simulatedAnnealing(educatedIndividual, initialTemp,
+		//	coolingRate, instance)
+
+		individuals[i] = destroyRepairCluster(individuals[i], instance)
+		individuals[i] = hillClimbing(educatedIndividual, 80, instance)
+	}
+	return educatedIndividuals
 }

@@ -233,3 +233,28 @@ func (p Population) spreadDisease(elitismPercentage float64, instance Instance) 
 		Individuals: finalIndividuals,
 	}
 }
+
+// Ages population, returns new population
+func (p Population) agePopulation() Population {
+	aged := deepCopyPopulation(p)
+
+	for i, ind := range aged.Individuals {
+		ind.growOlder()
+		aged.Individuals[i] = ind
+	}
+
+	return aged
+}
+
+// Perform age selection, returns new population
+func ageSurvivorSelection(popSize int, newIndividuals []Individual) []Individual {
+	newIndividuals = deepCopyIndividuals(newIndividuals)
+
+	sort.Slice(newIndividuals, func(i, j int) bool {
+		return newIndividuals[i].Age < newIndividuals[j].Age
+	})
+
+	newIndividuals = newIndividuals[:popSize]
+
+	return newIndividuals
+}

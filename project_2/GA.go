@@ -1,16 +1,18 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"math"
 	"math/rand"
 	"time"
 )
 
+// The genetic algorithm. Returns best individual and whether benchmark was hit
 func GA(populationSize int, gMax int, numParents int, temp int,
 	crossoverRate float64, mutationRate float64, elitismPercentage float64, coolingRate float64,
-	annealingRate float64, instance Instance) {
-	
+	annealingRate float64, benchmark float64, ctx context.Context, instance Instance) (Individual, bool) {
+
 	// initialize an emtpy array
 	bestFitnesses := []float64{}
 
@@ -21,6 +23,7 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 	var newIndividuals []Individual
 	stuck := 0
 	lastFitness := math.Inf(1)
+	benchmarkWasReached := false
 
 	fmt.Println("Initalzing population..")
 	population := initPopulation(instance, populationSize)
@@ -29,9 +32,23 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 	for generation < gMax {
 		newIndividuals = []Individual{}
 
+		// Age population
+		population = population.agePopulation()
+
 		parents := population.tournamentSelection(numParents)
 
-		for population.size() > len(newIndividuals) {
+		threshold := int(math.Floor(float64(population.size()) * 1.25))
+
+		for threshold > len(newIndividuals) {
+			// Check if other islands found the solution
+			select {
+			case <-ctx.Done():
+				fmt.Println("GA was canceled.")
+				return createDummyIndividual(), false
+			default:
+				// Continue with GA processing
+			}
+
 			source := rand.NewSource(time.Now().UnixNano())
 			r := rand.New(source)
 
@@ -49,34 +66,43 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 
 					if annealingRate > random.Float64() {
 						mutated1 = simulatedAnnealing(child1, temp, coolingRate, instance)
+						mutated1 = destroyRepairCluster(mutated1, instance)
 						mutated1.calculateFitness(instance)
 					} else {
 						mutated1 = hillClimbing(child1, temp, instance)
+						//mutated1 = destroyRepairCluster(mutated1, instance)
 						mutated1.calculateFitness(instance)
 					}
 
 					if annealingRate > random.Float64() {
 						mutated2 = simulatedAnnealing(child2, temp, coolingRate, instance)
+						//mutated2 = destroyRepairCluster(mutated2, instance)
 						mutated2.calculateFitness(instance)
 					} else {
 						mutated2 = hillClimbing(child2, temp, instance)
+						//mutated2 = destroyRepairCluster(mutated2, instance)
 						mutated2.calculateFitness(instance)
 					}
 
-					newIndividuals = addToPopulation(mutated1, population.size(), newIndividuals)
-					newIndividuals = addToPopulation(mutated2, population.size(), newIndividuals)
+					newIndividuals = addToPopulation(mutated1, threshold, newIndividuals)
+					newIndividuals = addToPopulation(mutated2, threshold, newIndividuals)
 				} else {
-					newIndividuals = addToPopulation(child1, population.size(), newIndividuals)
-					newIndividuals = addToPopulation(child2, population.size(), newIndividuals)
+					newIndividuals = addToPopulation(child1, threshold, newIndividuals)
+					newIndividuals = addToPopulation(child2, threshold, newIndividuals)
 				}
 			}
-			newIndividuals = addToPopulation(parent1, population.size(), newIndividuals)
-			newIndividuals = addToPopulation(parent2, population.size(), newIndividuals)
+			newIndividuals = addToPopulation(parent1, threshold, newIndividuals)
+			newIndividuals = addToPopulation(parent2, threshold, newIndividuals)
 		}
+
+		// Survivor selection -- AGE
+		newIndividuals = ageSurvivorSelection(populationSize, newIndividuals)
+
+		// Educate the elite
+		newIndividuals = educateTheElite(elitismPercentage, newIndividuals, temp, coolingRate, instance)
 
 		// Survivor selection -- ELITISM
 
-		// grows populationx
 		newPopulation := deepCopyPopulation(population.applyElitismWithPercentage(newIndividuals, elitismPercentage))
 		population = deepCopyPopulation(newPopulation)
 
@@ -93,9 +119,9 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 			lastFitness = bestFitness
 		}
 
-		if stuck > 5 {
+		if stuck > 7 {
 			var newPopulation Population
-			if 0.8 > random.Float64() {
+			if 0.5 > random.Float64() {
 				fmt.Println("\nPERFORM GENOCIDE AND REBUILD POPULATION..\n")
 				newPopulation = deepCopyPopulation(population.applyGenecoideWithElitism(elitismPercentage, instance))
 			} else {
@@ -105,6 +131,13 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 			population = newPopulation
 			stuck = 0
 		}
+
+		if bestFitness <= benchmark {
+			fmt.Println("Found an individual with lower fitness than the benchmark..")
+			benchmarkWasReached = true
+			break
+		}
+
 		generation++
 	}
 
@@ -112,6 +145,7 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 	getBestIndividual(population.Individuals).writeIndividualToVismaFormat()
 	writeBestFitnessesToJSON(bestFitnesses)
 
+	return getBestIndividual(population.Individuals), benchmarkWasReached
 }
 
 // Get Two random indexes that are not the same

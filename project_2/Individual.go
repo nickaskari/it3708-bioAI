@@ -68,7 +68,8 @@ func (i *Individual) calculateFitness(instance Instance) {
 				lastLocation = patient.ID
 				fitness += calculatePenalty(patient)
 			}
-			fitness += instance.getTravelTime(lastLocation, 0) // added this. To calculate travel time from last patient to depot
+			fitness += instance.getTravelTime(lastLocation, 0) 
+			fitness += calculateCapacityPenalty(route, instance)
 		}
 	}
 	i.Fitness = fitness
@@ -84,6 +85,18 @@ func calculatePenalty(patient Patient) float64 {
 	} else if patient.LeavingTime > float64(patient.EndTime) {
 		return (patient.LeavingTime - float64(patient.EndTime)) * penaltyFactor
 	}
+	
+	return 0
+}
+
+// Calculate capacity penalty
+func calculateCapacityPenalty(route Route, instance Instance) float64 {
+	var penaltyFactor float64 = 5
+
+	if route.NurseCapacity < 0 {
+		return math.Abs(float64(route.NurseCapacity - instance.CapacityNurse + 1) * penaltyFactor)
+	}
+
 	return 0
 }
 
@@ -359,3 +372,14 @@ func deepCopyIndividuals(individuals []Individual) []Individual {
 
 	return copy
 }
+
+// Create a bad dummy individual. Infinite fitness and no routes.
+func createDummyIndividual() Individual {
+	return Individual {
+		Fitness: math.Inf(1),
+		Age: 0,
+		Routes: []Route{},
+	}
+}
+
+

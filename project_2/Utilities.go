@@ -196,3 +196,31 @@ func writeBestFitnessesToJSON(bestFitnesses []float64) {
         return
     }
 }
+
+func readFromJson(instance Instance) float64 {
+	file, err := os.Open("plotting/IndividualVisma.json")
+	if err != nil {
+		fmt.Println("Error opening JSON file:", err)
+		return 0.0
+	}
+	defer file.Close()
+
+	// Read JSON data from file
+	var jsonData [][]int
+	err = json.NewDecoder(file).Decode(&jsonData)
+	if err != nil {
+		fmt.Println("Error parsing JSON:", err)
+		return 0.0
+	}
+
+	var fitness float64 = 0
+	for _, subArray := range jsonData {
+		start := 0
+		for _, element := range subArray {
+			fitness += instance.getTravelTime(start, element)
+			start = element
+		}
+		fitness += instance.getTravelTime(start, 0)
+	}
+	return fitness
+}

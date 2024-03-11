@@ -310,3 +310,31 @@ func (r Route) performPatientSwap(exsistingPatient Patient, outsidePatient Patie
 func (r *Route) addPatient(patient Patient) {
 	r.Patients = append(r.Patients, patient)
 }
+
+// Finds patients in a route that are in a cluster (a separate cluster from the others), and returns the patient ID's
+func (r Route) findPatientsInCluster(instance Instance) []int {
+	longestTravel := 0.0
+	clusterStartIndex := 0
+	finalPatients := []int{}
+
+	if len(r.Patients) > 0 {
+		lastLocation := 0
+		for i, patient := range r.Patients {
+			if lastLocation != 0 {
+				if longestTravel < instance.getTravelTime(lastLocation, patient.ID) {
+					longestTravel = instance.getTravelTime(lastLocation, patient.ID)
+					clusterStartIndex = i
+				}
+				
+			}
+			lastLocation = patient.ID
+		}
+
+		for i := clusterStartIndex; i < len(r.Patients); i++ {
+			finalPatients = append(finalPatients, r.Patients[i].ID)
+		}
+	}
+
+	return finalPatients
+}
+
