@@ -10,10 +10,10 @@ import (
 // https://it3708.resolve.visma.com/
 
 // Declare what file you want problem instance from
-var train_file string = "train/train_2.json"
+var train_file string = "train/train_9.json"
 
 // Benchmark stop criteria. 0 essentially deactivates this.
-var benchmark float64 = 865
+var benchmark float64 = 869
 
 // GA paramters
 /*
