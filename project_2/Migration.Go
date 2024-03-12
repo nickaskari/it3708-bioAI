@@ -60,3 +60,5 @@ func (me *MigrationEvent) WaitForMigration(generation, islandID int) []Individua
     // Optionally, remove migrants from the pool if you don't want them to be available for the next migration event
     return migrants
 }
+
+// Returns random migrants. Removes those from the population

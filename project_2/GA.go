@@ -11,7 +11,8 @@ import (
 // The genetic algorithm. Returns best individual and whether benchmark was hit
 func GA(populationSize int, gMax int, numParents int, temp int,
 	crossoverRate float64, mutationRate float64, elitismPercentage float64, coolingRate float64,
-	annealingRate float64, benchmark float64, ctx context.Context, instance Instance) (Individual, bool) {
+	annealingRate float64, benchmark float64, ctx context.Context, migrationFrequency int, numMigrants int,
+	migrationEvent *MigrationEvent, islandID int, instance Instance) (Individual, bool) {
 
 	// initialize an emtpy array
 	bestFitnesses := []float64{}
@@ -31,6 +32,15 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 
 	for generation < gMax {
 		newIndividuals = []Individual{}
+
+		if generation % migrationFrequency == 0 && generation != 0 {
+			migrants := selectRandomMigrants(population, 10)
+            migrationEvent.DepositMigrants(generation, migrants)
+
+            // Wait for all islands to deposit migrants and pick up new ones
+            newMigrants := migrationEvent.WaitForMigration(generation, islandID)
+            // Incorporate new migrants into the population
+		}
 
 		// Age population
 		population = population.agePopulation()

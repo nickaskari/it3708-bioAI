@@ -14,6 +14,8 @@ var train_file string = "train/train_7.json"
 
 // Benchmark stop criteria. 0 essentially deactivates this.
 var benchmark float64 = 1130
+var migrationFrequency int = 25
+var numMigrants int = 10
 
 // GA paramters OLD
 /*
@@ -65,8 +67,9 @@ func main() {
 	bestIndividuals := make(chan Individual, len(islandConfigs))
 
 	migrationEvent := NewMigrationEvent(len(islandConfigs))
+	//migrationEvent = NewMigrationEvent(len(islandConfigs))
 
-	for i, config := range islandConfigs {
+	for islandID, config := range islandConfigs {
 		wg.Add(1)
 		go func(c struct {
 			numParents        int
@@ -83,13 +86,14 @@ func main() {
 
 			// Run GA on each island with its configuration and capture the best individual
 			best, reachedBenchmark := GA(c.populationSize, c.gMax, c.numParents, c.temp, c.crossoverRate, c.mutationRate,
-				c.elitismPercentage, c.coolingRate, c.annealingRate, benchmark, ctx, instance)
+				c.elitismPercentage, c.coolingRate, c.annealingRate, benchmark, ctx, migrationFrequency, numMigrants,
+				migrationEvent, islandID, instance)
 
 			bestIndividuals <- best
 
 			if reachedBenchmark {
 				fmt.Println("BENCHMARK WAS REACHED -- EXITING ALL CURRENT GO ROUTINES..")
-				fmt.Println("INDIVIDUAL WAS FOUND BY ISLAND", i, "AND CONFIG", config)
+				fmt.Println("INDIVIDUAL WAS FOUND BY ISLAND", islandID, "AND CONFIG", config)
 				cancel() // Reached benchmark, signal other goroutines to stop
 			}
 
