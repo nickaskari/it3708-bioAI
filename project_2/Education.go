@@ -74,14 +74,15 @@ func simulatedAnnealing(initialIndividual Individual, initialTemp int, coolingRa
 func shouldAcceptMutation(currentFitness, newFitness, temperature float64) bool {
 	if newFitness < currentFitness {
 		return true
+	} else {
+		changeFitness := newFitness - currentFitness
+		probability := math.Exp(-changeFitness / (temperature * 0.01))
+	
+		source := rand.NewSource(time.Now().UnixNano())
+		random := rand.New(source)
+	
+		return random.Float64() < probability
 	}
-	changeFitness := newFitness - currentFitness
-	probability := math.Exp(-changeFitness / temperature)
-
-	source := rand.NewSource(time.Now().UnixNano())
-	random := rand.New(source)
-
-	return random.Float64() < probability
 }
 
 // Educates the Elite. Returns educated population

@@ -13,9 +13,9 @@ import (
 var train_file string = "train/train_7.json"
 
 // Benchmark stop criteria. 0 essentially deactivates this.
-var benchmark float64 = 1102
+var benchmark float64 = 1130
 
-// GA paramters
+// GA paramters OLD
 /*
 var numParents int = 50
 var populationSize int = 100
@@ -40,14 +40,13 @@ var islandConfigs = []struct {
 	elitismPercentage float64
 	annealingRate     float64
 }{
-	{25, 50, 0.4, 0.8, 600, 1000, 0.5, 0.05, 1},
-	{25, 50, 0.4, 0.8, 600, 1000, 0.2, 0.05, 1},
-	{25, 50, 0.4, 0.8, 600, 1000, 0.1, 0.1, 1},
-	{25, 50, 0.1, 1.0, 600, 1000, 0.5, 0.05, 1},
-	{25, 50, 0.2, 0.4, 600, 1000, 0.5, 0.01, 1},
-	{25, 50, 0.9, 0.1, 600, 1000, 0.5, 0.1, 1},
-	{25, 50, 0.9, 0.1, 600, 1000, 0.5, 0.05, 1},
-	{25, 50, 0.9, 0.1, 600, 1000, 0.5, 0.1, 1},
+	{25, 50, 0.9, 0.2, 100, 1000, 0.5, 0.05, 1},
+	{25, 50, 0.9, 0.2, 100, 1000, 0.5, 0.05, 1},
+	{25, 50, 0.9, 0.2, 100, 1000, 0.5, 0.05, 1},
+	{25, 50, 0.8, 0.4, 100, 1000, 0.5, 0.05, 1},
+	{25, 50, 0.8, 0.4, 100, 1000, 0.5, 0.05, 1},
+	{25, 50, 0.8, 0.4, 100, 1000, 0.5, 0.05, 1},
+	{25, 50, 0.8, 0.4, 100, 1000, 0.5, 0.05, 1},
 }
 
 func main() {
@@ -65,7 +64,9 @@ func main() {
 	// Channel to collect the best individuals from each island
 	bestIndividuals := make(chan Individual, len(islandConfigs))
 
-	for _, config := range islandConfigs {
+	migrationEvent := NewMigrationEvent(len(islandConfigs))
+
+	for i, config := range islandConfigs {
 		wg.Add(1)
 		go func(c struct {
 			numParents        int
@@ -88,6 +89,7 @@ func main() {
 
 			if reachedBenchmark {
 				fmt.Println("BENCHMARK WAS REACHED -- EXITING ALL CURRENT GO ROUTINES..")
+				fmt.Println("INDIVIDUAL WAS FOUND BY ISLAND", i, "AND CONFIG", config)
 				cancel() // Reached benchmark, signal other goroutines to stop
 			}
 
@@ -110,6 +112,8 @@ func main() {
 	})
 
 	best := allBest[0]
+
+	best.fixAllRoutesAndCalculateFitness(instance)
 	printSolution(best, instance)
 	best.checkIndividualRoutes(instance, true)
 	best.writeIndividualToJson()

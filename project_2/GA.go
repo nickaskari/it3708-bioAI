@@ -119,18 +119,21 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 			lastFitness = bestFitness
 		}
 
-		if stuck > 5 {
-			var newPopulation Population
-			if 0.5 > random.Float64() {
+		//newPopulation = deepCopyPopulation(population.spreadDisease(elitismPercentage, instance))
+		if stuck > 6 {
+			//var newPopulation Population
+		//	if 0.5 > random.Float64() {
 				fmt.Println("\nPERFORM GENOCIDE AND REBUILD POPULATION..\n")
 				newPopulation = deepCopyPopulation(population.applyGenecoideWithElitism(elitismPercentage, instance))
-			} else {
-				fmt.Println("\nSPREAD DISEASE..\n")
-				newPopulation = deepCopyPopulation(population.spreadDisease(elitismPercentage, instance))
-			}
-			population = newPopulation
+		//	} else {
+		//		fmt.Println("\nSPREAD DISEASE..\n")
+		//		newPopulation = deepCopyPopulation(population.spreadDisease(elitismPercentage, instance))
+		//	}
+	
 			stuck = 0
 		}
+
+		population = newPopulation
 
 		if bestFitness <= benchmark {
 			fmt.Println("Found an individual with lower fitness than the benchmark..")

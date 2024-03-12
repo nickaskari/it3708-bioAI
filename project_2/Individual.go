@@ -40,22 +40,21 @@ func (i Individual) writeIndividualToJson() {
 
 // This is a list of lists where each inner list is a nurse’s route. The elements are the patient IDs of the instance.
 func (i Individual) writeIndividualToVismaFormat() {
-    var routes [][]int
-    for _, route := range i.Routes {
-        routes = append(routes, route.extractAllVisitedPatients())
-    }
+	var routes [][]int
+	for _, route := range i.Routes {
+		routes = append(routes, route.extractAllVisitedPatients())
+	}
 
-    jsonData, err := json.Marshal(routes)
-    if err != nil {
-        fmt.Printf("Error marshaling to JSON: %v", err)
-    }
+	jsonData, err := json.Marshal(routes)
+	if err != nil {
+		fmt.Printf("Error marshaling to JSON: %v", err)
+	}
 
-    err = os.WriteFile("plotting/IndividualVisma.json", jsonData, 0644)
-    if err != nil {
-        fmt.Printf("Error writing JSON to file: %v", err)
-    }
+	err = os.WriteFile("plotting/IndividualVisma.json", jsonData, 0644)
+	if err != nil {
+		fmt.Printf("Error writing JSON to file: %v", err)
+	}
 }
-
 
 // Calculates the fitness of an individual, and assignes a penalty if neccesary. Updated the individuals fitness.
 func (i *Individual) calculateFitness(instance Instance) {
@@ -68,24 +67,23 @@ func (i *Individual) calculateFitness(instance Instance) {
 				lastLocation = patient.ID
 				fitness += calculatePenalty(patient)
 			}
-			fitness += instance.getTravelTime(lastLocation, 0) 
+			fitness += instance.getTravelTime(lastLocation, 0)
 			fitness += calculateCapacityPenalty(route, instance)
 		}
 	}
 	i.Fitness = fitness
 }
 
-
 // Calculates a penalty if patient is visited after endtime, or nurse leaves after endtime.
 func calculatePenalty(patient Patient) float64 {
-	var penaltyFactor float64 = 200
+	var penaltyFactor float64 = 2000
 
 	if patient.VisitTime > float64(patient.EndTime) {
 		return (patient.VisitTime - float64(patient.EndTime)) * penaltyFactor
 	} else if patient.LeavingTime > float64(patient.EndTime) {
 		return (patient.LeavingTime - float64(patient.EndTime)) * penaltyFactor
 	}
-	
+
 	return 0
 }
 
@@ -94,7 +92,7 @@ func calculateCapacityPenalty(route Route, instance Instance) float64 {
 	var penaltyFactor float64 = 5
 
 	if route.NurseCapacity < 0 {
-		return math.Abs(float64(route.NurseCapacity - instance.CapacityNurse + 1) * penaltyFactor)
+		return math.Abs(float64(route.NurseCapacity-instance.CapacityNurse+1) * penaltyFactor)
 	}
 
 	return 0
@@ -375,11 +373,9 @@ func deepCopyIndividuals(individuals []Individual) []Individual {
 
 // Create a bad dummy individual. Infinite fitness and no routes.
 func createDummyIndividual() Individual {
-	return Individual {
+	return Individual{
 		Fitness: math.Inf(1),
-		Age: 0,
-		Routes: []Route{},
+		Age:     0,
+		Routes:  []Route{},
 	}
 }
-
-

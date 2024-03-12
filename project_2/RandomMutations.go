@@ -39,7 +39,7 @@ func randomSwapMutation(individual Individual, instance Instance) Individual {
 		mutated.Routes[randomRouteIndex] = newRoute
 		return mutated
 	}
-	mutated.Routes[randomRouteIndex] = newRoute
+
 	return mutated
 }
 
@@ -94,7 +94,7 @@ func randomInterRouteSwapMutation(individual Individual, instance Instance) Indi
 
 	i, j := getTwoRouteIndexes(mutated)
 
-	route1, route2 := mutated.Routes[i], mutated.Routes[j]
+	route1, route2 := deepCopyRoute(mutated.Routes[i]), deepCopyRoute(mutated.Routes[j])
 
 	patient1, patient2 := route1.getRandomPatient(), route2.getRandomPatient()
 

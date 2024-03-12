@@ -91,7 +91,7 @@ func printSolution(individual Individual, instance Instance) {
 		}
 
 		coveredDemandStr := fmt.Sprintf("%-4d", coveredDemand)
-
+		
 		fmt.Printf("%-10s %-10s %-5s %-s\n", nurseIdentifier, routeDuration, coveredDemandStr, patientSequence)
 	}
 
