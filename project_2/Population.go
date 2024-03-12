@@ -258,3 +258,36 @@ func ageSurvivorSelection(popSize int, newIndividuals []Individual) []Individual
 
 	return newIndividuals
 }
+
+
+// Returns random migrants. Removes those from the population.
+func (p *Population) selectRandomMigrants(numMigrants int) []Individual {
+	source := rand.NewSource(time.Now().UnixNano())
+	random := rand.New(source)
+
+	migrants := make([]Individual, 0)
+
+	newIndividuals := deepCopyIndividuals(p.Individuals)
+	for len(migrants) < numMigrants {
+		index := random.Intn(len(newIndividuals))
+
+		migrants = append(migrants, newIndividuals[index])
+		
+		// Delete migrated individual from new individuals
+		newIndividuals[index] = newIndividuals[len(newIndividuals) - 1]
+		newIndividuals = newIndividuals[:len(newIndividuals) - 1]
+	}
+
+	p.Individuals = newIndividuals
+
+	return migrants
+}
+
+// Insert new migrants into population. 
+func (p *Population) insertNewMigrants(migrants []Individual) {
+	newIndividuals := deepCopyIndividuals(p.Individuals)
+
+	newIndividuals = append(newIndividuals, migrants...)
+
+	p.Individuals = newIndividuals
+}

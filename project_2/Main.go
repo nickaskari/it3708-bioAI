@@ -10,12 +10,13 @@ import (
 // https://it3708.resolve.visma.com/
 
 // Declare what file you want problem instance from
-var train_file string = "train/train_7.json"
+var train_file string = "train/train_9.json"
 
 // Benchmark stop criteria. 0 essentially deactivates this.
-var benchmark float64 = 1130
+var benchmark float64 = 0
 var migrationFrequency int = 25
 var numMigrants int = 10
+var gmax int = 1000
 
 // GA paramters OLD
 /*
@@ -42,13 +43,15 @@ var islandConfigs = []struct {
 	elitismPercentage float64
 	annealingRate     float64
 }{
-	{25, 50, 0.9, 0.2, 100, 1000, 0.5, 0.05, 1},
-	{25, 50, 0.9, 0.2, 100, 1000, 0.5, 0.05, 1},
-	{25, 50, 0.9, 0.2, 100, 1000, 0.5, 0.05, 1},
-	{25, 50, 0.8, 0.4, 100, 1000, 0.5, 0.05, 1},
-	{25, 50, 0.8, 0.4, 100, 1000, 0.5, 0.05, 1},
-	{25, 50, 0.8, 0.4, 100, 1000, 0.5, 0.05, 1},
-	{25, 50, 0.8, 0.4, 100, 1000, 0.5, 0.05, 1},
+	{25, 50, 0.9, 0.2, gmax, 500, 0.1, 0.05, 1},
+	{25, 50, 0.9, 0.2, gmax, 1000, 0.1, 0.05, 1},
+	{25, 50, 0.9, 0.2, gmax, 1000, 0.1, 0.05, 1},
+	{25, 50, 0.8, 0.4, gmax, 1000, 0.1, 0.05, 1},
+	{25, 50, 0.8, 0.4, gmax, 1000, 0.5, 0.05, 1},
+	{25, 50, 0.8, 0.4, gmax, 1000, 0.5, 0.05, 1},
+	{25, 50, 0.8, 0.4, gmax, 1000, 0.5, 0.05, 1},
+	{25, 50, 0.8, 0.4, gmax, 1000, 0.5, 0.05, 1},
+	{25, 50, 0.9, 0.2, gmax, 1000, 0.5, 0.05, 1},
 }
 
 func main() {

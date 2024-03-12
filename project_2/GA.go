@@ -32,14 +32,15 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 
 	for generation < gMax {
 		newIndividuals = []Individual{}
-
+		
 		if generation % migrationFrequency == 0 && generation != 0 {
-			migrants := selectRandomMigrants(population, 10)
+			migrants := population.selectRandomMigrants(numMigrants)
             migrationEvent.DepositMigrants(generation, migrants)
 
             // Wait for all islands to deposit migrants and pick up new ones
             newMigrants := migrationEvent.WaitForMigration(generation, islandID)
             // Incorporate new migrants into the population
+			population.insertNewMigrants(newMigrants)
 		}
 
 		// Age population
@@ -100,9 +101,10 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 					newIndividuals = addToPopulation(child1, threshold, newIndividuals)
 					newIndividuals = addToPopulation(child2, threshold, newIndividuals)
 				}
+			} else {
+				newIndividuals = addToPopulation(parent1, threshold, newIndividuals)
+				newIndividuals = addToPopulation(parent2, threshold, newIndividuals)
 			}
-			newIndividuals = addToPopulation(parent1, threshold, newIndividuals)
-			newIndividuals = addToPopulation(parent2, threshold, newIndividuals)
 		}
 
 		// Survivor selection -- AGE
@@ -129,8 +131,9 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 			lastFitness = bestFitness
 		}
 
+		
 		//newPopulation = deepCopyPopulation(population.spreadDisease(elitismPercentage, instance))
-		if stuck > 6 {
+		if stuck > 20 {
 			//var newPopulation Population
 		//	if 0.5 > random.Float64() {
 				fmt.Println("\nPERFORM GENOCIDE AND REBUILD POPULATION..\n")
