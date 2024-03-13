@@ -1,35 +1,33 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"fmt"
+	"os"
 	"sort"
 	"sync"
+	"time"
 )
+
+// When running you can press enter --> GA will stop and output best individual so far
 
 // https://it3708.resolve.visma.com/
 
 // Declare what file you want problem instance from
-var train_file string = "train/train_9.json"
+var train_file string = "train/train_7.json"
 
 // Benchmark stop criteria. 0 essentially deactivates this.
-var benchmark float64 = 0
-var migrationFrequency int = 25
-var numMigrants int = 10
-var gmax int = 1000
+var benchmark float64 = 1102
 
-// GA paramters OLD
-/*
-var numParents int = 50
-var populationSize int = 100
-var crossoverRate float64 = 0.4
-var mutationRate float64 = 0.8
-var gMax int = 2000
-var temp int = 1000
-var coolingRate float64 = 0.5
-var elitismPercentage float64 = 0.05
-var annealingRate float64 = 1
-*/
+var migrationFrequency int = 25
+var numMigrants int = 8
+var initiateBestCostRepair bool = true
+var genocideWhenStuck int = 15
+
+var gmax int = 1500
+var numParents int = 25
+var populationSize int = 50
 
 // Island parameters
 var islandConfigs = []struct {
@@ -43,25 +41,58 @@ var islandConfigs = []struct {
 	elitismPercentage float64
 	annealingRate     float64
 }{
-	{25, 50, 0.9, 0.2, gmax, 500, 0.1, 0.05, 1},
-	{25, 50, 0.9, 0.2, gmax, 1000, 0.1, 0.05, 1},
-	{25, 50, 0.9, 0.2, gmax, 1000, 0.1, 0.05, 1},
-	{25, 50, 0.8, 0.4, gmax, 1000, 0.1, 0.05, 1},
-	{25, 50, 0.8, 0.4, gmax, 1000, 0.5, 0.05, 1},
-	{25, 50, 0.8, 0.4, gmax, 1000, 0.5, 0.05, 1},
-	{25, 50, 0.8, 0.4, gmax, 1000, 0.5, 0.05, 1},
-	{25, 50, 0.8, 0.4, gmax, 1000, 0.5, 0.05, 1},
-	{25, 50, 0.9, 0.2, gmax, 1000, 0.5, 0.05, 1},
+	{numParents, populationSize, 0.8, 0.2, gmax, 500, 0.1, 0.05, 1},
+	{numParents, populationSize, 0.8, 0.2, gmax, 1000, 0.1, 0.05, 1},
+	{numParents, populationSize, 0.8, 0.2, gmax, 1000, 0.1, 0.05, 1},
+	{numParents, populationSize, 0.7, 0.4, gmax, 1000, 0.1, 0.05, 1},
+	{numParents, populationSize, 0.8, 0.4, gmax, 1000, 0.5, 0.05, 1},
+	{numParents, populationSize, 0.8, 0.4, gmax, 1000, 0.5, 0.05, 1},
+	{numParents, populationSize, 0.7, 0.4, gmax, 1000, 0.5, 0.05, 1},
+	{numParents, populationSize, 0.8, 0.4, gmax, 1000, 0.5, 0.05, 1},
+	{numParents, populationSize, 0.7, 0.2, gmax, 1000, 0.5, 0.05, 1},
+
+	/*
+		ALL TRAIN EXCEPT 5 AND 6
+		var genocideWhenStuck int = 15
+		var migrationFrequency int = 25
+		{numParents, populationSize, 0.8, 0.2, gmax, 500, 0.1, 0.05, 1},
+		{numParents, populationSize, 0.8, 0.2, gmax, 1000, 0.1, 0.05, 1},
+		{numParents, populationSize, 0.8, 0.2, gmax, 1000, 0.1, 0.05, 1},
+		{numParents, populationSize, 0.7, 0.4, gmax, 1000, 0.1, 0.05, 1},
+		{numParents, populationSize, 0.8, 0.4, gmax, 1000, 0.5, 0.05, 1},
+		{numParents, populationSize, 0.8, 0.4, gmax, 1000, 0.5, 0.05, 1},
+		{numParents, populationSize, 0.7, 0.4, gmax, 1000, 0.5, 0.05, 1},
+		{numParents, populationSize, 0.8, 0.4, gmax, 1000, 0.5, 0.05, 1},
+		{numParents, populationSize, 0.7, 0.2, gmax, 1000, 0.5, 0.05, 1},
+
+		"train/train_6.json", and train 5 (WHEN INDIVIDUAL CONVERGES TO LONG ROUTES THESE SHOULD BE THE PARAMTERS)
+		migrationNum 8 migrationFrquency = 10
+		initiateBestCostRepair bool = false
+		var genocideWhenStuck int = 5
+		{numParents, populationSize, 0.1, 0.5, gmax, 50, 0.1, 0.05, 1},
+		{numParents, populationSize, 0.1, 0.2, gmax, 100, 0.1, 0.05, 1},
+		{numParents, populationSize, 0.0, 0.2, gmax, 100, 0.1, 0.05, 1},
+		{numParents, populationSize, 0.2, 0.8, gmax, 50, 0.1, 0.05, 1},
+		{numParents, populationSize, 0.2, 0.8, gmax, 100, 0.9, 0.05, 1},
+		{numParents, populationSize, 0.1, 0, gmax, 100, 0.5, 0.05, 1},
+		{numParents, populationSize, 0.25, 0.8, gmax, 100, 0.1, 0.05, 1},
+
+		LONGEST TRAINING TIMES ARE UP TO 5-6 MIN.
+		EASY PROBLEMS GET SOLVED IN ABOUT 2 MIN.
+	*/
+
 }
 
 func main() {
 	fmt.Println("Starting GA on islands...")
 
+	startTime := time.Now()
+
 	instance := getProblemInstance(train_file)
 
 	// Use a context with cancel to signal goroutines to stop
 	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel() // Ensure all paths cancel to avoid context leak
+	defer cancel()
 
 	// Use a WaitGroup to wait for all islands to finish
 	var wg sync.WaitGroup
@@ -70,7 +101,16 @@ func main() {
 	bestIndividuals := make(chan Individual, len(islandConfigs))
 
 	migrationEvent := NewMigrationEvent(len(islandConfigs))
-	//migrationEvent = NewMigrationEvent(len(islandConfigs))
+
+	go func() {
+		fmt.Println("Press Enter at any time to stop all operations.")
+		bufio.NewReader(os.Stdin).ReadBytes('\n') // Block until Enter is pressed
+		migrationEvent.Lock()
+		defer migrationEvent.Unlock()
+		migrationEvent.Ready.Broadcast()
+		migrationEvent.signalCancelEvent()
+		cancel() // Trigger cancellation
+	}()
 
 	for islandID, config := range islandConfigs {
 		wg.Add(1)
@@ -90,13 +130,17 @@ func main() {
 			// Run GA on each island with its configuration and capture the best individual
 			best, reachedBenchmark := GA(c.populationSize, c.gMax, c.numParents, c.temp, c.crossoverRate, c.mutationRate,
 				c.elitismPercentage, c.coolingRate, c.annealingRate, benchmark, ctx, migrationFrequency, numMigrants,
-				migrationEvent, islandID, instance)
+				migrationEvent, islandID, initiateBestCostRepair, genocideWhenStuck, instance)
 
 			bestIndividuals <- best
 
 			if reachedBenchmark {
 				fmt.Println("BENCHMARK WAS REACHED -- EXITING ALL CURRENT GO ROUTINES..")
 				fmt.Println("INDIVIDUAL WAS FOUND BY ISLAND", islandID, "AND CONFIG", config)
+				migrationEvent.Lock()
+				defer migrationEvent.Unlock()
+				migrationEvent.Ready.Broadcast()
+				migrationEvent.signalCancelEvent()
 				cancel() // Reached benchmark, signal other goroutines to stop
 			}
 
@@ -125,16 +169,9 @@ func main() {
 	best.checkIndividualRoutes(instance, true)
 	best.writeIndividualToJson()
 	best.writeIndividualToVismaFormat()
+
+	endTime := time.Now() // Capture the end time
+	duration := endTime.Sub(startTime)
+
+	fmt.Println("\nThe Genetic Algorithm took", duration.Seconds(), "to run.")
 }
-
-/*
-func main() {
-	fmt.Println("")
-	instance := getProblemInstance(train_file)
-
-	GA(populationSize, gMax, numParents, temp, crossoverRate, mutationRate,
-		elitismPercentage, coolingRate, annealingRate, benchmark, instance)
-
-	fmt.Println("Calculating fintess from json..", readFromJson(instance))
-}
-*/

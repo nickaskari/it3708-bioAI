@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"sync"
 )
 
@@ -10,7 +11,8 @@ type MigrationEvent struct {
 	TotalIslands int                  // Total number of islands participating
 	PickedUp     map[int]map[int]bool
 	sync.Mutex
-	Ready *sync.Cond
+	Ready        *sync.Cond
+	JustCanceled bool
 }
 
 func NewMigrationEvent(totalIslands int) *MigrationEvent {
@@ -21,7 +23,12 @@ func NewMigrationEvent(totalIslands int) *MigrationEvent {
 		TotalIslands: totalIslands,
 	}
 	me.Ready = sync.NewCond(&me.Mutex)
+	me.JustCanceled = false
 	return me
+}
+
+func (me *MigrationEvent) signalCancelEvent() {
+	me.JustCanceled = true
 }
 
 func (me *MigrationEvent) DepositMigrants(generation int, migrants []Individual) {
@@ -34,33 +41,39 @@ func (me *MigrationEvent) DepositMigrants(generation int, migrants []Individual)
 	}
 }
 
-func (me *MigrationEvent) WaitForMigration(generation, islandID int) []Individual {
-    me.Lock()
-    if _, exists := me.PickedUp[generation]; !exists {
-        me.PickedUp[generation] = make(map[int]bool)
-    }
-    
-    defer me.Unlock()
-    for me.Counters[generation] < me.TotalIslands {
-        me.Ready.Wait() // Wait until all islands have deposited their migrants
-    }
-    if me.PickedUp[generation][islandID] {
-        // This island already picked up migrants for this generation, return an empty slice
-        return []Individual{}
-    }
-    // Determine the subset of migrants this island should receive
-    subsetSize := len(me.Migrants[generation]) / me.TotalIslands
-    startIndex := subsetSize * (islandID % me.TotalIslands)
-    endIndex := startIndex + subsetSize
-    if endIndex > len(me.Migrants[generation]) { endIndex = len(me.Migrants[generation]) }
-    
-    // Extract the subset of migrants for this island
-    migrants := make([]Individual, subsetSize)
-    copy(migrants, me.Migrants[generation][startIndex:endIndex])
-    
-    // Mark as picked up for this island
-    me.PickedUp[generation][islandID] = true
-    
-    // Optionally, remove migrants from the pool if you don't want them to be available for the next migration event
-    return migrants
+func (me *MigrationEvent) WaitForMigration(generation, islandID int, ctx context.Context) ([]Individual, bool) {
+	me.Lock()
+	if _, exists := me.PickedUp[generation]; !exists {
+		me.PickedUp[generation] = make(map[int]bool)
+	}
+
+	defer me.Unlock()
+	for me.Counters[generation] < me.TotalIslands {
+		if me.JustCanceled {
+			return []Individual{}, true
+		}
+
+		me.Ready.Wait() // Wait until all islands have deposited their migrants
+	}
+	if me.PickedUp[generation][islandID] {
+		// This island already picked up migrants for this generation, return an empty slice
+		return []Individual{}, false
+	}
+	// Determine the subset of migrants this island should receive
+	subsetSize := len(me.Migrants[generation]) / me.TotalIslands
+	startIndex := subsetSize * (islandID % me.TotalIslands)
+	endIndex := startIndex + subsetSize
+	if endIndex > len(me.Migrants[generation]) {
+		endIndex = len(me.Migrants[generation])
+	}
+
+	// Extract the subset of migrants for this island
+	migrants := make([]Individual, subsetSize)
+	copy(migrants, me.Migrants[generation][startIndex:endIndex])
+
+	// Mark as picked up for this island
+	me.PickedUp[generation][islandID] = true
+
+	// Optionally, remove migrants from the pool if you don't want them to be available for the next migration event
+	return migrants, false
 }

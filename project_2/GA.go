@@ -12,7 +12,7 @@ import (
 func GA(populationSize int, gMax int, numParents int, temp int,
 	crossoverRate float64, mutationRate float64, elitismPercentage float64, coolingRate float64,
 	annealingRate float64, benchmark float64, ctx context.Context, migrationFrequency int, numMigrants int,
-	migrationEvent *MigrationEvent, islandID int, instance Instance) (Individual, bool) {
+	migrationEvent *MigrationEvent, islandID int, initiateBestCostRepair bool, genocideWhenStuck int, instance Instance) (Individual, bool) {
 
 	// initialize an emtpy array
 	bestFitnesses := []float64{}
@@ -33,12 +33,17 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 	for generation < gMax {
 		newIndividuals = []Individual{}
 		
-		if generation % migrationFrequency == 0 && generation != 0 {
+		if generation % migrationFrequency == 0 && generation > 0 {
 			migrants := population.selectRandomMigrants(numMigrants)
             migrationEvent.DepositMigrants(generation, migrants)
 
             // Wait for all islands to deposit migrants and pick up new ones
-            newMigrants := migrationEvent.WaitForMigration(generation, islandID)
+            newMigrants, didCancel := migrationEvent.WaitForMigration(generation, islandID, ctx)
+
+			if didCancel {
+				return getBestIndividual(population.Individuals), false
+			}
+
             // Incorporate new migrants into the population
 			population.insertNewMigrants(newMigrants)
 		}
@@ -55,7 +60,7 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 			select {
 			case <-ctx.Done():
 				fmt.Println("GA was canceled.")
-				return createDummyIndividual(), false
+				return getBestIndividual(population.Individuals), false
 			default:
 				// Continue with GA processing
 			}
@@ -77,21 +82,29 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 
 					if annealingRate > random.Float64() {
 						mutated1 = simulatedAnnealing(child1, temp, coolingRate, instance)
-						mutated1 = destroyRepairCluster(mutated1, instance)
+						if initiateBestCostRepair {
+							mutated1 = destroyRepairCluster(mutated1, instance)
+						}
 						mutated1.calculateFitness(instance)
 					} else {
 						mutated1 = hillClimbing(child1, temp, instance)
-						//mutated1 = destroyRepairCluster(mutated1, instance)
+						if initiateBestCostRepair {
+							mutated1 = destroyRepairCluster(mutated1, instance)
+						}
 						mutated1.calculateFitness(instance)
 					}
 
 					if annealingRate > random.Float64() {
 						mutated2 = simulatedAnnealing(child2, temp, coolingRate, instance)
-						mutated2 = destroyRepairCluster(mutated2, instance)
+						if initiateBestCostRepair {
+							mutated2 = destroyRepairCluster(mutated1, instance)
+						}
 						mutated2.calculateFitness(instance)
 					} else {
 						mutated2 = hillClimbing(child2, temp, instance)
-						//mutated2 = destroyRepairCluster(mutated2, instance)
+						if initiateBestCostRepair {
+							mutated2 = destroyRepairCluster(mutated1, instance)
+						}
 						mutated2.calculateFitness(instance)
 					}
 
@@ -111,7 +124,7 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 		newIndividuals = ageSurvivorSelection(populationSize, newIndividuals)
 
 		// Educate the elite
-		newIndividuals = educateTheElite(elitismPercentage, newIndividuals, temp, coolingRate, instance)
+		newIndividuals = educateTheElite(elitismPercentage, newIndividuals, temp, coolingRate, initiateBestCostRepair, instance)
 
 		// Survivor selection -- ELITISM
 
@@ -133,7 +146,9 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 
 		
 		//newPopulation = deepCopyPopulation(population.spreadDisease(elitismPercentage, instance))
-		if stuck > 20 {
+
+		// 5 or 15
+		if stuck > genocideWhenStuck {
 			//var newPopulation Population
 		//	if 0.5 > random.Float64() {
 				fmt.Println("\nPERFORM GENOCIDE AND REBUILD POPULATION..\n")

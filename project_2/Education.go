@@ -86,7 +86,7 @@ func shouldAcceptMutation(currentFitness, newFitness, temperature float64) bool 
 }
 
 // Educates the Elite. Returns educated population
-func educateTheElite(elitismPercentage float64, individuals []Individual, initialTemp int, coolingRate float64, instance Instance) []Individual {
+func educateTheElite(elitismPercentage float64, individuals []Individual, initialTemp int, coolingRate float64, initiateBestCostRepair bool, instance Instance) []Individual {
 
 	educatedIndividuals := deepCopyIndividuals(individuals)
 	numToEducate := int(math.Floor(float64(len(individuals)) * elitismPercentage))
@@ -97,8 +97,12 @@ func educateTheElite(elitismPercentage float64, individuals []Individual, initia
 		educatedIndividual := deepCopyIndividual(individuals[i])
 		//individuals[i] = simulatedAnnealing(educatedIndividual, initialTemp,
 		//	coolingRate, instance)
+		
+		if initiateBestCostRepair {
 
-		individuals[i] = destroyRepairCluster(individuals[i], instance)
+			individuals[i] = destroyRepairCluster(individuals[i], instance)
+			
+		}
 		individuals[i] = hillClimbing(educatedIndividual, 500, instance)
 	}
 	return educatedIndividuals
