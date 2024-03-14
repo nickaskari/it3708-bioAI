@@ -100,6 +100,9 @@ func educateTheElite(elitismPercentage float64, individuals []Individual, initia
 		educatedIndividual := deepCopyIndividual(individuals[i])
 		//individuals[i] = simulatedAnnealing(educatedIndividual, initialTemp,
 		//	coolingRate, instance)
+		//if initiateBestCostRepair {
+		//	individuals[i] = destroyRepairCluster(individuals[i], instance)
+		//}
 
 		individuals[i] = hillClimbing(educatedIndividual, 500, instance)
 	}
@@ -122,9 +125,9 @@ func millitaryCamp(soldier Individual, instance Instance) Individual {
 
 	if after < before {
 		fmt.Println("Millitary camp worked. After:", after, "and Before:", before)
+		return navySeal
 	} else {
 		fmt.Println("Millitary camp did NOT work. After:", after, "and Before:", before)
+		return soldier
 	}
-
-	return navySeal
 }

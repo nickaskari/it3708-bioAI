@@ -15,10 +15,10 @@ import (
 // https://it3708.resolve.visma.com/
 
 // Declare what file you want problem instance from
-var train_file string = "train/train_8.json"
+var train_file string = "train/train_7.json"
 
 // Benchmark stop criteria. 0 essentially deactivates this.
-var benchmark float64 = 1269
+var benchmark float64 = 1102
 
 var migrationFrequency int = 25
 var numMigrants int = 10
