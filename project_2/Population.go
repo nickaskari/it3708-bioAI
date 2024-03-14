@@ -121,11 +121,12 @@ func getBestIndividual(individuals []Individual) Individual {
 
 // get best individual index
 func getBestIndividualIndex(individuals []Individual) int {
-	bestIndividual := Individual{Fitness: math.Inf(1), Age: 0, Routes: make([]Route, 0)}
+	bestIndividual := math.Inf(1)
 	index := 0
 	for i, individual := range individuals {
-		if individual.Fitness < bestIndividual.Fitness {
+		if individual.Fitness < bestIndividual {
 			index = i
+			bestIndividual = individual.Fitness
 		}
 	}
 	return index

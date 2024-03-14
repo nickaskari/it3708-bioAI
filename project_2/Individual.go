@@ -329,7 +329,8 @@ func (i *Individual) findBestRoutesForPatients(patients []int, instance Instance
 		leastChange := math.Inf(1)
 		var index int
 		var newRoute Route
-		for rIndex, r := range i.Routes {
+		for rIndex := range len(i.Routes) {
+			r := i.Routes[rIndex]
 			possibleRoute, change := r.findBestInsertion(pID, instance)
 			if change < leastChange {
 				leastChange = change

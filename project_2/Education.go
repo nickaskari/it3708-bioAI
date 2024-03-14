@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"math"
 	"math/rand"
 	"time"
@@ -19,20 +20,22 @@ func hillClimbing(individual Individual, temp int, instance Instance) Individual
 
 		if invertedIndividual.Fitness <= currentState.Fitness {
 			currentState = invertedIndividual
-			swappedIndividual := randomSwapMutation(currentState, instance)
-			swappedIndividual.fixAllRoutesAndCalculateFitness(instance)
-
-			if swappedIndividual.Fitness <= currentState.Fitness {
-				currentState = swappedIndividual
-
-				interSwappedIndividual := randomInterRouteSwapMutation(currentState, instance)
-				interSwappedIndividual.fixAllRoutesAndCalculateFitness(instance)
-
-				if interSwappedIndividual.Fitness <= currentState.Fitness {
-					currentState = interSwappedIndividual
-				}
-			}
 		}
+
+		swappedIndividual := randomSwapMutation(currentState, instance)
+		swappedIndividual.fixAllRoutesAndCalculateFitness(instance)
+
+		if swappedIndividual.Fitness <= currentState.Fitness {
+			currentState = swappedIndividual
+		}
+
+		interSwappedIndividual := randomInterRouteSwapMutation(currentState, instance)
+		interSwappedIndividual.fixAllRoutesAndCalculateFitness(instance)
+
+		if interSwappedIndividual.Fitness <= currentState.Fitness {
+			currentState = interSwappedIndividual
+		}
+
 		currentState.fixAllRoutesAndCalculateFitness(instance)
 
 		temp--
@@ -77,10 +80,10 @@ func shouldAcceptMutation(currentFitness, newFitness, temperature float64) bool 
 	} else {
 		changeFitness := newFitness - currentFitness
 		probability := math.Exp(-changeFitness / (temperature * 0.01))
-	
+
 		source := rand.NewSource(time.Now().UnixNano())
 		random := rand.New(source)
-	
+
 		return random.Float64() < probability
 	}
 }
@@ -97,14 +100,31 @@ func educateTheElite(elitismPercentage float64, individuals []Individual, initia
 		educatedIndividual := deepCopyIndividual(individuals[i])
 		//individuals[i] = simulatedAnnealing(educatedIndividual, initialTemp,
 		//	coolingRate, instance)
-		
-		if initiateBestCostRepair {
 
-			//individuals[i] = destroyRepairCluster(individuals[i], instance)
-			individuals[i] = destroyRepaiLite(individuals[i], instance)
-			
-		}
 		individuals[i] = hillClimbing(educatedIndividual, 500, instance)
 	}
 	return educatedIndividuals
+}
+
+// Puts an individual through millitary camp. Returns navy seal.
+func millitaryCamp(soldier Individual, instance Instance) Individual {
+	navySeal := deepCopyIndividual(soldier)
+
+	before := navySeal.Fitness
+
+	// HillClimbing
+	navySeal = hillClimbing(navySeal, 500, instance)
+
+	// HillClimbing
+	navySeal = hillClimbing(navySeal, 500, instance)
+
+	after := navySeal.Fitness
+
+	if after < before {
+		fmt.Println("Millitary camp worked. After:", after, "and Before:", before)
+	} else {
+		fmt.Println("Millitary camp did NOT work. After:", after, "and Before:", before)
+	}
+
+	return navySeal
 }

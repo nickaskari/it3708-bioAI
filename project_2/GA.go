@@ -25,6 +25,7 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 	stuck := 0
 	lastFitness := math.Inf(1)
 	benchmarkWasReached := false
+	detectedLongRoutes := false
 
 	fmt.Println("Initalzing population..")
 	population := initPopulation(instance, populationSize)
@@ -145,15 +146,21 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 		}
 
 		// 5 or 15
-		if stuck > genocideWhenStuck {
+		if stuck % genocideWhenStuck == 0 && stuck > 0 {
 			fmt.Println("\nPERFORM GENOCIDE AND REBUILD POPULATION..\n")
 			newPopulation = deepCopyPopulation(population.applyGenecoideWithElitism(elitismPercentage, instance))
-			bestIndex := getBestIndividualIndex(population.Individuals)
-			newPopulation.Individuals[bestIndex] = destroyRepaiLite(newPopulation.Individuals[bestIndex], instance)
-			newPopulation.Individuals[bestIndex] = destroyRepairCluster(newPopulation.Individuals[bestIndex], instance)
 			population = newPopulation
+		}
 
-			stuck = 0
+		if stuck % 25 == 0 && stuck > 0 {
+			genocideWhenStuck = 2
+		}
+
+		if stuck % 26 == 0 && stuck > 0 {
+			fmt.Println("TRANING BEST INDIVIDUAL IN MILLITARY CAMP..")
+			bestIndex := getBestIndividualIndex(population.Individuals)
+			population.Individuals[bestIndex] = millitaryCamp(population.Individuals[bestIndex], instance)
+
 		}
 
 		if bestFitness <= benchmark {
@@ -163,11 +170,19 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 		}
 
 		// Check if there are abnormally long routes.
-		numNonEmptyRoutes := getBestIndividual(population.Individuals).numberOfNonEmptyRoutes()
 
-		if numNonEmptyRoutes < 10 {
-			crossoverRate = 0.2
-			initiateBestCostRepair = false
+		if !detectedLongRoutes {
+			numNonEmptyRoutes := getBestIndividual(population.Individuals).numberOfNonEmptyRoutes()
+
+			if numNonEmptyRoutes < 10 {
+				crossoverRate = 0.2
+				initiateBestCostRepair = false
+				detectedLongRoutes = true
+			}
+		}
+
+		if generation > 200 {
+			detectedLongRoutes = true
 		}
 
 		generation++
@@ -202,3 +217,4 @@ func addToPopulation(toAdd Individual, size int, individuals []Individual) []Ind
 	}
 	return individuals
 }
+
