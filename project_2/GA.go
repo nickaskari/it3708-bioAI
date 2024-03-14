@@ -153,6 +153,10 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 		//	if 0.5 > random.Float64() {
 				fmt.Println("\nPERFORM GENOCIDE AND REBUILD POPULATION..\n")
 				newPopulation = deepCopyPopulation(population.applyGenecoideWithElitism(elitismPercentage, instance))
+				bestIndex := getBestIndividualIndex(population.Individuals)
+				newPopulation.Individuals[bestIndex] = destroyRepaiLite(newPopulation.Individuals[bestIndex], instance)
+				newPopulation.Individuals[bestIndex] = destroyRepairCluster(newPopulation.Individuals[bestIndex], instance)
+				population = newPopulation
 		//	} else {
 		//		fmt.Println("\nSPREAD DISEASE..\n")
 		//		newPopulation = deepCopyPopulation(population.spreadDisease(elitismPercentage, instance))
@@ -160,8 +164,6 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 	
 			stuck = 0
 		}
-
-		population = newPopulation
 
 		if bestFitness <= benchmark {
 			fmt.Println("Found an individual with lower fitness than the benchmark..")

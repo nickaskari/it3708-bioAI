@@ -63,3 +63,22 @@ func destroyRepairRandomly(individual Individual, instance Instance) Individual 
 
 	return repairedIndividual
 }
+
+// Removes a few patients, AND PERFORMS BEST COST INSERTION ON IT
+func destroyRepaiLite(individual Individual, instance Instance) Individual {
+	repairedIndividual := deepCopyIndividual(individual)
+
+	for i:=0;i<2;i++ {
+		patients := generateRandomPatientIDs(instance)
+
+		repairedIndividual.removePatients(patients, instance)
+	
+		// Updates Route values and assignes fitness
+		repairedIndividual.fixAllRoutesAndCalculateFitness(instance)
+	
+		// create function that distributes patients on routes based on best insertion
+		repairedIndividual.findBestRoutesForPatients(patients, instance)
+	}
+
+	return repairedIndividual
+}

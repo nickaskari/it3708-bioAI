@@ -15,15 +15,15 @@ import (
 // https://it3708.resolve.visma.com/
 
 // Declare what file you want problem instance from
-var train_file string = "train/train_7.json"
+var train_file string = "train/train_8.json"
 
 // Benchmark stop criteria. 0 essentially deactivates this.
-var benchmark float64 = 1102
+var benchmark float64 = 1269
 
-var migrationFrequency int = 25
+var migrationFrequency int = 10
 var numMigrants int = 8
 var initiateBestCostRepair bool = true
-var genocideWhenStuck int = 15
+var genocideWhenStuck int = 5
 
 var gmax int = 1500
 var numParents int = 25
@@ -41,15 +41,13 @@ var islandConfigs = []struct {
 	elitismPercentage float64
 	annealingRate     float64
 }{
-	{numParents, populationSize, 0.8, 0.2, gmax, 500, 0.1, 0.05, 1},
-	{numParents, populationSize, 0.8, 0.2, gmax, 1000, 0.1, 0.05, 1},
-	{numParents, populationSize, 0.8, 0.2, gmax, 1000, 0.1, 0.05, 1},
-	{numParents, populationSize, 0.7, 0.4, gmax, 1000, 0.1, 0.05, 1},
-	{numParents, populationSize, 0.8, 0.4, gmax, 1000, 0.5, 0.05, 1},
-	{numParents, populationSize, 0.8, 0.4, gmax, 1000, 0.5, 0.05, 1},
-	{numParents, populationSize, 0.7, 0.4, gmax, 1000, 0.5, 0.05, 1},
-	{numParents, populationSize, 0.8, 0.4, gmax, 1000, 0.5, 0.05, 1},
-	{numParents, populationSize, 0.7, 0.2, gmax, 1000, 0.5, 0.05, 1},
+	{numParents, populationSize, 0.1, 0.5, gmax, 50, 0.1, 0.01, 1},
+	{numParents, populationSize, 0.1, 0.2, gmax, 100, 0.1, 0.05, 1},
+	{numParents, populationSize, 0.0, 0.2, gmax, 100, 0.1, 0.05, 1},
+	{numParents, populationSize, 0.2, 0.8, gmax, 50, 0.1, 0.05, 1},
+	{numParents, populationSize, 0.25, 0.8, gmax, 100, 0.1, 0.05, 1},
+	{numParents, populationSize, 0.1, 0, gmax, 100, 0.5, 0.05, 1},
+	{numParents, populationSize, 0.25, 0.8, gmax, 100, 0.1, 0.05, 1},
 
 	/*
 		ALL TRAIN EXCEPT 5 AND 6

@@ -119,6 +119,17 @@ func getBestIndividual(individuals []Individual) Individual {
 	return bestIndividual
 }
 
+// get best individual index
+func getBestIndividualIndex(individuals []Individual) int {
+	bestIndividual := Individual{Fitness: math.Inf(1), Age: 0, Routes: make([]Route, 0)}
+	index := 0
+	for i, individual := range individuals {
+		if individual.Fitness < bestIndividual.Fitness {
+			index = i
+		}
+	}
+	return index
+}
 // Performs elitism for surivior selection. Returns the new population.
 func (p Population) applyElitismWithPercentage(newPopulation []Individual, elitismPercentage float64) Population {
 	numToPreserve := int(math.Floor(float64(p.size()) * elitismPercentage))

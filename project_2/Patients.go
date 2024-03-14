@@ -43,12 +43,12 @@ func createDummyPatient() Patient {
 	return Patient{-1, -1, -1, -1, -1, -1, -1, -1, -1}
 }
 
-// Generate a list of random patient ID's
+// Generate a list of random patient ID's (up to 5)
 func generateRandomPatientIDs(Instance Instance) []int {
 	source := rand.NewSource(time.Now().UnixNano())
 	random := rand.New(source)
 
-	numbers := make([]int, len(Instance.getPatients()))
+	numbers := make([]int, 10)
 	for i := range numbers {
 		numbers[i] = i + 1
 	}
@@ -59,7 +59,7 @@ func generateRandomPatientIDs(Instance Instance) []int {
 	})
 
 	// Decide the size of the subset. This example uses a random size between 1 and 100.
-	subsetSize := rand.Intn(100) + 1
+	subsetSize := rand.Intn(5) + 1
 
 	// Slice the shuffled array to get a random subset of the desired size.
 	return numbers[:subsetSize]
