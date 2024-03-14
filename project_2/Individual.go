@@ -379,3 +379,15 @@ func createDummyIndividual() Individual {
 		Routes:  []Route{},
 	}
 }
+
+// Return number of non-Empty routes in an individual
+func (i Individual) numberOfNonEmptyRoutes() int {
+	count := 0
+	for _, route := range i.Routes {
+		if len(route.Patients) > 0 {
+			count++
+		}
+	}
+
+	return count
+}

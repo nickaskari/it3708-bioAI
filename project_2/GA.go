@@ -32,19 +32,19 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 
 	for generation < gMax {
 		newIndividuals = []Individual{}
-		
-		if generation % migrationFrequency == 0 && generation > 0 {
-			migrants := population.selectRandomMigrants(numMigrants)
-            migrationEvent.DepositMigrants(generation, migrants)
 
-            // Wait for all islands to deposit migrants and pick up new ones
-            newMigrants, didCancel := migrationEvent.WaitForMigration(generation, islandID, ctx)
+		if generation%migrationFrequency == 0 && generation > 0 {
+			migrants := population.selectRandomMigrants(numMigrants)
+			migrationEvent.DepositMigrants(generation, migrants)
+
+			// Wait for all islands to deposit migrants and pick up new ones
+			newMigrants, didCancel := migrationEvent.WaitForMigration(generation, islandID, ctx)
 
 			if didCancel {
 				return getBestIndividual(population.Individuals), false
 			}
 
-            // Incorporate new migrants into the population
+			// Incorporate new migrants into the population
 			population.insertNewMigrants(newMigrants)
 		}
 
@@ -144,24 +144,15 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 			lastFitness = bestFitness
 		}
 
-		
-		//newPopulation = deepCopyPopulation(population.spreadDisease(elitismPercentage, instance))
-
 		// 5 or 15
 		if stuck > genocideWhenStuck {
-			//var newPopulation Population
-		//	if 0.5 > random.Float64() {
-				fmt.Println("\nPERFORM GENOCIDE AND REBUILD POPULATION..\n")
-				newPopulation = deepCopyPopulation(population.applyGenecoideWithElitism(elitismPercentage, instance))
-				bestIndex := getBestIndividualIndex(population.Individuals)
-				newPopulation.Individuals[bestIndex] = destroyRepaiLite(newPopulation.Individuals[bestIndex], instance)
-				newPopulation.Individuals[bestIndex] = destroyRepairCluster(newPopulation.Individuals[bestIndex], instance)
-				population = newPopulation
-		//	} else {
-		//		fmt.Println("\nSPREAD DISEASE..\n")
-		//		newPopulation = deepCopyPopulation(population.spreadDisease(elitismPercentage, instance))
-		//	}
-	
+			fmt.Println("\nPERFORM GENOCIDE AND REBUILD POPULATION..\n")
+			newPopulation = deepCopyPopulation(population.applyGenecoideWithElitism(elitismPercentage, instance))
+			bestIndex := getBestIndividualIndex(population.Individuals)
+			newPopulation.Individuals[bestIndex] = destroyRepaiLite(newPopulation.Individuals[bestIndex], instance)
+			newPopulation.Individuals[bestIndex] = destroyRepairCluster(newPopulation.Individuals[bestIndex], instance)
+			population = newPopulation
+
 			stuck = 0
 		}
 
@@ -169,6 +160,14 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 			fmt.Println("Found an individual with lower fitness than the benchmark..")
 			benchmarkWasReached = true
 			break
+		}
+
+		// Check if there are abnormally long routes.
+		numNonEmptyRoutes := getBestIndividual(population.Individuals).numberOfNonEmptyRoutes()
+
+		if numNonEmptyRoutes < 10 {
+			crossoverRate = 0.2
+			initiateBestCostRepair = false
 		}
 
 		generation++

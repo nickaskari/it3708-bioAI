@@ -116,7 +116,7 @@ func getBestIndividual(individuals []Individual) Individual {
 			bestIndividual = individual
 		}
 	}
-	return bestIndividual
+	return deepCopyIndividual(bestIndividual)
 }
 
 // get best individual index
