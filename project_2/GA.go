@@ -176,6 +176,7 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 				crossoverRate = 0.2
 				initiateBestCostRepair = false
 				detectedLongRoutes = true
+				genocideWhenStuck = 5
 			}
 		}
 
