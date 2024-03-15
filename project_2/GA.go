@@ -150,13 +150,15 @@ func GA(populationSize int, gMax int, numParents int, temp int,
 			fmt.Println("\nPERFORM GENOCIDE AND REBUILD POPULATION..\n")
 			newPopulation = deepCopyPopulation(population.applyGenecoideWithElitism(elitismPercentage, instance))
 			population = newPopulation
-
-			bestIndex := getBestIndividualIndex(population.Individuals)
-			population.Individuals[bestIndex] = millitaryCamp(population.Individuals[bestIndex], instance)
 		}
 
-		if stuck%25 == 0 && stuck > 0 {
-			genocideWhenStuck = 2
+		if stuck%50 == 0 && stuck > 0 {
+			genocideWhenStuck = 12
+		}
+
+		if stuck%30 == 0 && stuck > 0 {
+			bestIndex := getBestIndividualIndex(population.Individuals)
+			population.Individuals[bestIndex] = millitaryCamp(population.Individuals[bestIndex], instance)
 		}
 
 		if bestFitness <= benchmark {
@@ -212,4 +214,13 @@ func addToPopulation(toAdd Individual, size int, individuals []Individual) []Ind
 		return append(individuals, toAdd)
 	}
 	return individuals
+}
+
+// Performs a match between two individuals
+func crowdingMatch(parent Individual, child Individual) Individual {
+	if parent.Fitness <= child.Fitness {
+		return parent
+	} else {
+		return child
+	}
 }
