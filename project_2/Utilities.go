@@ -8,6 +8,7 @@ import (
 	"sort"
 	"strconv"
 	"time"
+	"slices"
 )
 
 // Reads file at filename and returns JSON.
@@ -223,4 +224,79 @@ func readFromJson(instance Instance) float64 {
 		fitness += instance.getTravelTime(start, 0)
 	}
 	return fitness
+}
+
+// Adds patients from route to patient (ID's only) array. Returns patients array.
+func registerPatients(route Route, patients []int) []int {
+	routePatients := route.Patients
+	for _, p := range routePatients {
+		patients = append(patients, p.ID)
+	}
+	return patients
+}
+
+// Checks if the patient ID of one route is already visited in another patient ID array
+func checkAlreadyVisited(routePatients []int, visitedPatients []int) bool {
+	for _, pID := range routePatients {
+		if slices.Contains(visitedPatients, pID) {
+			return true
+		}
+	}
+	return false
+}
+
+// Extract unvisited patients from visitied patients. Returns []int of patient ID's that are unvisited.
+func extractUnvisitedPatients(visitedPatients []int, instance Instance) []int {
+	allPatients := instance.PatientArray
+	unvistedPatients := make([]int, 0)
+
+	for _, patient := range allPatients {
+		if !slices.Contains(visitedPatients, patient.ID) {
+			unvistedPatients = append(unvistedPatients, patient.ID)
+		}
+	}
+
+	return unvistedPatients
+}
+
+func checkForDuplicates(individual Individual) bool {
+	allPatients := make([]int, 0)
+	for _, route := range individual.Routes {
+		for _, patient := range route.Patients {
+			if slices.Contains(allPatients, patient.ID) {
+				fmt.Println("duplicateid", patient.ID)
+				return true
+			}
+			allPatients = append(allPatients, patient.ID)
+		}
+	}
+
+	return false
+
+}
+
+func hasDuplicates(slice []int) bool {
+	occurrences := make(map[int]bool)
+	for _, value := range slice {
+		if _, exists := occurrences[value]; exists {
+			// Duplicate found
+			return true
+		}
+		occurrences[value] = true
+	}
+	// No duplicates found
+	return false
+}
+
+func getOtherParentIndex(index int, n int) int {
+	source := rand.NewSource(time.Now().UnixNano())
+	random := rand.New(source)
+
+	for {
+		num := random.Intn(n)
+		if num != index {
+			return num
+		}
+	}
+	return 0
 }

@@ -1,9 +1,0 @@
-
-- Satisfiesconstraint has omitted return time --> solved train8 problem.
-
-
-
-- random mutation changed to slack on return time and performPatientSwap in Route.Go
-- train8 has a really tight returntime
-
-- possible mistake in generateRandomPatientIDs
